@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'User_Home_app',
     'user_app',
+    'django_twilio',
 ]
 
 MIDDLEWARE = [
@@ -127,5 +128,6 @@ STATICFILES_DIRS=[
 ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+AUTH_USER_MODEL = 'user_app.CustomUser'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -157,16 +157,19 @@ font-family: 'Russo One', sans-serif;
                                 <span class="ti-user"></span> My Profile
                             </a>
                             <div class="dropdown-menu" aria-labelledby="profileDropdown" id="profileDropdownContent">
-                               
+                               {% if user.is_authenticated %}
                                     <a class="dropdown-item" href="/profile">My Account</a>
                                     <a class="dropdown-item" href="/fav">My Wish List</a>
                                     <a class="dropdown-item" href="/orderhistory">My Orders</a>
                                     <a class="dropdown-item" href="/wallet">My Wallet</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" id="loginOrLogoutButton1" href="/logout">Logout</a>
+                                    <a class="dropdown-item" id="loginOrLogoutButton1" href="{% url 'logout' %}">Logout</a>
+								{% else %}
                                 
 									<a class="dropdown-item" id="loginOrLogoutButton2" href="{% url 'login' %}">Login</a>
                                     <a class="dropdown-item" id="loginOrLogoutButton3" href="{% url 'signup' %}">Sign Up</a>
+
+								{%endif%}
                                 
                             </div>
                         </li> 

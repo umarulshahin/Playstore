@@ -16,7 +16,7 @@
 	<!-- meta character set -->
 	<meta charset="UTF-8">
 	<!-- Site Title -->
-	<title>UrbanSole</title>
+	<title>PlayStore</title>
 	<!--
 		CSS
 		============================================= -->
@@ -29,7 +29,11 @@
 	<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
 	<link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
+<style>
+	.message{
 
+	}
+</style>
 <body>
 
 	
@@ -66,8 +70,10 @@
 								<div class="login_form_inner">
 									<h3>Create New Account</h3>
 									
-									<form class="row login_form" action="{% url 'signup_otp' %}" method="post" id="signupForm" novalidate="novalidate">
+
+									<form class="row login_form" action="{% url 'signup' %}" method="post" id="signupForm" novalidate="novalidate">
 										{% csrf_token %}
+									
 										<div class="col-md-6 form-group">
 											<input type="text" class="form-control" id="fname" name="fname" placeholder="First Name" required>
 											
@@ -94,10 +100,20 @@
 								
 											
 										</div>
+										<div class="container">
+
+										{% for error in messages %}
+
+										<p class="text-center" style="color:red">{{error}}</p>
+
+										{%endfor%}
+
+									</div>
 										
 										<div class="col-md-12 form-group">
 											<button type="submit" class="primary-btn">Sign Up</button>
 										</div>
+										
 										<div class="col-md-12">
 											<p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
 										</div>
