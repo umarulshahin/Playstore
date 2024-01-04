@@ -7,7 +7,7 @@ urlpatterns = [
     path('Signup_Otp/',views.Signup_Otp,name='signup_otp'),
     path('Forget_pass/',views.Forget_pass,name='forget_pass'),
     path('New_pass/',views.New_pass,name='new_pass'),
-    path('Forget_Otp/',views.Forget_Otp,name='Forget_pass'),
+    path('Forget_Otp/',views.Forget_Otp,name='Forget_pass'), 
     path('Logout/',views.Logout,name='logout'),
 
 ]

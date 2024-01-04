@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'User_Home_app',
     'user_app',
     'django_twilio',
+    'Admin_app'
 ]
 
 MIDDLEWARE = [

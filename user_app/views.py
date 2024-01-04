@@ -7,7 +7,6 @@ from twilio.rest import Client
 import os
 from dotenv import load_dotenv
 from django.contrib.auth import authenticate,login,logout
-from django.contrib.auth.hashers import make_password
 
 
  
