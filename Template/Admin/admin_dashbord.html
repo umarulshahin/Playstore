@@ -181,19 +181,19 @@
             </ul>
           </li>
           <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <a href="" class="menu-link menu-toggle">
               <i class="menu-icon tf-icons bx bx-dock-top"></i>
               <div data-i18n="Account Settings">Category</div>
             </a>
             <ul class="menu-sub">
               <li class="menu-item">
-                <a href="categorylist" class="menu-link">
+                <a href="{% url 'category_list' %}" class="menu-link">
                   <div data-i18n="Account">Category List</div>
                 </a>
               </li>
               <li class="menu-item">
-                <a href="addcategory" class="menu-link">
-                  <div data-i18n="Notifications">Add Category</div>
+                <a href="{% url 'sub_category' %}" class="menu-link">
+                  <div data-i18n="Notifications">Sub Category</div>
                 </a>
               </li>
             </ul>

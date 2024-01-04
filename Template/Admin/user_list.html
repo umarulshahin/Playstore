@@ -7,7 +7,7 @@
 
               <!-- Hoverable Table rows -->
               <div class="card mx-4">
-                <h5 class="card-header">Users List</h5>
+                <h3 class="card-header">Users List</h3>
                 <div class="table-responsive text-nowrap">
                   <table class="table table-hover">
                     <thead>
@@ -29,13 +29,13 @@
                         <td>{{data.ph_no}}</td>
                         
                         <td>
-                          {%if data.is_active == True %}
+                          {%if not data.is_active  %}
 
-                          <p>Active</p>
+                          <p>Blocked</p>
 
                           {% else %}
 
-                          <p>Blocked</p>
+                          <p>Active</p>
 
                           {% endif %}
                           </td>
@@ -49,11 +49,11 @@
                             </button>
                             <div class="dropdown-menu">
                              
-                              <a class="dropdown-item" href="{% url 'user_block' data.id %}"
+                              <a class="dropdown-item" href="{% url 'user_block' data.id %}" onclick="return confirm('Do you want to Block  {{data.full_name}} ?')"
                                 ><i class="bx bx-edit-alt me-1"></i>Block </a
                               >
                               
-                               <a class="dropdown-item" href="{% url 'user_unblock' data.id %}"
+                               <a class="dropdown-item" href="{% url 'user_unblock' data.id %}" onclick="return confirm('Do you want to Unblock  {{data.full_name}} ?')"
                                 ><i class="bx bx-edit-alt me-1"></i>Unblock </a
                               >
                               
@@ -69,6 +69,10 @@
 
               
      <!-- ............End User List............. -->
+
+     
+
+
 
 {%endblock%}
 
