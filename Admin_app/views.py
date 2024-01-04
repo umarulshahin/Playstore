@@ -1,6 +1,7 @@
 from django.shortcuts import render,HttpResponse,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
+from user_app.models import *
 
 
 # Create your views here.
@@ -32,11 +33,33 @@ def Admin_logout(request):
     logout(request)
     
     return render(request,"Admin/admin_login.html")
+
 def User_list(request):
     
-    data=
+    user=CustomUser.objects.filter(is_staff=False).values()
+    print(user)
+    
+    context={
+        "user":user
+    }
+    
+    return render(request,"Admin/user_list.html",context)
+
+def User_block(request,id):
+    
+    user=CustomUser.objects.get(id=id)
+    user.is_active=False
+    user.save()
+    return redirect("user_list")
+
+def User_unblock(request,id):
+    
+    user=CustomUser.objects.get(id=id)
+    user.is_active=True
+    user.save()
+    return redirect("user_list")
+
     
     
-    return render(request,"Admin/user_list.html")
     
     

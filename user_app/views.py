@@ -23,13 +23,11 @@ def Login(request):
         password=request.POST.get("password")
         print(password)
         user= authenticate(request,email=email,password=password)
-        print("User:",user)
         
-        if user is not None:
+        if user is not None and user.is_active:
             login(request,user)
             return redirect("Dashbord")
-        
-        else:
+        else:  
             messages.error(request, "Email or Passwors mismatch")
             return render(request,'user_auth/Login.html')
             
@@ -38,7 +36,7 @@ def Login(request):
     
     # ........ OTP Genarating ........
 
-def otp(request):
+def otp():
         otp= random.randint(100000,999999)
         load_dotenv()
         account_sid = os.getenv('TWILIO_ACCOUNT_SID')
@@ -117,7 +115,7 @@ def Signup(request):
             messages.error(request,"Password mismath")
             return render(request,'user_auth/Signup.html')
         
-        user_data = CustomUser.objects.create_user(email=email,password=password,full_name=username)
+        user_data = CustomUser.objects.create_user(email=email,password=password,full_name=username,ph_no=phone)
         user_data.save()
         
         # ...........End Form Validation ............
@@ -125,11 +123,16 @@ def Signup(request):
         
         
         try: 
-            values=otp(request)
             
-        except :
-            messages.error(request,"Otp Genaration Faile")
-            return render(request,"user_auth/Signup.html")
+            values=otp()
+            print(values,"...........1")
+            
+        except Exception as e:
+            # print(".........2")
+            # CustomUser.objects.filter(email=email).delete()
+            messages.error(request,"{e}")
+            print(f"Error : {e}")
+            return redirect("signup")
         
         request.session['otp']=values
         request.session['email'] = email
