@@ -226,21 +226,120 @@ def Add_Sub_Category(request):
     
     if request.method == 'POST' :
         sub=request.POST.get("category_name")
-        print(sub,".....2")
         cate=request.POST.get("category_type")
         
-        print(cate,"....1")
         id=Category.objects.get(id=cate)
         Sub_Category.objects.create(name=sub,category=id)
         
         return redirect("sub_category")
         
-    
-    
-        
-                    
                     
                     # ................End Add Sub Category .........................
+                    
+                    # ................Product .........................
+                    
+def Product_list(request):
+    
+    pro=Product.objects.all()
+    sub=Sub_Category.objects.all()
+    
+    context={
+        'pro' : pro,
+        'sub' : sub
+    }
+    
+    return render(request,"admin/Product.html",context)
+                    
+                    
+                    # ................End Product .........................
+                    
+                    # ................ Product Status.........................
+                    
+def Product_Status(request,id):
+   
+    status=Product.objects.get(id=id)
+    
+    if not status.is_deleted:
+        
+        status.is_deleted = True
+        status.save()
+        
+    else:
+        
+        status.is_deleted = False
+        status.save()
+        
+    return redirect("product_list")
+                    
+                    # ................End Product Status.........................
+                    
+                    # ................Add Product .........................
+                    
+def Add_Product(request):
+    
+    if request.method == "POST" :
+        
+        name=request.POST.get("product_name")
+        price=request.POST.get("price")
+        discount=request.POST.get("discount")
+        stock=request.POST.get("stock")
+        sub_category=request.POST.get("category_type")
+        description=request.POST.get("description")
+        image=request.FILES.get("image")
+        
+        print(name,price,discount,stock,sub_category,description,image,".........1")
+        sub=Sub_Category.objects.get(id=sub_category)
+        Product.objects.create(name=name,price=price,discount=discount,stock=stock,sub_category=sub,description=description,image=image)
+        
+        return redirect("product_list") 
+        
+    
+                    
+                    # ................End Add Product .........................
+                    
+                    
+                    # ................Delete Product .........................
+                    
+def Delete_Product(request,id):
+   
+    pro=Product.objects.get(id=id)
+    pro.delete()
+    
+    return redirect("product_list")
+                    
+                    
+                    # ................End Delete Product .........................
+                    
+                    # ................Update Product .........................
+                    
+def Update_Product(request,id):
+    
+    if request.method == "POST" :
+        up= Product.objects.get(id=id)
+        name=request.POST.get("product_name")
+        price=request.POST.get("price")
+        discount=request.POST.get("discount")
+        stock=request.POST.get("stock")
+        sub_category=request.POST.get("category_type")
+        description=request.POST.get("description")
+        image=request.FILES.get("image")
+    
+    
+        sub=Sub_Category.objects.get(id=sub_category)
+        up.name=name
+        up.price=price
+        up.discount=discount
+        up.stock=stock
+        up.description=description
+        
+        if image:
+            up.image=image
+            
+        up.save()
+    
+    return redirect("product_list")
+                    
+                    # ................End Update Product .........................
 
     
     

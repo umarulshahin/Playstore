@@ -17,7 +17,8 @@
                 
                 <tr>
                     <th>Sl.No</th>
-                    <th>Category Name</th>
+                    <th>Main Category Name</th>
+                    <th>Sub Category Name</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -26,12 +27,13 @@
                 {% for cate in sub %}
                 <tr>
                     <td>{{cate.id}}</td>
+                    <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ cate.category.name }}</strong></td>
                     <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ cate.name }}</strong></td>
                     <td>
                         {% if not cate.is_deleted %}
-                        <p>Listed</p>
+                        <p>unlisted</p>
                         {% else %}
-                        <p>Unlisted</p>
+                        <p>Listed</p>
                         {% endif %}
                     </td>
                     <td>
@@ -167,10 +169,10 @@
                 {% endfor %}
             </tbody>
         </table>
- 
-       <!-- ............... Add Category Butten.............   -->
     </div>
 </div>
+       <!-- ............... Add Category Butten.............   -->
+    
 <div class="d-flex">
     <div class="ms-auto" style="margin-right: 200px ; margin-top:30px">
         <a class="btn btn-primary dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#updateCategoryModal"  role="button" style="color: white;">Add Category</a>

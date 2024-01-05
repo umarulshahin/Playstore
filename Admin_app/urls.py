@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     
@@ -49,17 +51,25 @@ urlpatterns = [
     
     path('add_sub_category/',views.Add_Sub_Category,name="add_sub_category"),
 
-
-
-    
-    
     
     # .............. End Sub Category.....................
     
+    # .............. Product.....................
     
+    path('product_list/',views.Product_list,name="product_list"),
+    
+    path('product_status/<int:id>',views.Product_Status,name="product_status"),
+    
+    path('add_product/',views.Add_Product,name="add_Product"),
+    
+    path('delete_product/<int:id>',views.Delete_Product,name="delete_product"),
+    
+    path('update_product/<int:id>',views.Update_Product,name="update_product"),
 
-
-
+    
+    # ..............End Product.....................
+    
     
 
 ]
+

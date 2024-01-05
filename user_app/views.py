@@ -48,7 +48,7 @@ def otp():
         msg = client.messages.create(
             
             body = F"Your OTP is {otp}",
-            from_= "+12059474365",
+            from_= "+13346030540",
             to =my_number,
             
             
@@ -128,8 +128,8 @@ def Signup(request):
             print(values,"...........1")
             
         except Exception as e:
-            # print(".........2")
-            # CustomUser.objects.filter(email=email).delete()
+            print(".........2")
+            CustomUser.objects.filter(email=email).delete()
             messages.error(request,"{e}")
             print(f"Error : {e}")
             return redirect("signup")
