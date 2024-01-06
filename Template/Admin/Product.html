@@ -6,6 +6,15 @@
 <hr class="my-5" />
 
 <!-- Hoverable Table rows -->
+<div class="container">
+
+  {% for error in messages %}
+
+  <p class="text-center" style="color:red">{{error}}</p>
+
+  {%endfor%}
+
+</div>
 
 <div class="card mx-4">
   <h5 class="card-header">Product List</h5>
@@ -93,8 +102,8 @@
                   <label for="price">Price:</label>
                   <input type="text" name="price" class="form-control" value="{{pro.price}}" required>
   
-                  <label for="price">Discound:</label>
-                  <input type="text" name="discount" class="form-control" value="{{ pro.discount }}" required>
+                  <label for="price">Discount:</label>
+                  <input type="text" name="discount" class="form-control" value="{{pro.discount}}" required>
   
                   <label for="current_image">Current Image:</label>
                   <img src="{{ pro.image.url }}" alt="Current Image" style="max-width: 200px; max-height: 200px;">
@@ -111,12 +120,15 @@
                   <div class="mb-3">
                       <label for="category_type" class="form-label">Category:</label>
                       <select class="form-select" name="category_type" id="category_type" required>
+                          <option value="{{pro.id}}">{{pro.sub_category.name}}</option>
                           {% for sub in sub %}
                           <option value="{{sub.id}}">{{sub.name}}</option>
                           {% endfor %}
                           <!-- Add more options as needed -->
                       </select>
                   </div>
+
+                  
   
                   <button type="submit" data-bs-dismiss="modal" class="btn btn-danger">Cancel</button>
                   <button type="submit" class="btn btn-primary">Update Product</button>
@@ -188,7 +200,7 @@
                 <input type="text" name="price" class="form-control" value="" required>
 
                 <label for="price">Discound:</label>
-                <input type="text" name="discound" class="form-control" value="" required>
+                <input type="text" name="discount" class="form-control" value="" required>
 
                 <label for="image">Image:</label>
                 <input type="file" name="image" class="form-control" accept="image/*" required>

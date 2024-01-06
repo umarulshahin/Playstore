@@ -1,0 +1,236 @@
+{% extends 'dashbord/dashbord.html' %}
+
+{%block content%}
+
+
+
+
+<style>
+    #size {
+        border: 2px solid red !important;
+        .size-selector {
+        display: flex;
+        gap: 10px;
+    }
+    
+    }
+    
+    .size-selector {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .size-circle {
+        background-color: orange;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        border: 2px solid orange;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .size-circle:hover {
+        background-color: rgba(191, 184, 184, 0.522);
+        color: orange;
+    }
+    
+    .hidden-radio {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+    }
+    
+    .hidden-radio:checked + .size-circle {
+        background-color: white;
+        color: orange;
+        border-color:  orange;
+    }
+    
+    
+    </style>
+    
+    <body>
+    
+        <!-- Start Header Area -->
+       
+            <!-- End Header Area -->
+            <!-- Start Banner Section -->
+            <section class="banner-area organic-breadcrumb">
+                <div class="container">
+                    <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+                        <div class="col-first">
+                            <h1>Shopping</h1>
+                            <nav class="d-flex align-items-center">
+                                <a href="#">View Product<span class="lnr lnr-arrow-right"></span></a>
+                                <a href="{% url 'Dashbord' %}">Home</a>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </section>
+    
+            {% for pro in pro %}
+            <section class="product-details mt-4">
+                <div class="container">
+                    <form id="productForm" action="/add-to-cart/<%= product._id %>" method="post">
+                        <div class="row">
+                            <!-- Product Image -->
+                            <div class="col-lg-6">
+                                <div class="product-image">
+                                    <a href="/<%= product.images[0] %>" class="MagicZoom" id="Mag">                    
+                                        <img id="mainImage" src="{{ pro.image.url }}" alt="Product Image" class="img-fluid" 
+                                        style="width: 300px; height: 400px; object-fit: cover;">
+                                    </a>
+                                </div>
+                                
+                                <!-- <div class="additional-images mt-2 d-flex">
+                                   
+                                        <div class="additional-image ml-2" data-image="/<%= image %>" value="<%= index %>">
+                                            <img src="/<%= image %>" alt="Additional Product Image" class="img-thumbnail"  
+                                            style="width: 75px; height: 75px; object-fit: cover;">
+                                        </div>
+                                    
+                                </div> -->
+                            </div>
+                           
+                            <div class="col-lg-6">
+                                <div class="product-info">
+                                    <h2>{{pro.name}}</h2>
+                                    <p class="lead">₹ {{pro.price}}</p>
+                                    <p>{{pro.description}}</p>
+                                    
+                                    <p>Average Ratings:   <span class="fa fa-star" style="color: green; border: 1px solid green;"></span></p>
+                                    
+                                    <div class="form-group">
+                                        <label for="size">Select Size:</label>
+                                        <div class="size-selector">
+                                            <input type="radio" id="size-6" name="size" value="6" class="hidden-radio" required>
+                                            <label for="size-6" class="size-circle">6</label>
+                                    
+                                            <input type="radio" id="size-7" name="size" value="7" class="hidden-radio" required>
+                                            <label for="size-7" class="size-circle">7</label>
+                                    
+                                            <input type="radio" id="size-8" name="size" value="8" class="hidden-radio" required>
+                                            <label for="size-8" class="size-circle">8</label>
+                                    
+                                            <input type="radio" id="size-9" name="size" value="9" class="hidden-radio" required>
+                                            <label for="size-9" class="size-circle">9</label>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    
+                                
+                                    
+                                    <div class="interactive-icons mt-5">
+                                        <button type="submit" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
+                                        <a href="/wishlist/<%= product._id %>" class="btn btn-danger ml-2"><i class="fa fa-heart"></i> Add to Wishlist</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+    
+            <div class="container mt-4">
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="text-center">Related Products</h2>
+                    </div>
+                    
+                        {% for relate in relate%}
+                        <div class="col-md-3 mt-4"> 
+                            <a href="/singleproduct/<%= product._id %>">
+                            <div class="card" style="border: none;">
+                                <img src="{{ relate.image.url }}" class="card-img-top"
+                                    alt="<%= product.name %>"
+                                    style="width: 175px; height: 175px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{relate.name}}
+                                        
+                                    </h5>
+                                    <p class="card-text">Price:₹{{relate.price}} 
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                        </div>
+
+                        {% endfor %}
+                    
+                        
+    
+                </div>
+            </div>
+    
+    
+    
+    
+            <div class="modal fade" id="outOfStockModal" tabindex="-1" role="dialog" aria-labelledby="outOfStockModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="outOfStockModalLabel">Out of Stock</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Selected item is out of stock.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+           
+            
+    
+    
+            {% endfor %}
+           
+            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script>
+        
+            </script>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var additionalImages = document.querySelectorAll('.additional-image');
+                    
+                        additionalImages.forEach(function (image) {
+                            image.addEventListener('click', function () {
+                                var newImageSrc = this.getAttribute('data-image');
+                                var index = this.getAttribute('value');
+                                document.getElementById('mainImage').src = newImageSrc;
+                                var magLink = document.getElementById('Mag');
+                                magLink.setAttribute('href', newImageSrc);
+                                console.log('Updated href:', magLink.getAttribute('href'));
+                                if (typeof MagicZoom !== 'undefined' && typeof MagicZoom.stop === 'function') {
+                                        MagicZoom.stop('Mag');
+                                        document.getElementById('mainImage').src = newImageSrc;
+                                        MagicZoom.start('Mag');
+                                } else {
+                                        console.warn('MagicZoom not available or stop function not defined.');
+                                    }
+    
+                                
+                            });
+                        });
+                    });
+                </script>
+                
+                
+
+{% endblock %}

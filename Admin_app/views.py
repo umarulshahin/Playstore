@@ -3,14 +3,20 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from user_app.models import *
 from .models import *
+from django.views.decorators.cache import  never_cache
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
 
 
                # ........... Admin Authentication................
-
+@never_cache
 def Admin(request):
+    
+    if 'email' in request.session:
+        
+        return redirect("admin_dashbord")
     
     if request.method == "POST":
         email=request.POST.get("email")
@@ -20,6 +26,7 @@ def Admin(request):
         
         if user is not None and user.is_superuser:
             login(request,user)
+            request.session['email']=email
             return redirect("admin_dashbord")
         else:
             messages.error(request, "Email or Passwors mismatch")
@@ -31,27 +38,39 @@ def Admin(request):
               # ........... End Admin Authentication................
       
               # ............ Admin Dashbord ....................
-
+@login_required(login_url="admin_login")
+@never_cache
 def Admin_dashbord(request):
+    
     
     return render(request,"Admin/admin_dashbord.html")
 
+               # ............ End Admin Dashbord ....................
+               
+               
+               # ............  Admin Logout ....................
+
+
+@never_cache
 def Admin_logout(request):
     
-    logout(request)
-    
-    return render(request,"Admin/admin_login.html")
+    if 'email' in request.session:
+         
+       request.session.flush()
+       logout(request)
+       return redirect("admin_login")
 
-                # ............ End Admin Dashbord ....................
+                # ............End Admin Logout  ....................
                 
                 # ..............User List ..........................
 
 def User_list(request):
     
     user=CustomUser.objects.filter(is_staff=False).values()
-    print(user)
+   
     
     context={
+        
         "user":user
     }
     
@@ -150,6 +169,15 @@ def Add_category(request):
     
     if request.method == 'POST':
         name=request.POST.get("category_name")
+        
+        if  Category.objects.filter(name=name).exists():
+            
+            messages.error(request, "This Category Alredy Exist")
+            return redirect("category_list")
+            
+            
+        
+        
         Category.objects.create(name=name)
         
         return redirect("category_list")
@@ -227,6 +255,11 @@ def Add_Sub_Category(request):
     if request.method == 'POST' :
         sub=request.POST.get("category_name")
         cate=request.POST.get("category_type")
+        print(cate,".......4")
+        if  Sub_Category.objects.filter(name=sub).exists():
+            
+            messages.error(request, "This Sub Category Alredy Exist")
+            return redirect("sub_category")
         
         id=Category.objects.get(id=cate)
         Sub_Category.objects.create(name=sub,category=id)
@@ -323,14 +356,27 @@ def Update_Product(request,id):
         sub_category=request.POST.get("category_type")
         description=request.POST.get("description")
         image=request.FILES.get("image")
+        
+        if int(price) < 1:
+            
+             messages.error(request, "Invalid Price . Price Should Be Above Zero ")
+             return redirect("product_list")
+        if int(discount) < 1:
+            
+             messages.error(request, "Invalid Discound . Discound Should Be Above Zero ")
+             return redirect("product_list")
+         
+            
     
-    
+        print(sub_category,".....1")
         sub=Sub_Category.objects.get(id=sub_category)
+        print(sub,"......")
         up.name=name
         up.price=price
         up.discount=discount
         up.stock=stock
         up.description=description
+        up.sub_category=sub
         
         if image:
             up.image=image

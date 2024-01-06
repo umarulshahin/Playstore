@@ -7,15 +7,19 @@ from twilio.rest import Client
 import os
 from dotenv import load_dotenv
 from django.contrib.auth import authenticate,login,logout
+from django.views.decorators.cache import  never_cache
+from django.contrib.auth.decorators import login_required
 
 
  
 
 # Create your views here.
 
-
-
+# ................. Login ................
+@never_cache
 def Login(request):
+    if  'email' in request.session :
+        return redirect("Dashbord")
     
     
     if request.method == 'POST':
@@ -25,7 +29,9 @@ def Login(request):
         user= authenticate(request,email=email,password=password)
         
         if user is not None and user.is_active:
+            
             login(request,user)
+            request.session['email']=email
             return redirect("Dashbord")
         else:  
             messages.error(request, "Email or Passwors mismatch")
@@ -33,6 +39,9 @@ def Login(request):
             
 
     return render(request,'user_auth/Login.html')
+    
+    # ................. End Login ................
+    
     
     # ........ OTP Genarating ........
 
@@ -58,8 +67,11 @@ def otp():
     # ........ End OTP Genarating ........
     
     # ......... Signup .........
-
+@never_cache
 def Signup(request):
+    
+    if  'email' in request.session :
+        return redirect("Dashbord")
     
     if request.method =="POST":
         
@@ -125,13 +137,13 @@ def Signup(request):
         try: 
             
             values=otp()
-            print(values,"...........1")
+            
             
         except Exception as e:
-            print(".........2")
+           
             CustomUser.objects.filter(email=email).delete()
-            messages.error(request,"{e}")
-            print(f"Error : {e}")
+            messages.error(request,"OTP genaration failed")
+           
             return redirect("signup")
         
         request.session['otp']=values
@@ -183,5 +195,6 @@ def Forget_pass(request):
 
 def New_pass(request):
     return render(request,'user_auth/New_pass.html')
+
 def Forget_Otp(request):
     return render(request,'uera_auth/Forget_otp.html')

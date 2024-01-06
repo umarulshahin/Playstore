@@ -107,7 +107,7 @@ font-family: 'Russo One', sans-serif;
 		 /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); */
 	 } -->
  
-	 </style>
+	 <!-- </style> -->
 	
 
    
@@ -117,7 +117,10 @@ font-family: 'Russo One', sans-serif;
 				<nav class="navbar navbar-expand-lg navbar-light main_box">
 					<div class="container">
 						<!-- Brand and toggle get grouped for better mobile display -->
-						<a class="navbar-brand logo_h" href="index.html"><img src="{% static 'img/logo.png' %}" alt=""></a>
+						<a class="navbar-brand logo_h" href="index.html">
+							<img src="{% static 'img/playstore logo.png' %}" alt="" style="width: 150px; height: 60px;">
+						</a>
+						
 						<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
 						 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 							<span class="icon-bar"></span>
@@ -127,16 +130,16 @@ font-family: 'Russo One', sans-serif;
 						<!-- Collect the nav links, forms, and other content for toggling -->
 						<div class="collapse navbar-collapse offset" id="navbarSupportedContent">
 							<ul class="nav navbar-nav menu_nav ml-auto">
-								<li class="nav-item active"><a class="nav-link" href="index.html">Home</a></li>
+								<li class="nav-item active"><a class="nav-link" href="{% url 'Dashbord' %}">Home</a></li>
 								<li class="nav-item submenu dropdown">
 									<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
 									 aria-expanded="false">Shop</a>
 									<ul class="dropdown-menu">
-										<li class="nav-item"><a class="nav-link" href="category.html">Shop Category</a></li>
+										<li class="nav-item"><a class="nav-link" href="{% url 'all_product' %}">All product</a></li>
 										<li class="nav-item"><a class="nav-link" href="single-product.html">Product Details</a></li>
 										<li class="nav-item"><a class="nav-link" href="checkout.html">Product Checkout</a></li>
-										<li class="nav-item"><a class="nav-link" href="cart.html">Shopping Cart</a></li>
-										<li class="nav-item"><a class="nav-link" href="confirmation.html">Confirmation</a></li>
+										<!-- <li class="nav-item"><a class="nav-link" href="cart.html">Shopping Cart</a></li>
+										<li class="nav-item"><a class="nav-link" href="confirmation.html">Confirmation</a></li> -->
 									</ul>
 								</li>
 								<!-- <li class="nav-item submenu dropdown">
@@ -189,7 +192,7 @@ font-family: 'Russo One', sans-serif;
 			</div>
 		</header>
 		<!-- End Header Area -->
-
+		{% block content%}
 	<!-- Start Banner Area -->
 	<section class="banner-area">
 		<div class="container">
@@ -379,49 +382,42 @@ font-family: 'Russo One', sans-serif;
 					<div class="col-lg-6 text-center">
 						<div class="section-title">
 							<h1>Latest Products</h1>
-							<p> Made from high-quality materials, these shoes offer durability and breathability,
-							 ensuring long-lasting comfort during every workout or game.</p>
+							<p>Made from high-quality materials, these shoes offer durability and breathability,
+								ensuring long-lasting comfort during every workout or game.</p>
 						</div>
 					</div>
 				</div>
-				<div class="row justify-content-center" style="width: 100%;">
-					<!-- <% product.forEach(product => { %> -->
+		
+				<div class="row justify-content-center">
+					{% for pro in pro %}
 						<div class="col-sm-6 col-lg-3 mx-auto">
-						  <div class="single-product">
-							
-							  <img class="img-fluid" src="{% static '/product.images[0]' %}"
-							  style="width: 175px; height: 175px; object-fit: cover;">
-							</a>
-							<div class="product-details">
-							  <h6> product.name</h6>
-							  <div class="price">
-								<h6>Price: ₹ product.price </h6>
-							  </div>
-							  <div class="prd-bottom">
-								<!-- <a href="#" class="social-info">
-								  <span class="ti-bag"></span>
-								  <p class="hover-text">Add to Bag</p>
-								</a> -->
-								<a href="/wishlist/product._id" class="social-info">
-								  <span class="lnr lnr-heart"></span>
-								  <p class="hover-text">Wishlist</p>
-								</a>
-								<!-- <a href="#" class="social-info">
-								  <span class="lnr lnr-sync"></span>
-								  <p class="hover-text">Compare</p>
-								</a> -->
-								<a href="/singleproduct/ product._id" class="social-info">
-								  <span class="lnr lnr-move"></span>
-								  <p class="hover-text">View More</p>
-								</a>
-							  </div>
+							<div class="single-product">
+								<img class="img-fluid" src="{{ pro.image.url }}"
+									 style="width: 200px; height: 200px; object-fit: cover;">
+								<div class="product-details">
+									<h6>{{ pro.name }}</h6>
+									<div class="price">
+										<h6>Price: ₹ {{ pro.price }} </h6>
+									</div>
+									<div class="prd-bottom">
+										<a href="/wishlist/{{ pro.id }}" class="social-info">
+											<span class="lnr lnr-heart"></span>
+											<p class="hover-text">Wishlist</p>
+										</a>
+										<a href="{% url 'view_product' pro.id %}" class="social-info">
+											<span class="lnr lnr-move"></span>
+											<p class="hover-text">View More</p>
+										</a>
+									</div>
+								</div>
 							</div>
-						  </div>
 						</div>
-					  <!-- <% }); %> -->
+					{% endfor %}
 				</div>
 			</div>
 		</div>
+		
+		
 		<!-- single product slide -->
 		<div class="single-product-slider">
 			<div class="container ">
@@ -434,52 +430,36 @@ font-family: 'Russo One', sans-serif;
 						</div>
 					</div>
 				</div>
-				<div class="row  " >
-					<!-- <% product2.forEach(product => { %> -->
-						<div class="col-lg-3 col-md-6 col-sm-6">
-						  <div class="single-product">
-							
-							<img class="img-fluid" src="{% static 'img/banner/banner-img.png' %" alt="Image 1">
 
-							  style="width: 175px; height: 175px; object-fit: cover; ">
-							</a>
-							<div class="product-details">
-							  <h6> product.name </h6>
-							  <div class="price">
-								<h6>Price: ₹ product.price </h6>
-							  </div>
-							  <div class="prd-bottom">
-								<!-- <a href="#" class="social-info">
-								  <span class="ti-bag"></span>
-								  <p class="hover-text">Add to Bag</p>
-								</a> -->
-								<a href="/wishlist/product._id" class="social-info">
-								  <span class="lnr lnr-heart"></span>
-								  <p class="hover-text">Wishlist</p>
-								</a>
-								<!-- <a href="#" class="social-info">
-								  <span class="lnr lnr-sync"></span>
-								  <p class="hover-text">Compare</p>
-								</a> -->
-								<a href="/singleproduct/product._id" class="social-info">
-								  <span class="lnr lnr-move"></span>
-								  <p class="hover-text">View More</p>
-								</a>
-							  </div>
+				
+				<div class="row">
+					{% for sub_category in sub %}
+						{% for product in sub_category.product_set.all %}
+							<div class="col-lg-3 col-md-6 col-sm-6">
+								<div class="single-product">
+									<img class="img-fluid" src="{{ product.image.url }}" alt="Image">
+									<div class="product-details">
+										<h6>{{ product.name }}</h6>
+										<div class="price">
+											<h6>Price: ₹{{ product.price }}</h6>
+										</div>
+										<div class="prd-bottom">
+											<a href="/wishlist/{{ product.id }}" class="social-info">
+												<span class="lnr lnr-heart"></span>
+												<p class="hover-text">Wishlist</p>
+											</a>
+											<a href="{% url 'view_product' product.id %}" class="social-info">
+												<span class="lnr lnr-move"></span>
+												<p class="hover-text">View More</p>
+											</a>
+										</div>
+									</div>
+								</div>
 							</div>
-						  </div>
-						</div>
-					  <!-- <% }); %> -->
-					
+						{% endfor %}
+					{% endfor %}
 				</div>
-					
-					
-
-					
-					
-			
-			</div>
-		</div>
+				
 	</section>
 	<!-- end product Area -->
 
@@ -579,6 +559,7 @@ font-family: 'Russo One', sans-serif;
 			</div>
 		</div>
 	</footer>
+	{% endblock %}
 	<!-- End footer Area -->
 	
 	<script src="{% static 'js/vendor/jquery-2.2.4.min.js' %}"></script>
@@ -596,6 +577,8 @@ font-family: 'Russo One', sans-serif;
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
 	<script src="{% static 'js/gmaps.min.js' %}"></script>
 	<script src="{% static 'js/main.js' %}"></script>
+	
+
 </body>
 
 </html>
