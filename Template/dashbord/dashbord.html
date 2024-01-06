@@ -117,7 +117,7 @@ font-family: 'Russo One', sans-serif;
 				<nav class="navbar navbar-expand-lg navbar-light main_box">
 					<div class="container">
 						<!-- Brand and toggle get grouped for better mobile display -->
-						<a class="navbar-brand logo_h" href="index.html">
+						<a class="navbar-brand logo_h" href="{% url 'Dashbord' %}">
 							<img src="{% static 'img/playstore logo.png' %}" alt="" style="width: 150px; height: 60px;">
 						</a>
 						
@@ -390,6 +390,7 @@ font-family: 'Russo One', sans-serif;
 		
 				<div class="row justify-content-center">
 					{% for pro in pro %}
+					    {% if pro.is_deleted == True %}
 						<div class="col-sm-6 col-lg-3 mx-auto">
 							<div class="single-product">
 								<img class="img-fluid" src="{{ pro.image.url }}"
@@ -412,6 +413,7 @@ font-family: 'Russo One', sans-serif;
 								</div>
 							</div>
 						</div>
+						{%endif%}
 					{% endfor %}
 				</div>
 			</div>
@@ -435,6 +437,7 @@ font-family: 'Russo One', sans-serif;
 				<div class="row">
 					{% for sub_category in sub %}
 						{% for product in sub_category.product_set.all %}
+						    {% if product.is_deleted == True%}
 							<div class="col-lg-3 col-md-6 col-sm-6">
 								<div class="single-product">
 									<img class="img-fluid" src="{{ product.image.url }}" alt="Image">
@@ -456,6 +459,7 @@ font-family: 'Russo One', sans-serif;
 									</div>
 								</div>
 							</div>
+							{% endif %}
 						{% endfor %}
 					{% endfor %}
 				</div>

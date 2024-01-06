@@ -80,6 +80,7 @@
                 <div class="container">
             <div class="row justify-content-center">
                 {% for pro in pro %}
+                   {% if pro.is_deleted == True %}
                     <div class="col-sm-6 col-lg-3 mx-auto">
                         <div class="single-product">
                             <img class="img-fluid" src="{{ pro.image.url }}"
@@ -102,6 +103,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>

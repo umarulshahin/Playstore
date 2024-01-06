@@ -351,17 +351,17 @@ def Update_Product(request,id):
         up= Product.objects.get(id=id)
         name=request.POST.get("product_name")
         price=request.POST.get("price")
-        discount=request.POST.get("discount")
+        discount=float(request.POST.get("discount"))
         stock=request.POST.get("stock")
         sub_category=request.POST.get("category_type")
         description=request.POST.get("description")
         image=request.FILES.get("image")
-        
+        print(type(discount))
         if int(price) < 1:
             
              messages.error(request, "Invalid Price . Price Should Be Above Zero ")
              return redirect("product_list")
-        if int(discount) < 1:
+        if discount < 1:
             
              messages.error(request, "Invalid Discound . Discound Should Be Above Zero ")
              return redirect("product_list")
@@ -371,6 +371,7 @@ def Update_Product(request,id):
         print(sub_category,".....1")
         sub=Sub_Category.objects.get(id=sub_category)
         print(sub,"......")
+        
         up.name=name
         up.price=price
         up.discount=discount

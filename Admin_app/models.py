@@ -23,6 +23,9 @@ class Product(models.Model):
     description=models.TextField()
     is_deleted = models.BooleanField(default=False)
     image =  models.ImageField(upload_to='img/product')
+    
+    def __bool__(self):
+        return  self.is_deleted
 
     
 class Product_image(models.Model):

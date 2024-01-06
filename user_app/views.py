@@ -18,6 +18,7 @@ from django.contrib.auth.decorators import login_required
 # ................. Login ................
 @never_cache
 def Login(request):
+    
     if  'email' in request.session :
         return redirect("Dashbord")
     
@@ -147,7 +148,7 @@ def Signup(request):
             return redirect("signup")
         
         request.session['otp']=values
-        request.session['email'] = email
+        request.session['phone'] = phone
         
         return redirect("signup_otp")
     
@@ -161,7 +162,8 @@ def Signup(request):
 def Signup_Otp(request):
     
     otp=request.session.get("otp")
-    user = CustomUser.objects.get(email = request.session.get('email'))
+    print(otp)
+    user = CustomUser.objects.get(ph_no = request.session.get('phone'))
     
     if request.method =="POST":
         action = request.POST.get('action')
@@ -183,11 +185,13 @@ def Signup_Otp(request):
 
        # ........End  Signup OTP Varification .......
        
-       
+
 def Logout(request):
-   
-    logout(request)
-    return redirect("Dashbord")
+    if 'email' in request.session:
+        
+        request.session.flush()
+        logout(request)
+        return redirect("Dashbord")
        
     
 def Forget_pass(request):

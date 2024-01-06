@@ -145,8 +145,9 @@
                     </div>
                     
                         {% for relate in relate%}
+                               {% if relate.is_deleted == True %}
                         <div class="col-md-3 mt-4"> 
-                            <a href="/singleproduct/<%= product._id %>">
+                            <a href="{% url 'view_product' relate.id %}">
                             <div class="card" style="border: none;">
                                 <img src="{{ relate.image.url }}" class="card-img-top"
                                     alt="<%= product.name %>"
@@ -161,6 +162,8 @@
                             </div>
                         </a>
                         </div>
+
+                        {% endif %}
 
                         {% endfor %}
                     

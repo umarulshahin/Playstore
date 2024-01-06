@@ -10,13 +10,13 @@ from Admin_app.models import *
 def Dashbord(request):
     
     pro=Product.objects.all()
-    sub = Sub_Category.objects.filter(name="adidas").prefetch_related("product_set")
-    
-    
+    sub = Sub_Category.objects.filter(name="Nike").prefetch_related("product_set")
+    for i in pro:
+        print(i.is_deleted)
     context={
-        'pro' : pro,
-        'sub' : sub
-    }
+            'pro' : pro,
+            'sub' : sub
+        }
     
     return render(request,'dashbord/dashbord.html',context)
 
