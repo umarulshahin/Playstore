@@ -5,16 +5,27 @@ from user_app.models import *
 from .models import *
 from django.views.decorators.cache import  never_cache
 from django.contrib.auth.decorators import login_required
-
-
+from django.contrib.auth.decorators import user_passes_test
 # Create your views here.
+
+          # ........... User Priventing Authentication................
+          
+def admin_required(Admin_dashbord):
+    
+    actual_decorator = user_passes_test(
+        lambda u: u.is_authenticated and u.is_staff,
+        login_url='admin_login'  
+    )
+    return actual_decorator(Admin_dashbord)
+             
+              # ...........End  User Priventing Authentication................
 
 
                # ........... Admin Authentication................
 @never_cache
 def Admin(request):
     
-    if 'email' in request.session:
+    if 'email_admin' in request.session:
         
         return redirect("admin_dashbord")
     
@@ -22,11 +33,11 @@ def Admin(request):
         email=request.POST.get("email")
         password=request.POST.get("password")
         
-        user=authenticate(email=email,password=password)
+        users=authenticate(email=email,password=password)
         
-        if user is not None and user.is_superuser:
-            login(request,user)
-            request.session['email']=email
+        if users is not None and users.is_staff:
+            login(request,users)
+            request.session['email_admin']=email
             return redirect("admin_dashbord")
         else:
             messages.error(request, "Email or Passwors mismatch")
@@ -36,8 +47,12 @@ def Admin(request):
     return render(request,"Admin/admin_login.html")
 
               # ........... End Admin Authentication................
+              
       
               # ............ Admin Dashbord ....................
+              
+              
+@admin_required
 @login_required(login_url="admin_login")
 @never_cache
 def Admin_dashbord(request):
@@ -54,11 +69,13 @@ def Admin_dashbord(request):
 @never_cache
 def Admin_logout(request):
     
-    if 'email' in request.session:
-         
-       request.session.flush()
-       logout(request)
-       return redirect("admin_login")
+    if 'email_admin' in request.session:
+        email_admin_value = request.session.get('email_admin')
+        print(email_admin_value)
+        del request.session['email_admin']
+       
+        logout(request)
+        return redirect("admin_login")
 
                 # ............End Admin Logout  ....................
                 
@@ -255,7 +272,6 @@ def Add_Sub_Category(request):
     if request.method == 'POST' :
         sub=request.POST.get("category_name")
         cate=request.POST.get("category_type")
-        print(cate,".......4")
         if  Sub_Category.objects.filter(name=sub).exists():
             
             messages.error(request, "This Sub Category Alredy Exist")
@@ -320,7 +336,6 @@ def Add_Product(request):
         description=request.POST.get("description")
         image=request.FILES.get("image")
         
-        print(name,price,discount,stock,sub_category,description,image,".........1")
         sub=Sub_Category.objects.get(id=sub_category)
         Product.objects.create(name=name,price=price,discount=discount,stock=stock,sub_category=sub,description=description,image=image)
         
@@ -368,9 +383,7 @@ def Update_Product(request,id):
          
             
     
-        print(sub_category,".....1")
         sub=Sub_Category.objects.get(id=sub_category)
-        print(sub,"......")
         
         up.name=name
         up.price=price

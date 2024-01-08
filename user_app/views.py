@@ -19,7 +19,7 @@ from django.contrib.auth.decorators import login_required
 @never_cache
 def Login(request):
     
-    if  'email' in request.session :
+    if  'email_user' in request.session :
         return redirect("Dashbord")
     
     
@@ -29,10 +29,10 @@ def Login(request):
         print(password)
         user= authenticate(request,email=email,password=password)
         
-        if user is not None and user.is_active:
+        if user is not None  and not user.is_staff and user.is_active:
             
+            request.session['email_user']={'email_user':email}
             login(request,user)
-            request.session['email']=email
             return redirect("Dashbord")
         else:  
             messages.error(request, "Email or Passwors mismatch")
@@ -71,7 +71,7 @@ def otp():
 @never_cache
 def Signup(request):
     
-    if  'email' in request.session :
+    if  'email_user' in request.session :
         return redirect("Dashbord")
     
     if request.method =="POST":
@@ -187,9 +187,9 @@ def Signup_Otp(request):
        
 
 def Logout(request):
-    if 'email' in request.session:
-        
-        request.session.flush()
+    
+    if 'email_user' in request.session:
+        del request.session['email_user']
         logout(request)
         return redirect("Dashbord")
        
