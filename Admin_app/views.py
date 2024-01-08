@@ -3,20 +3,21 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from user_app.models import *
 from .models import *
-from django.views.decorators.cache import  never_cache
+from django.views.decorators.cache import  never_cache,cache_control
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 # Create your views here.
 
           # ........... User Priventing Authentication................
-          
-def admin_required(Admin_dashbord):
-    
+
+def admin_required(view_func):
+   
     actual_decorator = user_passes_test(
         lambda u: u.is_authenticated and u.is_staff,
-        login_url='admin_login'  
+        login_url='admin_login'
     )
-    return actual_decorator(Admin_dashbord)
+
+    return actual_decorator(view_func)
              
               # ...........End  User Priventing Authentication................
 
@@ -53,6 +54,7 @@ def Admin(request):
               
               
 @admin_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url="admin_login")
 @never_cache
 def Admin_dashbord(request):
@@ -66,7 +68,6 @@ def Admin_dashbord(request):
                # ............  Admin Logout ....................
 
 
-@never_cache
 def Admin_logout(request):
     
     if 'email_admin' in request.session:
@@ -80,7 +81,11 @@ def Admin_logout(request):
                 # ............End Admin Logout  ....................
                 
                 # ..............User List ..........................
-
+                
+@admin_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@login_required(login_url="admin_login")
+@never_cache
 def User_list(request):
     
     user=CustomUser.objects.filter(is_staff=False).values()
@@ -96,6 +101,7 @@ def User_list(request):
                 # ..............End User List ..........................
                 
                 # ................User Block .........................
+                
 
 def User_block(request,id):
     
@@ -117,8 +123,13 @@ def User_unblock(request,id):
 
                 # ................End User UnBlock ......................... 
                 
+
                 # ................Product Category......................... 
                 
+@admin_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@login_required(login_url="admin_login")
+@never_cache
 def Category_list(request): 
     
     cate = Category.objects.all()
@@ -204,6 +215,10 @@ def Add_category(request):
                 
                  # ................Sub Category.........................
                  
+@admin_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@login_required(login_url="admin_login")
+@never_cache    
 def Sub_category(request):
     
     sub=Sub_Category.objects.all()
@@ -286,7 +301,10 @@ def Add_Sub_Category(request):
                     # ................End Add Sub Category .........................
                     
                     # ................Product .........................
-                    
+@admin_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@login_required(login_url="admin_login")
+@never_cache    
 def Product_list(request):
     
     pro=Product.objects.all()
