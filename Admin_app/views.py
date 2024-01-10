@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from user_app.models import *
 from .models import *
+from .views import *
 from django.views.decorators.cache import  never_cache,cache_control
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
@@ -108,7 +109,9 @@ def User_block(request,id):
     user=CustomUser.objects.get(id=id)
     user.is_active=False
     user.save()
-    return redirect("user_list")
+    return redirect("block_check",id=id)
+    
+        
 
                   # ................End User Block .........................
                   
@@ -381,6 +384,7 @@ def Delete_Product(request,id):
 def Update_Product(request,id):
     
     if request.method == "POST" :
+        
         up= Product.objects.get(id=id)
         name=request.POST.get("product_name")
         price=request.POST.get("price")
@@ -389,11 +393,12 @@ def Update_Product(request,id):
         sub_category=request.POST.get("category_type")
         description=request.POST.get("description")
         image=request.FILES.get("image")
-        print(type(discount))
+       
         if int(price) < 1:
             
              messages.error(request, "Invalid Price . Price Should Be Above Zero ")
              return redirect("product_list")
+         
         if discount < 1:
             
              messages.error(request, "Invalid Discound . Discound Should Be Above Zero ")

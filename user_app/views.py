@@ -1,4 +1,4 @@
-from django.shortcuts import render,HttpResponse,redirect
+from django.shortcuts import render,HttpResponse,redirect,get_object_or_404
 from .models import *
 from django.contrib import messages
 import re 
@@ -8,7 +8,9 @@ import os
 from dotenv import load_dotenv
 from django.contrib.auth import authenticate,login,logout
 from django.views.decorators.cache import  never_cache
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required 
+from .models import CustomUser
+
 
 
  
@@ -26,12 +28,11 @@ def Login(request):
     if request.method == 'POST':
         email=request.POST.get("email")
         password=request.POST.get("password")
-        print(password)
         user= authenticate(request,email=email,password=password)
         
         if user is not None  and not user.is_staff and user.is_active:
             
-            request.session['email_user']={'email_user':email}
+            request.session['email_user']=email
             login(request,user)
             return redirect("Dashbord")
         else:  
@@ -44,6 +45,24 @@ def Login(request):
     # ................. End Login ................
     
     
+       # ........ Block Check............
+       
+def Block_Check(request, id):
+    
+    try:
+        user = get_object_or_404(CustomUser, id=id)
+        
+        if user.email == request.session.get('user_email'):
+            logout(request)
+            request.session.flush()    
+    except CustomUser.DoesNotExist:
+        return redirect("user_list")
+
+    return redirect("user_list")
+
+       
+       # ........ End Block Check.......
+       
     # ........ OTP Genarating ........
 
 def otp():
@@ -202,3 +221,4 @@ def New_pass(request):
 
 def Forget_Otp(request):
     return render(request,'uera_auth/Forget_otp.html')
+
