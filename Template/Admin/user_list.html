@@ -22,7 +22,7 @@
                     <tbody class="table-border-bottom-0">
                      {% for data in user %}
                       <tr>
-                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{data.full_name}}</strong></td>
+                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{data.username}}</strong></td>
                         <td>
                           {{data.email}}
                         </td>
@@ -49,11 +49,11 @@
                             </button>
                             <div class="dropdown-menu">
                              
-                              <a class="dropdown-item" href="{% url 'user_block' data.id %}" onclick="return confirm('Do you want to Block  {{data.full_name}} ?')"
+                              <a class="dropdown-item" href="{% url 'user_block' data.id %}" onclick="return confirm('Do you want to Block  {{data.username}} ?')"
                                 ><i class="bx bx-edit-alt me-1"></i>Block </a
                               >
                               
-                               <a class="dropdown-item" href="{% url 'user_unblock' data.id %}" onclick="return confirm('Do you want to Unblock  {{data.full_name}} ?')"
+                               <a class="dropdown-item" href="{% url 'user_unblock' data.id %}" onclick="return confirm('Do you want to Unblock  {{data.username}} ?')"
                                 ><i class="bx bx-edit-alt me-1"></i>Unblock </a
                               >
                               

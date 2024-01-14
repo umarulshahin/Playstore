@@ -1,21 +1,40 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
+    
+    
+        #  .............. User Authentication..............
+        
     path('Login/',views.Login,name='login'),
     
     path('Signup/',views.Signup,name='signup'),
     
     path('Signup_Otp/',views.Signup_Otp,name='signup_otp'),
     
-    path('Forget_pass/',views.Forget_pass,name='forget_pass'),
+    path('Logout/',views.Logout,name='logout'),
+    
+      #  ..............End User Authentication..............
+    
+
+      #  .............. Forget Password..............
+      
+    path('Forgot_pass/',views.Forgot_pass,name='forgot_pass'),
     
     path('New_pass/',views.New_pass,name='new_pass'),
     
-    path('Forget_Otp/',views.Forget_Otp,name='Forget_pass'), 
+    path('forget_OTP_check/',views.Forget_OTP_check,name='forget_OTP_check'),
     
-    path('Logout/',views.Logout,name='logout'),
-    
-    path('Block_check/<int:id>',views.Block_Check,name='block_check')
+       #  ..............End Forget Password..............
 
-]
+    
+   
+    
+    
+    
+    path('Block_check/<int:id>',views.Block_Check,name='block_check'),
+    
+    path('resend_otp/',views.Resend_Otp,name='resend_otp'), 
+
+ ]

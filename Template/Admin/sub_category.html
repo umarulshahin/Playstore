@@ -132,48 +132,7 @@
 
                 <!-- Delete category confirmation modal -->
 
-                <!-- Add category  modal -->
-
-                <div class="modal fade" id="updateCategoryModal" tabindex="-1" role="dialog" aria-labelledby="updateCategoryModalLabel" aria-hidden="true">
-                    <!-- Modal content goes here -->
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="updateCategoryModalLabel">Add Category</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form method="post" action="{% url 'add_sub_category' %}" id="updateCategoryForm">
-                                    {% csrf_token %}
-
-                                    <label for="category_name">Sub Category:</label>
-                                    <input type="text" name="category_name" class="form-control" value="" required>
-                
-                                    <!-- Dropdown field -->
-                                    <div class="mb-3">
-                                        
-                                        <label for="category_type" class="form-label">Category</label>
-                                        
-                                        <select class="form-select" name="category_type" id="category_type" required>
-                                            {% for main in main%}
-                                            <option value="{{main.id}}">{{main.name}}</option>
-                                            {% endfor %}
-                                            <!-- Add more options as needed -->
-                                        </select>
-                                       
-                                    </div>
-                
-
-                                    <!-- Add other fields as needed -->
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary" form="updateCategoryForm">Add Sub Category</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+               
                 
 
                 {% endfor %}
@@ -187,6 +146,50 @@
     <div class="ms-auto" style="margin-right: 200px ; margin-top:30px">
         <a class="btn btn-primary dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#updateCategoryModal"  role="button" style="color: white;">Add Sub Category</a>
        
+    </div>
+</div>
+
+
+ <!-- Add category  modal -->
+
+ <div class="modal fade" id="updateCategoryModal" tabindex="-1" role="dialog" aria-labelledby="updateCategoryModalLabel" aria-hidden="true">
+    <!-- Modal content goes here -->
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateCategoryModalLabel">Add Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'add_sub_category' %}" id="updateCategoryForm">
+                    {% csrf_token %}
+
+                    <label for="category_name">Sub Category:</label>
+                    <input type="text" name="category_name" class="form-control" value="" required>
+
+                    <!-- Dropdown field -->
+                    <div class="mb-3">
+                        
+                        <label for="category_type" class="form-label">Category</label>
+                        
+                        <select class="form-select" name="category_type" id="category_type" required>
+                            {% for main in main%}
+                            <option value="{{main.id}}">{{main.name}}</option>
+                            {% endfor %}
+                            <!-- Add more options as needed -->
+                        </select>
+                       
+                    </div>
+
+
+                    <!-- Add other fields as needed -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" form="updateCategoryForm">Add Sub Category</button>
+            </div>
+        </div>
     </div>
 </div>
 

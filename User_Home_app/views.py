@@ -8,7 +8,6 @@ from Admin_app.models import *
              # ................. Dashbord......................
 @never_cache
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-# @login_required(login_url="login")
 def Dashbord(request):
     
     pro=Product.objects.all()
