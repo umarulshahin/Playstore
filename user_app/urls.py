@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
 
-
 urlpatterns = [
     
     
@@ -29,12 +28,14 @@ urlpatterns = [
        #  ..............End Forget Password..............
 
     
-   
-    
-    
     
     path('Block_check/<int:id>',views.Block_Check,name='block_check'),
     
     path('resend_otp/',views.Resend_Otp,name='resend_otp'), 
+    
+    
+    
+    
+
 
  ]

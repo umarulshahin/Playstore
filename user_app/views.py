@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from django.contrib.auth import authenticate,login,logout
 from django.views.decorators.cache import  never_cache,cache_control
 from django.contrib.auth.decorators import login_required 
-from .models import CustomUser
+from .models import *
 from django.contrib.auth.hashers import make_password, check_password
 
 
@@ -33,13 +33,29 @@ def Login(request):
         password=request.POST.get("password")
         user= authenticate(request,email=email,password=password)
         
+        try :
+            
+           status=CustomUser.objects.get(email=email)
+        
+        except Exception as e:
+            
+            messages.error(request, "Email or Passwors mismatch")
+            return render(request,'user_auth/Login.html')
+        
+        if not status.is_active:
+            
+            messages.error(request, "Your account is Blocked")
+            return render(request,'user_auth/Login.html')
+        
         if user is not None  and not user.is_staff and user.is_active:
             
-            request.session['email_user']=email
-            print(request.session.get('email_user'),"...............10")
+            
+            request.session['user_email']=email
+            print(request.session.get('user_email'),"...............10")
             login(request,user)
             return redirect("Dashbord")
-        else:  
+            
+        else: 
             messages.error(request, "Email or Passwors mismatch")
             return render(request,'user_auth/Login.html')
             
@@ -56,7 +72,7 @@ def Login(request):
 @never_cache
 def Signup(request):
     
-    if  'email_user' in request.session :
+    if  'user_email' in request.session :
         return redirect("Dashbord")
     
     if request.method =="POST":
@@ -152,8 +168,6 @@ def Signup_Otp(request):
     
     otp=request.session.get("otp")
     re_otp=request.session.get("re_otp")
-    
-    print(re_otp,"...........................5")
    
     user = CustomUser.objects.get(ph_no = request.session.get('phone'))
     
@@ -186,13 +200,15 @@ def Signup_Otp(request):
 @never_cache
 def Logout(request):
     
-    if 'email_user' in request.session:
-        del request.session['email_user']
+    if 'user_email' in request.session:
+        
         logout(request)
+        del request.session['user_email']
         return redirect("Dashbord")
     else:
         logout(request)
         return redirect("Dashbord")
+    
        # ..................End Logout ................
        
        
@@ -205,6 +221,7 @@ def Logout(request):
     #    ......................................................................
        
        # .....................Forget Password ...............
+       
 @never_cache      
 def Forgot_pass(request):
     
@@ -259,7 +276,6 @@ def Forget_OTP_check(request):
         
         f_otp=request.POST.get("otp") 
         action=request.POST.get("action")
-        
         
         if action == "verify":
             
@@ -319,31 +335,34 @@ def New_pass(request):
               # ........End New Password .............
 
 
- #    ............................FORGET PASSWORD...........................
+ #    ............................ END FORGET PASSWORD...........................
     #    ......................................................................
 
 
    
        # ........ Block Check............
        
+
 def Block_Check(request, id):
     
-   
     try:
-        user = get_object_or_404(CustomUser, id=id)
-        email_user = request.session.get('email_user')  # Store email in a variable
-        print(user.email, "...........1")
-        print(email_user, '.....................5')
+        
+        email = request.session.get("user_email")
 
-        if user.email == email_user:
-            print("...........2")
+        user = get_object_or_404(CustomUser, id=id)
+        print(email)
+        print( user.email)
+
+       
+        if user.email == email:
             logout(request)
-            del request.session['email_user']
+            del request.session['user_email']
 
     except CustomUser.DoesNotExist:
         return redirect("user_list")
 
     return redirect("user_list")
+
 
        
        # ........ End Block Check.......
@@ -394,8 +413,3 @@ def Resend_Otp(request):
 
      # .............End  Resend OTP ..........
      
-     
-
-
-
-

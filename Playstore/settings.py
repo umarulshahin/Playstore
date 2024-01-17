@@ -30,6 +30,8 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+SITE_ID=2
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,8 +42,27 @@ INSTALLED_APPS = [
     'User_Home_app',
     'user_app',
     'django_twilio',
-    'Admin_app'
+    'Admin_app',
+    
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    
 ]
+
+SOCIALACCOUNT_PROVIDERS={
+             
+             "google" : {
+                 "SCOPE" : [
+                     "profile",
+                     "email"
+                 ],
+                 "AUTH_PARAMS" : {"access_type":"online"}
+             }
+    
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -51,9 +72,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+# SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 ROOT_URLCONF = 'Playstore.urls'
 
 TEMPLATES = [
@@ -81,7 +103,7 @@ WSGI_APPLICATION = 'Playstore.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Playstore_db',
+        'NAME': 'playstore',
         'USER':'postgres',
         'PASSWORD':'901861',
         'HOST':'localhost',
@@ -126,6 +148,7 @@ USE_TZ = True
 
 
 STATIC_URL = 'static/'
+
 STATICFILES_DIRS=[
     os.path.join(BASE_DIR,'static')
 ]
@@ -133,10 +156,18 @@ STATICFILES_DIRS=[
 # settings.py
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / "media"  # Replace with the actual path to your media directory
+MEDIA_ROOT = BASE_DIR / "media"  
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 AUTH_USER_MODEL = 'user_app.CustomUser'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTHENTICATION_BACKEND = (
+     "django.contrib.auth.backends.Modelbackend",
+     "allauth.account.auth_backends.authenticationbackend"
+ )
+
+LOGIN_REDIRECT_URL="/"
+LOGOUT_REDIRECT_URL="/"

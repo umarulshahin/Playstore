@@ -187,6 +187,12 @@ def Update_category(request,id):
     
     if request.method == 'POST':
         name=request.POST.get("category_name")
+        
+        if Category.objects.filter(name=name).exists():
+            
+            messages.error(request, "This Category Alredy Exist")
+            return redirect("category_list")
+        
         Category.objects.filter(id=id).update(name=name)
     
     return redirect("category_list")
@@ -263,6 +269,12 @@ def Update_Sub_Category(request,id):
     if request.method == 'POST':
         
         name=request.POST.get("category_name")
+        
+        if  Sub_Category.objects.filter(name=name).exists():
+            
+            messages.error(request, " Sub Category Alredy Exist")
+            return redirect("sub_category")
+        
         Sub_Category.objects.filter(id=id).update(name=name)
         
         return redirect("sub_category") 
@@ -290,9 +302,10 @@ def Add_Sub_Category(request):
     if request.method == 'POST' :
         sub=request.POST.get("category_name")
         cate=request.POST.get("category_type")
+        
         if  Sub_Category.objects.filter(name=sub).exists():
             
-            messages.error(request, "This Sub Category Alredy Exist")
+            messages.error(request, " Sub Category Alredy Exist")
             return redirect("sub_category")
         
         id=Category.objects.get(id=cate)
@@ -357,6 +370,17 @@ def Add_Product(request):
         description=request.POST.get("description")
         image=request.FILES.get("image")
         
+        
+        if int(price) < 1:
+            
+             messages.error(request, "Invalid Price . Price Should Be Above Zero ")
+             return redirect("product_list")
+         
+        if discount < 0:
+            
+             messages.error(request, "Invalid Discound . Discound Should Be Zero or  Above Zero ")
+             return redirect("product_list")
+        
         sub=Sub_Category.objects.get(id=sub_category)
         Product.objects.create(name=name,price=price,discount=discount,stock=stock,sub_category=sub,description=description,image=image)
         
@@ -399,9 +423,9 @@ def Update_Product(request,id):
              messages.error(request, "Invalid Price . Price Should Be Above Zero ")
              return redirect("product_list")
          
-        if discount < 1:
+        if discount < 0:
             
-             messages.error(request, "Invalid Discound . Discound Should Be Above Zero ")
+             messages.error(request, "Invalid Discound . Discound Should Be Zero or Above Zero ")
              return redirect("product_list")
          
             
