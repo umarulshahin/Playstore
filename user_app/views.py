@@ -51,7 +51,6 @@ def Login(request):
             
             
             request.session['user_email']=email
-            print(request.session.get('user_email'),"...............10")
             login(request,user)
             return redirect("Dashbord")
             
@@ -244,7 +243,7 @@ def Forgot_pass(request):
             try:
                 
                 f_otp=otp()  
-                print(f_otp)
+               
                 
             except Exception as e:
             
@@ -350,8 +349,7 @@ def Block_Check(request, id):
         email = request.session.get("user_email")
 
         user = get_object_or_404(CustomUser, id=id)
-        print(email)
-        print( user.email)
+        
 
        
         if user.email == email:

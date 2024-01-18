@@ -2,6 +2,7 @@ from django.shortcuts import render,HttpResponse,redirect
 from django.views.decorators.cache import  never_cache,cache_control
 from django.contrib.auth.decorators import login_required
 from Admin_app.models import *
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -43,11 +44,15 @@ def All_Product(request):
                # ................. View Product......................
 def View_Product(request,id):
     
-    pro=Product.objects.filter(id=id)
+    pro=get_object_or_404(Product,id=id)
+    
     relate=Product.objects.exclude(id=id)[:4]
+    
     context={
+        
         'pro' : pro,
-        'relate' : relate
+        'relate' : relate,
+       
     }
     
     return render(request,'dashbord/view_product.html',context)

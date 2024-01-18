@@ -73,7 +73,6 @@ def Admin_logout(request):
     
     if 'email_admin' in request.session:
         email_admin_value = request.session.get('email_admin')
-        print(email_admin_value)
         del request.session['email_admin']
        
         logout(request)
@@ -325,10 +324,13 @@ def Product_list(request):
     
     pro=Product.objects.all()
     sub=Sub_Category.objects.all()
+    img=Product_image.objects.all().prefetch_related("product_set")
+    
     
     context={
         'pro' : pro,
-        'sub' : sub
+        'sub' : sub,
+        'img': img
     }
     
     return render(request,"admin/Product.html",context)
@@ -368,7 +370,8 @@ def Add_Product(request):
         stock=request.POST.get("stock")
         sub_category=request.POST.get("category_type")
         description=request.POST.get("description")
-        image=request.FILES.get("image")
+        m_image=request.FILES.get("m_image")
+        r_images=request.FILES.getlist("r_images")
         
         
         if int(price) < 1:
@@ -376,14 +379,19 @@ def Add_Product(request):
              messages.error(request, "Invalid Price . Price Should Be Above Zero ")
              return redirect("product_list")
          
-        if discount < 0:
+        if int(discount) < 0:
             
              messages.error(request, "Invalid Discound . Discound Should Be Zero or  Above Zero ")
              return redirect("product_list")
         
         sub=Sub_Category.objects.get(id=sub_category)
-        Product.objects.create(name=name,price=price,discount=discount,stock=stock,sub_category=sub,description=description,image=image)
-        
+        pro_id=Product.objects.create(name=name,price=price,discount=discount,stock=stock,sub_category=sub,description=description,image=m_image)
+ 
+    
+        for i in range(len(r_images)):
+            
+            Product_image.objects.create(product=pro_id,image_url=r_images[i])
+            
         return redirect("product_list") 
         
     
@@ -417,7 +425,8 @@ def Update_Product(request,id):
         sub_category=request.POST.get("category_type")
         description=request.POST.get("description")
         image=request.FILES.get("image")
-       
+        r_image=request.FILES.getlist("related_images")
+     
         if int(price) < 1:
             
              messages.error(request, "Invalid Price . Price Should Be Above Zero ")
@@ -443,6 +452,17 @@ def Update_Product(request,id):
             up.image=image
             
         up.save()
+        
+        if r_image:
+            
+           Product_image.objects.filter(product=id).delete()
+           for i in range(len(r_image)):
+               
+            
+                Product_image.objects.create(product=up,image_url=r_image[i])
+            
+           
+        
     
     return redirect("product_list")
                     

@@ -8,18 +8,13 @@
 <style>
     #size {
         border: 2px solid red !important;
-        .size-selector {
-        display: flex;
-        gap: 10px;
     }
-    
-    }
-    
+
     .size-selector {
         display: flex;
         gap: 10px;
     }
-    
+
     .size-circle {
         background-color: orange;
         color: #fff;
@@ -33,26 +28,112 @@
         cursor: pointer;
         transition: background-color 0.3s;
     }
-    
+
     .size-circle:hover {
         background-color: rgba(191, 184, 184, 0.522);
         color: orange;
     }
-    
+
     .hidden-radio {
         position: absolute;
         opacity: 0;
         cursor: pointer;
     }
-    
+
     .hidden-radio:checked + .size-circle {
         background-color: white;
         color: orange;
-        border-color:  orange;
+        border-color: orange;
     }
-    
-    
-    </style>
+
+    .line {
+        width: 100%;
+        border-bottom: 1px solid #ccc;
+        margin: 20px 0;
+    }
+
+    .text-box {
+        margin-left: 30vw;
+        margin-top: 32vh;
+    }
+
+    .btn:link,
+    .btn:visited {
+        text-transform: uppercase;
+        text-decoration: none;
+        width: 100px;
+        padding: 10px 20px;
+        display: inline-block; 
+        border-radius: 50px;
+        transition: all .2s;
+        font-size: 14px;
+    }
+
+    .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:active {
+        transform: translateY(-1px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-white {
+        background-color: #fff;
+        color: #777;
+    }
+
+    .btn::after {
+
+        content: "";
+        display: inline-block;
+        height: 100%;
+        width: 100%;
+        border-radius: 100px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        transition: all .4s;
+        
+    }
+
+    .btn-white::after {
+        background-color: #fff;
+    }
+
+    .btn:hover::after {
+        transform: scaleX(1.4) scaleY(1.6);
+        opacity: 0;
+    }
+
+    .btn-animated {
+        animation: moveInBottom 5s ease-out;
+        animation-fill-mode: backwards;
+    }
+
+    @keyframes moveInBottom {
+        0% {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        100% {
+
+            opacity: 1;
+            transform: translateY(0px);
+        }
+    }
+
+    .icon-size {
+
+        width: 20px; /* Set the desired width */
+        height: 20px; /* Set the desired height */
+    }
+</style>
+
+
     
     <body>
     
@@ -73,167 +154,160 @@
                     </div>
                 </div>
             </section>
-    
-            {% for pro in pro %}
-            <section class="product-details mt-4">
-                <div class="container">
-                    <form id="productForm" action="/add-to-cart/<%= product._id %>" method="post">
-                        <div class="row">
-                            <!-- Product Image -->
-                            <div class="col-lg-6">
-                                <div class="product-image">
-                                    <a href="/<%= product.images[0] %>" class="MagicZoom" id="Mag">                    
-                                        <img id="mainImage" src="{{ pro.image.url }}" alt="Product Image" class="img-fluid" 
-                                        style="width: 300px; height: 400px; object-fit: cover;">
-                                    </a>
+        
+            <section class="product-details mt-5">
+                <div class="container-fluid mt-5">
+                    <div class="row">
+                        <!-- Additional Images Section (Left Side) -->
+                        <div class="col-lg-2 order-lg-1 order-2 mt-5">
+                            <div class="additional-images d-flex flex-column align-items-start ml-5">
+                                {% for image in pro.product_image_set.all %}
+
+                                <div class="additional-image mb-2" data-image="{{ image.image_url.url }}">
+                                    <img src="{{ image.image_url.url }}" alt="Additional Product Image"  class="img-thumbnail"
+                                         style="width: 100px; height: 100px; object-fit: cover;">
                                 </div>
                                 
-                                <!-- <div class="additional-images mt-2 d-flex">
-                                   
-                                        <div class="additional-image ml-2" data-image="/<%= image %>" value="<%= index %>">
-                                            <img src="/<%= image %>" alt="Additional Product Image" class="img-thumbnail"  
-                                            style="width: 75px; height: 75px; object-fit: cover;">
-                                        </div>
-                                    
-                                </div> -->
+                                {% endfor %}
                             </div>
-                           
-                            <div class="col-lg-6">
-                                <div class="product-info">
-                                    <h2>{{pro.name}}</h2>
-                                    <p class="lead">₹ {{pro.price}}</p>
-                                    <p>{{pro.description}}</p>
-                                    
-                                    <p>Average Ratings:   <span class="fa fa-star" style="color: green; border: 1px solid green;"></span></p>
-                                    
-                                    <div class="form-group">
-                                        <label for="size">Select Size:</label>
-                                        <div class="size-selector">
-                                            <input type="radio" id="size-6" name="size" value="6" class="hidden-radio" required>
-                                            <label for="size-6" class="size-circle">6</label>
-                                    
-                                            <input type="radio" id="size-7" name="size" value="7" class="hidden-radio" required>
-                                            <label for="size-7" class="size-circle">7</label>
-                                    
-                                            <input type="radio" id="size-8" name="size" value="8" class="hidden-radio" required>
-                                            <label for="size-8" class="size-circle">8</label>
-                                    
-                                            <input type="radio" id="size-9" name="size" value="9" class="hidden-radio" required>
-                                            <label for="size-9" class="size-circle">9</label>
-                                        </div>
-                                    </div>
-                                    
-                                    
-                                    
+                        </div>
+        
+                        <!-- Product Main Image Section (Right Side) -->
+                        <div class="col-lg-6 order-lg-2 order-1 text-center">
+                            <div class="product-image">
+                                    <img id="mainImage" src="" alt="Product Image"
+                                        class="img-fluid" style="width: 700px; height: 500px; object-fit: cover;">
                                 
-                                    
-                                    <div class="interactive-icons mt-5">
-                                        <button type="submit" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
-                                        <a href="/wishlist/<%= product._id %>" class="btn btn-danger ml-2"><i class="fa fa-heart"></i> Add to Wishlist</a>
+                            </div>
+                        </div>
+        
+                        <!-- Product Details Section (Right Side) -->
+                        <div class="col-lg-4 order-lg-3 order-3">
+                            <div class="product-info ml-5 mt-5">
+                                <!-- Product Information (Name, Price, Description, etc.) -->
+                                <h1>{{pro.name}}</h1>
+                                <p class="lead"><h2 style="color: red">₹ {{pro.price}}</h2></p>
+                                <p><h4>{{pro.description}}</h4></p>
+                                <p>Average Ratings: <span class="fa fa-star"
+                                        style="color: green; border: 1px solid green;"></span></p>
+        
+                                <!-- Size Selector -->
+                                <div class="form-group">
+                                    <label for="size"><h4> Size </h4></label>
+                                    <br>
+                                    <div class="size-selector">
+                                        <!-- Add your size radio buttons here -->
+                                        <input type="radio" id="size-6" name="size" value="6" class="hidden-radio" required>
+                                        <label for="size-6" class="size-circle">6</label>
+        
+                                        <input type="radio" id="size-7" name="size" value="7" class="hidden-radio" required>
+                                        <label for="size-7" class="size-circle">7</label>
+        
+                                        <input type="radio" id="size-8" name="size" value="8" class="hidden-radio" required>
+                                        <label for="size-8" class="size-circle">8</label>
+        
+                                        <input type="radio" id="size-9" name="size" value="9" class="hidden-radio" required>
+                                        <label for="size-9" class="size-circle">9</label>
+                                    </div>
+                                </div>
+        
+                                <!-- Interactive Icons (Add to Cart, Add to Wishlist) -->
+                                <div class="interactive-icons mt-5">
+                                    <div class="btn-container d-flex">
+                                        <a href="/wishlist/{{ pro.id }}" class="btn btn-dark flex-grow-1">
+                                            <i class="fa fa-cart-plus icon-size"></i> Add to Cart
+                                        </a>
+        
+                                        <a href="/wishlist/{{ pro.id }}" class="btn btn-primary ml-2 flex-grow-1">
+                                            <i class="fa fa-heart icon-size"></i> Add Wishlist
+                                        </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </section>
-    
-            <div class="container mt-4">
-                <div class="row">
-                    <div class="col-12">
-                        <h2 class="text-center">Related Products</h2>
-                    </div>
-                    
-                        {% for relate in relate%}
-                               {% if relate.is_deleted == True %}
-                        <div class="col-md-3 mt-4"> 
-                            <a href="{% url 'view_product' relate.id %}">
-                            <div class="card" style="border: none;">
-                                <img src="{{ relate.image.url }}" class="card-img-top"
-                                    alt="<%= product.name %>"
-                                    style="width: 175px; height: 175px; object-fit: cover;">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{relate.name}}
-                                        
-                                    </h5>
-                                    <p class="card-text">Price:₹{{relate.price}} 
-                                    </p>
-                                </div>
-                            </div>
-                        </a>
-                        </div>
-
-                        {% endif %}
-
-                        {% endfor %}
-                    
-                        
-    
-                </div>
-            </div>
-    
-    
-    
-    
-            <div class="modal fade" id="outOfStockModal" tabindex="-1" role="dialog" aria-labelledby="outOfStockModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="outOfStockModalLabel">Out of Stock</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            Selected item is out of stock.
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-           
-           
-            
-    
-    
-            {% endfor %}
-           
-            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-            <script>
         
-            </script>
+            <!-- Related Products Section -->
+            <div class="container mt-5">
+                <div class="row justify-content-center mt-5">
+                    <div class="col-12 text-center mt-5">
+                        <h2>Related Products</h2>
+                    </div>
+        
+                    <!-- Loop through related products -->
+                    {% for relate in relate %}
+                        {% if relate.is_deleted == True %}
+                            <div class="col-lg-3 col-md-4 col-sm-6 mt-4">
+                                <a href="{% url 'view_product' relate.id %}">
+                                    <div class="card" style="border: none;">
+                                        <img src="{{ relate.image.url }}" class="card-img-top" alt="{{ relate.name }}"
+                                            style="width: 175px; height: 175px; object-fit: cover;">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ relate.name }}</h5>
+                                            <p class="card-text">Price: ₹{{ relate.price }}</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        
+            <!-- Out of Stock Modal -->
+            <div class="modal fade" id="outOfStockModal" tabindex="-1" role="dialog" aria-labelledby="outOfStockModalLabel"
+                aria-hidden="true">
+                <!-- Modal content goes here -->
+            </div>
+        
+            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        var additionalImages = document.querySelectorAll('.additional-image');
-                    
-                        additionalImages.forEach(function (image) {
-                            image.addEventListener('click', function () {
-                                var newImageSrc = this.getAttribute('data-image');
-                                var index = this.getAttribute('value');
-                                document.getElementById('mainImage').src = newImageSrc;
-                                var magLink = document.getElementById('Mag');
-                                magLink.setAttribute('href', newImageSrc);
-                                console.log('Updated href:', magLink.getAttribute('href'));
-                                if (typeof MagicZoom !== 'undefined' && typeof MagicZoom.stop === 'function') {
-                                        MagicZoom.stop('Mag');
-                                        document.getElementById('mainImage').src = newImageSrc;
-                                        MagicZoom.start('Mag');
-                                } else {
-                                        console.warn('MagicZoom not available or stop function not defined.');
-                                    }
-    
-                                
-                            });
+                document.addEventListener('DOMContentLoaded', function () {
+                    var additionalImages = document.querySelectorAll('.additional-image');
+                    var mainImage = document.getElementById('mainImage');
+            
+                    // Set the main image source to the first additional image by default
+                    if (additionalImages.length > 0) {
+                        mainImage.src = additionalImages[0].getAttribute('data-image');
+                    }
+            
+                    additionalImages.forEach(function (image) {
+                        image.addEventListener('click', function () {
+                            var newImageSrc = this.getAttribute('data-image');
+                            mainImage.src = newImageSrc;
                         });
                     });
-                </script>
-                
+                });
+            </script>
+            
+            <!-- <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var additionalImages = document.querySelectorAll('.additional-image');
+        
+                    additionalImages.forEach(function (image) {
+                        image.addEventListener('click', function () {
+                            var newImageSrc = this.getAttribute('data-image');
+                            var index = this.getAttribute('value');
+                            document.getElementById('mainImage').src = newImageSrc;
+                            var magLink = document.getElementById('Mag');
+                            magLink.setAttribute('href', newImageSrc);
+                            console.log('Updated href:', magLink.getAttribute('href'));
+                            if (typeof MagicZoom !== 'undefined' && typeof MagicZoom.stop === 'function') {
+                                MagicZoom.stop('Mag');
+                                document.getElementById('mainImage').src = newImageSrc;
+                                MagicZoom.start('Mag');
+                            } else {
+                                console.warn('MagicZoom not available or stop function not defined.');
+                            }
+                        });
+                    });
+                });
+            </script>
+                 -->
                 
 
 {% endblock %}

@@ -26,6 +26,10 @@ class Product(models.Model):
     
     def __bool__(self):
         return  self.is_deleted
+    
+    def __iter__(self):
+        
+        yield  self.id
 
     
 class Product_image(models.Model):

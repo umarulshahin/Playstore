@@ -2,7 +2,27 @@
 
 {% block content %}
 {% load static %}
+<style>
+  .related-images-container {
+      display: flex;
+      gap: 5px; /* Adjust the gap as needed */
+      justify-content: flex-start;
+      flex-wrap: wrap;
+  }
 
+  .related-image {
+      width: 20%; /* Adjust the width as needed */
+      max-width: 100px; /* Set a maximum width */
+      height: auto;
+      object-fit: cover;
+  }
+
+  @media (max-width: 767px) {
+      .related-image {
+          width: 30%; /* Adjust for smaller screens */
+      }
+  }
+</style>
 <hr class="my-5" />
 
 <!-- Hoverable Table rows -->
@@ -104,13 +124,32 @@
   
                   <label for="price">Discount:</label>
                   <input type="text" name="discount" class="form-control" value="{{pro.discount}}" required>
+                  <br>
+                  
   
-                  <label for="current_image">Current Image:</label>
+                  <label for="current_image">Current Main Image:</label>
                   <img src="{{ pro.image.url }}" alt="Current Image" style="max-width: 200px; max-height: 200px;">
+                  <br>
                   <input type="file" name="image" class="form-control" accept="image/*">
-
                   <!-- Add a hidden input field to store the current image URL -->
                   <input type="hidden" name="current_image" value="{{ pro.image.url }}">
+                  
+                  <br>
+
+                  <label for="current_image">Current Related Images:</label>
+                  <br>
+                  <br>
+                  <div class="related-images-container">
+                    {% for i in pro.product_image_set.all %}
+                        <img src="{{ i.image_url.url }}" alt="Current Image" class="related-image">
+                    {% endfor %}
+                </div>
+              
+                  <br>
+                  <br>
+                  <input type="file" multiple name="related_images" class="form-control" accept="image/*">
+                  <!-- Add a hidden input field to store the current image URL -->
+                  <input type="hidden"  name="current_related_images" value="{{ pro.image.url }}">
 
   
                   <label for="description">Description:</label>
@@ -120,7 +159,7 @@
                   <div class="mb-3">
                       <label for="category_type" class="form-label">Category:</label>
                       <select class="form-select" name="category_type" id="category_type" required>
-                          <option value="{{pro.id}}">{{pro.sub_category.name}}</option>
+                          <option value="{{pro.sub_category.id}}">{{pro.sub_category.name}}</option>
                           {% for sub in sub %}
                           <option value="{{sub.id}}">{{sub.name}}</option>
                           {% endfor %}
@@ -221,8 +260,11 @@
                 <label for="price">Discound:</label>
                 <input type="text" name="discount" class="form-control" value="" required>
 
-                <label for="image">Image:</label>
-                <input type="file" name="image" class="form-control" accept="image/*" required>
+                <label for="image">Main Image:</label>
+                <input type="file" name="m_image"  class="form-control" accept="image/*" required>
+
+                <label for="image">Related Images:</label>
+                <input type="file" name="r_images" multiple class="form-control" accept="image/*" required>
 
                 <label for="description">Description:</label>
                 <input type="text" name="description" class="form-control" value="" required>
