@@ -197,17 +197,20 @@
                                     <br>
                                     <div class="size-selector">
                                         <!-- Add your size radio buttons here -->
-                                        <input type="radio" id="size-6" name="size" value="6" class="hidden-radio" required>
-                                        <label for="size-6" class="size-circle">6</label>
+                                        {% for  size in pro.product_size_set.all%}
+                                        <input type="radio" id="size-{{size.size}}" name="size" value="{{size.siz4e}}" class="hidden-radio" required>
+                                        <label for="size-{{size.size}}" class="size-circle">{{size.size}}</label>
+
+                                        {% endfor %}
         
-                                        <input type="radio" id="size-7" name="size" value="7" class="hidden-radio" required>
+                                        <!-- <input type="radio" id="size-7" name="size" value="7" class="hidden-radio" required>
                                         <label for="size-7" class="size-circle">7</label>
         
                                         <input type="radio" id="size-8" name="size" value="8" class="hidden-radio" required>
                                         <label for="size-8" class="size-circle">8</label>
         
                                         <input type="radio" id="size-9" name="size" value="9" class="hidden-radio" required>
-                                        <label for="size-9" class="size-circle">9</label>
+                                        <label for="size-9" class="size-circle">9</label> -->
                                     </div>
                                 </div>
         

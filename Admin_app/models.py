@@ -36,4 +36,11 @@ class Product_image(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     image_url = models.ImageField(upload_to ='img/product')
     
+
+class Product_size(models.Model):
+    size=models.CharField(max_length=50,null=True)
+    stock=models.IntegerField(null=True)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+
+    
     

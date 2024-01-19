@@ -7,6 +7,7 @@ from .views import *
 from django.views.decorators.cache import  never_cache,cache_control
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
+from django.http import JsonResponse
 # Create your views here.
 
           # ........... User Priventing Authentication................
@@ -461,7 +462,6 @@ def Update_Product(request,id):
         up.save()
         
         if delete and r_image:
-            print("up and deleted..........")
             for i in delete:
                 
                 Product_image.objects.filter(id=int(i)).delete()
@@ -471,14 +471,12 @@ def Update_Product(request,id):
                 Product_image.objects.create(product=up,image_url=j)
         elif delete:
             
-             print("delete.......3")
              for i in delete:
                 
                 Product_image.objects.filter(id=int(i)).delete()
                 
         elif r_image:
             
-              print("add image.........2")  
               for i in r_image:
             
                 Product_image.objects.create(product=up,image_url=i)
@@ -489,8 +487,55 @@ def Update_Product(request,id):
     return redirect("product_list")
                     
                     # ................End Update Product .........................
-
+                    
+                    # ................ADD SIZE .........................
+            
+def Add_Size(request,id):
     
+    if request.method == "POST":
+        
+        size=request.POST.get("size")
+        stock=request.POST.get("stock")
+        
+       
+        
+        value=Product.objects.get(id=id)
+        
+        Product_size.objects.create(size=size,stock=stock,product=value)
+        
+    return redirect("product_list")
+
+                    # ................END ADD SIZE .........................
+                    
+#                     # ................EDIT SIZE .........................
+def Edit_Size(request,id):
+    
+    if request.method == 'POST':
+        
+        for size_obj in Product_size.objects.filter(product_id=id):
+            
+            size_obj.size = request.POST.get('size' + str(size_obj.id))
+            size_obj.stock = request.POST.get('stock' + str(size_obj.id))
+            size_obj.save()
+
+        
+    return redirect("product_list")
+
+                    
+                    # ................END EDIT SIZE .........................
+    
+
+def your_ajax_view(request):
+    pro_id = request.GET.get('pro_id')
+    selected_size = request.GET.get('selected_size')
+
+    # Add your logic to get the stock based on the pro_id and selected_size
+    # For example, assuming Product has a method get_stock_for_size(selected_size)
+    product = Product.objects.get(id=pro_id)
+    stock = product.get_stock_for_size(selected_size)
+
+    # Return the stock in a JSON response
+    return JsonResponse({'stock': stock})
     
     
     

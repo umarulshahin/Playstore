@@ -60,7 +60,7 @@
         <tr>
           <th>Name</th>
           <th>Category</th>
-          <th>Stock</th>
+          <th>Size and Stock</th>
           <th>Price</th>
           <th>Image</th>
           <th>Description</th>
@@ -68,48 +68,91 @@
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody class="table-border-bottom-0">
-        {% for pro in pro %}
-        <tr>
-          <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{pro.name}}</strong></td>
-          
-          <td >{{pro.sub_category.name}}</td>
-          
-          <td>{{pro.stock}}</td>
-          <td>{{pro.price}}</td>
-          <td>
-            <img style="border-radius: 0; width: 100px; height: 100px;" src="{{ pro.image.url }}" alt="Product Image">
-          </td>
-          <td>{{pro.description}}</td>
-          <td>
-            {% if not pro.is_deleted%}
-            <p>Unlisted</p>
-            {% else %}
-            <p>Listed</p>
-            {% endif %}
-          </td>
-          <td>
-            <div class="dropdown">
+      
+<tbody class="table-border-bottom-0">
+  {% for pro in pro %}
+  <tr>
+      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{pro.name}}</strong></td>
+
+      <td>{{pro.sub_category.name}}</td>
+
+
+
+      <td>
+        <label for="sizeStockDropdown{{ pro.id }}">Select Size and Stock:</label>
+        <select id="sizeStockDropdown{{ pro.id }}" class="form-select">
+          {% for size in pro.product_size_set.all %}
+            <option value="{{ size.size }}" data-stock="{{ size.stock }}">
+              Size: {{ size.size }} | Stock: {{ size.stock }}
+            </option>
+          {% endfor %}
+        </select>
+      </td>
+
+      <td>{{pro.price}}</td>
+      <td>
+          <img style="border-radius: 0; width: 100px; height: 100px;" src="{{ pro.image.url }}" alt="Product Image">
+      </td>
+      <td>{{pro.description}}</td>
+      <td>
+          {% if not pro.is_deleted%}
+          <p>Unlisted</p>
+          {% else %}
+          <p>Listed</p>
+          {% endif %}
+      </td>
+      <td>
+          <div class="dropdown">
               <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                <i class="bx bx-dots-vertical-rounded"></i>
+                  <i class="bx bx-dots-vertical-rounded"></i>
               </button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ pro.id }}">
-                  <i class="bx bx-edit-alt me-1"></i> Edit
-                </a>
-                
-                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#listModal{{ pro.id }}">
-                  <i class="bx bx-edit-alt me-1"></i> Change status
-                </a>
-                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal{{ pro.id }}">
-                  <i class="bx bx-trash me-1"></i> Delete
-                </a>
+                  <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ pro.id }}">
+                      <i class="bx bx-edit-alt me-1"></i> Edit
+                  </a>
+
+                  <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#listModal{{ pro.id }}">
+                      <i class="bx bx-edit-alt me-1"></i> Change status
+                  </a>
+                  <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal{{ pro.id }}">
+                      <i class="bx bx-trash me-1"></i> Delete
+                  </a>
+                  <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addSizeModal{{ pro.id }}">
+                      <i class="bx bx-plus-circle me-1"></i> Add Size
+                  </a>
+                  <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editSizeModal{{ pro.id }}">
+                      <i class="bx bx-edit-alt me-1"></i> Edit Size
+                  </a>
+                  
+                  </a>
               </div>
-            </div>
-          </td>
-        </tr>
-        
-      
+          </div>
+      </td>
+  </tr>
+  <!-- Add the following modal code for Size & Stock -->
+  <!-- <div class="modal fade" id="sizeStockModal{{ pro.id }}" tabindex="-1" aria-labelledby="sizeStockModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="sizeStockModalLabel">Size & Stock</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <label for="sizeDropdown">Select Size:</label>
+                  <select id="sizeDropdown{{ pro.id }}" class="form-select">
+                      {% for product_size in pro.product_size_set.all %}
+                      <option value="{{ product_size.size }}">{{ product_size.size }}</option>
+                      {% endfor %}
+                  </select>
+                  <p id="stockInfo{{ pro.id }}">Stock: <span id="stockValue{{ pro.id }}">{{ pro.stock }}</span></p>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+          </div>
+      </div>
+  </div>
+       -->
 <!--/ Hoverable Table rows -->
 
 <!-- Modals -->
@@ -167,6 +210,8 @@
                         </div>
                         <input type="file" multiple name="related_images" class="form-control" data-id="{{ i.id }}" accept="image/*">
                         <input type="hidden" name="image_id_{{ i.id }}" value="{{ i.id }}">
+                        
+
                         <br>
                     {% endfor %}
                 </div>
@@ -243,7 +288,62 @@
     </div>
   </div>
 
- 
+   <!-- ...........................ADD SiZE MODAL ..................................... -->
+
+   <div class="modal fade" id="addSizeModal{{ pro.id }}" tabindex="-1" role="dialog" aria-labelledby="addSizeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addSizeModalLabel">Add Size - {{ pro.name }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="{% url 'add_size' pro.id %}" id="addSizeForm">
+            {% csrf_token %}
+  
+            <label for="size">Size:</label>
+            <input type="text" name="size" class="form-control" value="" required>
+            
+            <label for="stock">Stock:</label>
+            <input type="text" name="stock" class="form-control" value="" required>
+  
+            <button type="submit" class="btn btn-primary">Add Size</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ...........................Edit SiZE MODAL ..................................... -->
+<!-- Edit Size Modal -->
+<div class="modal fade" id="editSizeModal{{ pro.id }}" tabindex="-1" role="dialog" aria-labelledby="editSizeModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editSizeModalLabel">Edit Sizes - {{ pro.name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'edit_size' pro.id %}" id="editSizesForm">
+          {% csrf_token %}
+
+          {% for size_obj in pro.product_size_set.all %}
+            <div>
+              <label for="size{{ size_obj.id }}">Size:</label>
+              <input type="text" name="size{{ size_obj.id }}" class="form-control" value="{{ size_obj.size }}" required>
+              
+              <label for="stock{{ size_obj.id }}">Stock:</label>
+              <input type="text" name="stock{{ size_obj.id }}" class="form-control" value="{{ size_obj.stock }}" required>
+            </div>
+          {% endfor %}
+          
+          <button type="submit" class="btn btn-primary">Update Sizes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 {% endfor %}
@@ -313,6 +413,10 @@
         </div>
     </div>
 </div>
+
+
+
+
 
 
 {% endblock %}
