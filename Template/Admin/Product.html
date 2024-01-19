@@ -2,27 +2,41 @@
 
 {% block content %}
 {% load static %}
+
 <style>
-  .related-images-container {
-      display: flex;
-      gap: 5px; /* Adjust the gap as needed */
-      justify-content: flex-start;
-      flex-wrap: wrap;
-  }
+    .related-images-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
 
-  .related-image {
-      width: 20%; /* Adjust the width as needed */
-      max-width: 100px; /* Set a maximum width */
-      height: auto;
-      object-fit: cover;
-  }
+    .related-image-wrapper {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 10px;
+    }
 
-  @media (max-width: 767px) {
-      .related-image {
-          width: 30%; /* Adjust for smaller screens */
-      }
-  }
+    .image-container {
+        flex: 1;
+        margin-right: 10px;
+    }
+
+    .related-image {
+        width: 100%;
+        max-width: 100px;
+        height: auto;
+        object-fit: cover;
+    }
+
+    .button-container {
+        flex-shrink: 0;
+    }
+
+    .image-checkbox {
+        margin-top: 50px;
+    }
 </style>
+
+
 <hr class="my-5" />
 
 <!-- Hoverable Table rows -->
@@ -141,15 +155,29 @@
                   <br>
                   <div class="related-images-container">
                     {% for i in pro.product_image_set.all %}
-                        <img src="{{ i.image_url.url }}" alt="Current Image" class="related-image">
+                        <div class="related-image-wrapper">
+                            <div class="image-container">
+                                <img src="{{ i.image_url.url }}" alt="Current Image" class="related-image" data-id="{{ i.id }}">
+                            </div>
+                            <div class="button-container">
+                                <!-- <button class="btn btn-danger delete-image-btn" data-id="{{ i.id }}">Delete</button> -->
+                                <label for="image{{ i.id }}">Do you want to delete this image?</label>
+                                <input type="checkbox" name="selected_images" id="image{{ i.id }}" value="{{ i.id }}" class="image-checkbox">
+                              </div>
+                        </div>
+                        <input type="file" multiple name="related_images" class="form-control" data-id="{{ i.id }}" accept="image/*">
+                        <input type="hidden" name="image_id_{{ i.id }}" value="{{ i.id }}">
+                        <br>
                     {% endfor %}
                 </div>
-              
-                  <br>
-                  <br>
-                  <input type="file" multiple name="related_images" class="form-control" accept="image/*">
-                  <!-- Add a hidden input field to store the current image URL -->
-                  <input type="hidden"  name="current_related_images" value="{{ pro.image.url }}">
+                
+                <input type="hidden" name="related" value="{{ pro.image.url }}">
+                
+                  <!-- <br>
+                  <br> -->
+                  <!-- <input type="file" multiple name="related_images" class="form-control" accept="image/*">
+                  Add a hidden input field to store the current image URL
+                  <input type="hidden"  name="current_related_images" value="{{ pro.image.url }}"> -->
 
   
                   <label for="description">Description:</label>

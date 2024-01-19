@@ -426,6 +426,13 @@ def Update_Product(request,id):
         description=request.POST.get("description")
         image=request.FILES.get("image")
         r_image=request.FILES.getlist("related_images")
+        delete=request.POST.getlist("selected_images")
+        
+        print(delete,"...........45")
+        print(r_image,"............434")
+       
+        
+
      
         if int(price) < 1:
             
@@ -453,13 +460,28 @@ def Update_Product(request,id):
             
         up.save()
         
-        if r_image:
+        if delete and r_image:
+            print("up and deleted..........")
+            for i in delete:
+                
+                Product_image.objects.filter(id=int(i)).delete()
+                
+            for j in r_image:
+                
+                Product_image.objects.create(product=up,image_url=j)
+        elif delete:
             
-           Product_image.objects.filter(product=id).delete()
-           for i in range(len(r_image)):
-               
+             print("delete.......3")
+             for i in delete:
+                
+                Product_image.objects.filter(id=int(i)).delete()
+                
+        elif r_image:
             
-                Product_image.objects.create(product=up,image_url=r_image[i])
+              print("add image.........2")  
+              for i in r_image:
+            
+                Product_image.objects.create(product=up,image_url=i)
             
            
         
