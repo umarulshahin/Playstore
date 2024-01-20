@@ -154,15 +154,21 @@ font-family: 'Russo One', sans-serif;
 								<li class="nav-item submenu dropdown">
 									<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
 									 aria-expanded="false">My Profile</a>
+
 									 {% if user.is_authenticated %}
+
 									<ul class="dropdown-menu">
-										<li class="nav-item"><a class="nav-link" href="login.html">My Account</a></li>
+										<li class="nav-item"><a class="nav-link" href="{% url 'user_profile' user.id %}">My Account</a></li>
 										<li class="nav-item"><a class="nav-link" href="tracking.html">My Wishlist</a></li>
 										<li class="nav-item"><a class="nav-link" href="elements.html">My Order</a></li>
 										<li class="nav-item"><a class="nav-link" href="login.html">My Wallet</a></li>
 										<li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
 									</ul>
+
 									{% else %}
+									<script>
+										console.log("Else Part")
+									</script>
 									<ul>
 										<li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
 										<li class="nav-item"><a class="nav-link" href="{% url 'signup' %}">Signup</a></li>
@@ -193,7 +199,9 @@ font-family: 'Russo One', sans-serif;
 			</div>
 		</header>
 		<!-- End Header Area -->
+
 		{% block content%}
+
 	<!-- Start Banner Area -->
 	<section class="banner-area">
 		<div class="container">
@@ -494,7 +502,7 @@ font-family: 'Russo One', sans-serif;
 		</div>
 	</section>
 	<!--================End Login Box Area =================-->
-
+	{% endblock %}
 	<!-- start footer Area -->
 	<footer class="footer-area section_gap">
 		<div class="container">
@@ -564,7 +572,7 @@ font-family: 'Russo One', sans-serif;
 			</div>
 		</div>
 	</footer>
-	{% endblock %}
+	
 	<!-- End footer Area -->
 	
 	<script src="{% static 'js/vendor/jquery-2.2.4.min.js' %}"></script>
