@@ -75,7 +75,7 @@ urlpatterns = [
     
     path('edit_size/<int:id>',views.Edit_Size,name="edit_size"),
     
-     path('your_ajax_endpoint/',views.your_ajax_view, name='your_ajax_endpoint'),
+    #  path('your_ajax_endpoint/',views.your_ajax_view, name='your_ajax_endpoint'),
     
     # ..............Endsize.....................
 

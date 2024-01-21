@@ -169,7 +169,6 @@ font-family: 'Russo One', sans-serif;
 
 									{% else %}
 									<script>
-										console.log("Else Part")
 									</script>
 									<ul>
 										<li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
@@ -181,7 +180,7 @@ font-family: 'Russo One', sans-serif;
 								<li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
 							</ul>
 							<ul class="nav navbar-nav navbar-right">
-								<li class="nav-item"><a href="#" class="cart"><span class="ti-bag"></span></a></li>
+								<li class="nav-item"><a href="{% url 'user_cart' %}" class="cart"><span class="ti-bag"></span></a></li>
 								<li class="nav-item">
 									<button class="search"><span class="lnr lnr-magnifier" id="search"></span></button>
 								</li>

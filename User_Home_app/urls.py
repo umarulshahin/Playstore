@@ -20,6 +20,18 @@ urlpatterns = [
     
     path('edit_address/',views.Edit_Address,name="edit_address"),
     
+    path('add-to-cart',views.Add_to_Cart,name="add_to_cart"),
+    
+    path('cart/',views.User_Cart,name="user_cart"),
+    
+    path('update-quantity/',views.update_quantity_view, name='update_quantity'),
+    
+    path('delete_cart/<int:product_id>/', views.Delete_Cart, name='delete_cart'),
+    
+    # path('get-cart-subtotal/',views.get_cart_subtotal, name='get_cart_subtotal'),
+
+
+    
     
 
 ]

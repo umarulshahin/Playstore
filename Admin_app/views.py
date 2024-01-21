@@ -7,7 +7,7 @@ from .views import *
 from django.views.decorators.cache import  never_cache,cache_control
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
-from django.http import JsonResponse
+# from django.http import JsonResponse
 # Create your views here.
 
           # ........... User Priventing Authentication................
@@ -429,8 +429,7 @@ def Update_Product(request,id):
         r_image=request.FILES.getlist("related_images")
         delete=request.POST.getlist("selected_images")
         
-        print(delete,"...........45")
-        print(r_image,"............434")
+      
        
         
 
@@ -525,17 +524,17 @@ def Edit_Size(request,id):
                     # ................END EDIT SIZE .........................
     
 
-def your_ajax_view(request):
-    pro_id = request.GET.get('pro_id')
-    selected_size = request.GET.get('selected_size')
+# def your_ajax_view(request):
+#     pro_id = request.GET.get('pro_id')
+#     selected_size = request.GET.get('selected_size')
 
-    # Add your logic to get the stock based on the pro_id and selected_size
-    # For example, assuming Product has a method get_stock_for_size(selected_size)
-    product = Product.objects.get(id=pro_id)
-    stock = product.get_stock_for_size(selected_size)
+#     # Add your logic to get the stock based on the pro_id and selected_size
+#     # For example, assuming Product has a method get_stock_for_size(selected_size)
+#     product = Product.objects.get(id=pro_id)
+#     stock = product.get_stock_for_size(selected_size)
 
-    # Return the stock in a JSON response
-    return JsonResponse({'stock': stock})
+#     # Return the stock in a JSON response
+#     return JsonResponse({'stock': stock})
     
     
     

@@ -3,9 +3,12 @@ from django.views.decorators.cache import  never_cache,cache_control
 from django.contrib.auth.decorators import login_required
 from Admin_app.models import *
 from user_app.models import *
+from . models import *
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 import re 
+from django.http.response import JsonResponse
+from django.views.decorators.http import require_POST
 
 # Create your views here.
 
@@ -301,6 +304,184 @@ def Edit_Address(request):
     return redirect("addresses")
          
          # .................END EDIT ADDRESS......................
+         
+         # .................ADD TO CART......................
 
     
+def Add_to_Cart(request):
     
+    if request.method == "POST":
+        if request.user.is_authenticated:
+            pro_id=request.POST.get('product_id')
+            pro_size=request.POST.get('product_size')
+            product = Product.objects.get(id=pro_id)
+            
+            product_check = Product.objects.get(id=pro_id)
+            if (pro_size):
+                    if(product_check):
+                        
+                        if (Cart.objects.filter(customuser=request.user,product=pro_id,size=pro_size)):
+                            
+                            return JsonResponse({'status' :"Product already in  Cart"})
+                        else:
+                            
+                            pro_qty=request.POST.get('product_qty')
+                            
+                            total= int(product_check.price) * int(pro_qty)
+                            
+                            Cart.objects.create(customuser=request.user,
+                                                product=product,
+                                                size=pro_size,
+                                                qty=pro_qty,
+                                                price=int(product_check.price),
+                                                total_price=total)
+                            
+                            return JsonResponse({'status' :"Product added successfully"})
+
+                        
+                    else:
+                        return JsonResponse({'status' :"No such product found"})
+            else:
+                
+                return JsonResponse({'status' :"Please select Your Size"})
+                
+                        
+        else:
+                    
+            messages.error(request,"Login to Continue")
+            return redirect("login")
+            
+        
+    
+    return redirect("view_product") 
+
+         # .................END ADD TO CART......................
+         
+         
+          # .................User CART......................
+          
+def User_Cart(request):
+    
+            cart=Cart.objects.filter(customuser=request.user)
+            
+            sub=request.session.get("sub_total")
+            
+            if not sub :
+                sub_total=0
+                for i in cart:
+                
+                    sub_total += int(i.total_price)
+                request.session["sub_total"]=sub_total
+                sub=request.session.get("sub_total")
+            else:
+                sub_total=0
+                for i in cart:
+                
+                    sub_total += int(i.total_price)
+                request.session["sub_total"]=sub_total
+                sub=request.session.get("sub_total")
+                
+                
+            
+            context={
+                
+                'cart':cart,
+                'sub_totel' : sub,
+            }
+            
+            
+            
+            return render(request,'dashbord/cart.html',context)
+                
+           # .................END USER CART......................
+           
+           # .................UPDATE AND STOCK MANAGE, TOTAL PRICE, SUB_TOTAL  CART......................
+           
+@login_required(login_url="Login")
+@never_cache
+@require_POST
+def update_quantity_view(request):
+    
+        cart_item_id = request.POST.get('cartItemId')
+        new_quantity = int(request.POST.get('newQuantity'))
+        
+        if "sub_total" in request.session:
+            
+            del request.session["sub_total"]
+        
+        cart_item = get_object_or_404(Cart, id=cart_item_id)
+        
+        stock=Product_size.objects.get(size=cart_item.size,product=cart_item.product)
+        
+        if stock is not None and new_quantity > stock.stock :
+            
+            return JsonResponse({'error': f'Not enough stock available. Current stock: {stock.stock}'}, status=400)
+    
+    
+        total=int(cart_item.price) * int(new_quantity)
+        
+        if stock.stock >= new_quantity:
+        
+                cart_item.qty = new_quantity
+                cart_item.total_price = total
+                cart_item.save()
+                
+                total_item=Cart.objects.filter(customuser=request.user)
+                sub_total = 0
+                
+                for i in total_item:
+                    
+                    sub_total += int(i.total_price)
+                
+                
+                cart_subtotal=request.session["sub_total"]=sub_total
+                
+                current_stock=stock.stock
+                
+                return JsonResponse({'success': True,'total_price': total,'cart_subtotal2w': cart_subtotal,'current_stock': current_stock})
+            
+        else:
+            
+            total_item=Cart.objects.filter(customuser=request.user)
+            sub_total = 0
+                
+            for i in total_item:
+                    
+                sub_total += int(i.total_price)
+                
+                
+            cart_subtotal=request.session["sub_total"]=sub_total
+            return JsonResponse({'error': f'Not enough stock available. Current stock: {stock.stock}'}, status=400)
+        
+        
+         # ................. END UPDATE AND STOCK MANAGE, TOTAL PRICE, SUB_TOTAL  CART......................
+         
+          # .................DELETE PRODUCT FROM CART......................
+        
+        
+@login_required(login_url="Login")
+@never_cache
+def Delete_Cart(request,product_id):
+    
+        value=Cart.objects.get(id=product_id)
+        
+        if "sub_total" in request.session:
+        
+            sub=request.session.get("sub_total")
+            print(value.total_price)
+            print(sub)
+            
+            sub_total=  int(sub) - int(value.total_price)
+
+            print(sub_total)
+            
+            if "sub_total" in request.session:
+                del request.session["sub_total"]
+                
+
+            request.session["sub_total"]=sub_total
+            value.delete()
+        
+        return redirect('user_cart')
+   
+       # .................END DELETE PRODUCT FROM CART......................
