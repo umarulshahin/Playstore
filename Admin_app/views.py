@@ -497,10 +497,16 @@ def Add_Size(request,id):
         stock=request.POST.get("stock")
         
        
-        
-        value=Product.objects.get(id=id)
-        
-        Product_size.objects.create(size=size,stock=stock,product=value)
+        if int(size) <= 0 or int(stock) <= 0 :
+                
+                messages.error(request, "Invalid Size or Stock .Size and Stock Should Be Above Zero ")
+                return redirect("product_list")
+            
+        else:
+               
+            value=Product.objects.get(id=id)
+            
+            Product_size.objects.create(size=size,stock=stock,product=value)
         
     return redirect("product_list")
 
@@ -513,9 +519,18 @@ def Edit_Size(request,id):
         
         for size_obj in Product_size.objects.filter(product_id=id):
             
-            size_obj.size = request.POST.get('size' + str(size_obj.id))
-            size_obj.stock = request.POST.get('stock' + str(size_obj.id))
-            size_obj.save()
+            size = request.POST.get('size' + str(size_obj.id))
+            stock = request.POST.get('stock' + str(size_obj.id))
+            
+            if int(size) <= 0 or int(stock) <= 0 :
+                
+                messages.error(request, "Invalid Size or Stock .Size and Stock Should Be Above Zero ")
+                return redirect("product_list")
+            
+            else:
+                size_obj.stock=stock 
+                size_obj.size=size 
+                size_obj.save()
 
         
     return redirect("product_list")
