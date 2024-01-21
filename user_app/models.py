@@ -29,11 +29,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
-    username = models.CharField(max_length=30, blank=True)
+    username = models.CharField(max_length=30, blank=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
-    ph_no=models.CharField(max_length=15,blank=True)
+    ph_no=models.CharField(max_length=15,blank=False)
     wallet_bal = models.DecimalField(max_digits=10, decimal_places=2,default=0.00)
     
     
@@ -46,7 +46,21 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
     
-    def __iter__(self):
+    def __int__(self):
         yield self.id 
     
      # ....coustomer_user end....
+     
+class User_Address(models.Model):
+    
+    name=models.CharField(max_length=100,null=False)
+    email=models.EmailField(null=False, blank=False)
+    phone=models.IntegerField(null=False, blank=False)
+    house=models.TextField(null=False,blank=False)
+    street=models.TextField(null=False,blank=False)
+    city=models.TextField(null=False,blank=False)
+    state=models.TextField(null=False,blank=False)
+    country=models.TextField(null=False,blank=False)
+    pin_code=models.TextField(null=False,blank=False,verbose_name='Postal Code')
+    location=models.CharField(max_length=10, null=False,blank=False)
+    customuser=models.ForeignKey(CustomUser,on_delete=models.CASCADE)

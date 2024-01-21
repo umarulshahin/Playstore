@@ -11,5 +11,15 @@ urlpatterns = [
     path('user_profile/<int:id>',views.User_Profile,name="user_profile"),
     
     path('edit_profile/<int:id>',views.Edit_Profile,name="edit_profile"),
+    
+    path('addresses/',views.Addresses,name="addresses"),
+    
+    path('add_address/',views.Add_Address,name="add_address"),
+    
+    path('delete_address/<int:id>',views.Delete_Address,name="delete_address"),
+    
+    path('edit_address/',views.Edit_Address,name="edit_address"),
+    
+    
 
 ]
