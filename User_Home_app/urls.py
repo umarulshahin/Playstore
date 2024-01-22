@@ -28,8 +28,7 @@ urlpatterns = [
     
     path('delete_cart/<int:product_id>/', views.Delete_Cart, name='delete_cart'),
     
-    # path('get-cart-subtotal/',views.get_cart_subtotal, name='get_cart_subtotal'),
-
+    path('checkout/',views.Checkout,name="checkout"),
 
     
     

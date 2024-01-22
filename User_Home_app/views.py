@@ -485,3 +485,25 @@ def Delete_Cart(request,product_id):
         return redirect('user_cart')
    
        # .................END DELETE PRODUCT FROM CART......................
+       
+        # .................CHECKOUT......................
+        
+        
+def Checkout(request):
+    
+    user=request.user
+    print(user)
+    value=Cart.objects.filter(customuser=user)
+    sub_total=request.session.get("sub_total")
+    address=User_Address.objects.filter( customuser=user)
+    context={
+        
+        'value' :value,
+        'sub_total':sub_total,
+         'address' : address,
+    }
+    
+    
+    return render(request,'dashbord/checkout.html',context)
+        
+        # .................END CHECKOUT......................

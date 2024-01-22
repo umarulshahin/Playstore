@@ -344,18 +344,27 @@ def Product_list(request):
 def Product_Status(request,id):
    
     status=Product.objects.get(id=id)
+    print(status)
+    value=Product_size.objects.all()
     
-    if not status.is_deleted:
+    for i in value:
+        print(i.product)
+        if status == i.product:
         
-        status.is_deleted = True
-        status.save()
-        
+                if not status.is_deleted:
+                    
+                    status.is_deleted = True
+                    status.save()
+                    return redirect("product_list")
+                else:
+                    
+                    status.is_deleted = False
+                    status.save()
+                    return redirect("product_list")
     else:
-        
-        status.is_deleted = False
-        status.save()
-        
-    return redirect("product_list")
+        messages.error(request, "Please add any size")
+        return redirect("product_list")
+                
                     
                     # ................End Product Status.........................
                     
