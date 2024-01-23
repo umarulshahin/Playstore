@@ -7,7 +7,8 @@ from .views import *
 from django.views.decorators.cache import  never_cache,cache_control
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
-# from django.http import JsonResponse
+
+
 # Create your views here.
 
           # ........... User Priventing Authentication................
@@ -377,7 +378,6 @@ def Add_Product(request):
         name=request.POST.get("product_name")
         price=request.POST.get("price")
         discount=request.POST.get("discount")
-        stock=request.POST.get("stock")
         sub_category=request.POST.get("category_type")
         description=request.POST.get("description")
         m_image=request.FILES.get("m_image")
@@ -395,7 +395,7 @@ def Add_Product(request):
              return redirect("product_list")
         
         sub=Sub_Category.objects.get(id=sub_category)
-        pro_id=Product.objects.create(name=name,price=price,discount=discount,stock=stock,sub_category=sub,description=description,image=m_image)
+        pro_id=Product.objects.create(name=name,price=price,discount=discount,sub_category=sub,description=description,image=m_image)
  
     
         for i in range(len(r_images)):
@@ -431,7 +431,6 @@ def Update_Product(request,id):
         name=request.POST.get("product_name")
         price=request.POST.get("price")
         discount=float(request.POST.get("discount"))
-        stock=request.POST.get("stock")
         sub_category=request.POST.get("category_type")
         description=request.POST.get("description")
         image=request.FILES.get("image")
@@ -460,7 +459,6 @@ def Update_Product(request,id):
         up.name=name
         up.price=price
         up.discount=discount
-        up.stock=stock
         up.description=description
         up.sub_category=sub
         
@@ -548,17 +546,7 @@ def Edit_Size(request,id):
                     # ................END EDIT SIZE .........................
     
 
-# def your_ajax_view(request):
-#     pro_id = request.GET.get('pro_id')
-#     selected_size = request.GET.get('selected_size')
 
-#     # Add your logic to get the stock based on the pro_id and selected_size
-#     # For example, assuming Product has a method get_stock_for_size(selected_size)
-#     product = Product.objects.get(id=pro_id)
-#     stock = product.get_stock_for_size(selected_size)
-
-#     # Return the stock in a JSON response
-#     return JsonResponse({'stock': stock})
     
     
     

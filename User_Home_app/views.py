@@ -70,6 +70,7 @@ def View_Product(request,id):
                   # ................. USER PROFILE......................
 
 login_required(login_url='login')
+@never_cache
 def User_Profile(request,id):
     
     user = request.user
@@ -139,19 +140,21 @@ def Edit_Profile(request,id):
                      
 login_required(login_url='login')     
 @never_cache                
-def Addresses(request):
+def Addresses(request):    
     
-    
-    user=CustomUser.objects.get(email=request.session.get("user_email"))
-    value=User_Address.objects.filter(customuser=user.id)
-    
-    context={
+    if request.user:
         
-        'value' : value
-    }
+        user=CustomUser.objects.get(email=request.user)
+        value=User_Address.objects.filter(customuser=user.id)
+        
+        context={
+            
+            'value' : value
+        }
     
     
-    return render(request,'dashbord/address.html',context)
+        return render(request,'dashbord/address.html',context)
+    return redirect('user_profile')
 
 
          # .................END ADDRESS AND ADD ADDRESS......................
@@ -160,68 +163,72 @@ def Addresses(request):
           
 def Add_Address(request):
     
-    user=CustomUser.objects.get(email=request.session.get("user_email"))
     
-    if request.method == "POST":
+    if request.user:
     
-            name=request.POST.get("name")
-            email=request.POST.get("email")
-            phone=request.POST.get("phone")
-            house=request.POST.get("house")
-            street=request.POST.get("street")
-            city=request.POST.get("city")
-            state=request.POST.get("state")
-            country=request.POST.get("country")
-            pin_code=request.POST.get("pin_code")
-            location=request.POST.get("location")
-            
-            
-            pattern = r'^[\w-]+$'
-            pattern_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-            pattern_Phone= r'^\d{3}-?\d{3}-?\d{4}$'
+        user=CustomUser.objects.get(email=request.user)
+        
+        if request.method == "POST":
+        
+                name=request.POST.get("name")
+                email=request.POST.get("email")
+                phone=request.POST.get("phone")
+                house=request.POST.get("house")
+                street=request.POST.get("street")
+                city=request.POST.get("city")
+                state=request.POST.get("state")
+                country=request.POST.get("country")
+                pin_code=request.POST.get("pin_code")
+                location=request.POST.get("location")
                 
-            if not (name or email or phone or house or street or city or country or pin_code or location):
-                    messages.error(request, "please Fill Required Field")
-                    return redirect("addresses")
                 
-            if not re.match(pattern,name and house and street and city or country and pin_code or location):
-                    messages.error(request,"Please Enter Valid values")
-                    return redirect("addresses") 
+                pattern = r'^[\w-]+$'
+                pattern_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+                pattern_Phone= r'^\d{3}-?\d{3}-?\d{4}$'
+                    
+                if not (name or email or phone or house or street or city or country or pin_code or location):
+                        messages.error(request, "please Fill Required Field")
+                        return redirect("addresses")
+                    
+                if not re.match(pattern,name and house and street and city or country and pin_code or location):
+                        messages.error(request,"Please Enter Valid values")
+                        return redirect("addresses") 
+                    
+                elif not re.match(pattern_email,email):
+                        messages.error(request,"Please enter valid email address")
+                        return redirect("addresses")
+                    
+                    # elif CustomUser.objects.filter(email=email).exists():
+                    #     messages.error(request,"Email already exists")
+                    #     return render(request,'dashbord/profile.html')
+                    
+                elif not re.match(pattern_Phone,phone):
+                        messages.error(request,"Please enter valid Phone number")
+                        return redirect("addresses")
+                    
                 
-            elif not re.match(pattern_email,email):
-                    messages.error(request,"Please enter valid email address")
-                    return redirect("addresses")
+                value=CustomUser.objects.get(id=user.id)
                 
-                # elif CustomUser.objects.filter(email=email).exists():
-                #     messages.error(request,"Email already exists")
-                #     return render(request,'dashbord/profile.html')
                 
-            elif not re.match(pattern_Phone,phone):
-                    messages.error(request,"Please enter valid Phone number")
-                    return redirect("addresses")
-                
-            
-            value=CustomUser.objects.get(id=user.id)
-            
-            
-            User_Address.objects.create(
-                name=name,
-                email=email,
-                phone=phone,
-                house=house,
-                street=street,
-                city=city,
-                state=state,
-                country=country,
-                pin_code=pin_code,
-                location=location,
-                customuser= value,
-                                        
-                                        
-                                        )
-       
-       
-            return redirect("addresses")
+                User_Address.objects.create(
+                    
+                    name=name,
+                    email=email,
+                    phone=phone,
+                    house=house,
+                    street=street,
+                    city=city,
+                    state=state,
+                    country=country,
+                    pin_code=pin_code,
+                    location=location,
+                    customuser= value,
+                                            
+                                            
+                                            )
+        
+        
+                return redirect("addresses")
         
         
     return redirect("addresses")
@@ -307,7 +314,8 @@ def Edit_Address(request):
          
          # .................ADD TO CART......................
 
-    
+login_required(login_url='login')
+@never_cache   
 def Add_to_Cart(request):
     
     if request.method == "POST":
@@ -359,7 +367,8 @@ def Add_to_Cart(request):
          
          
           # .................User CART......................
-          
+login_required(login_url='login')
+@never_cache          
 def User_Cart(request):
     
             cart=Cart.objects.filter(customuser=request.user)
@@ -488,22 +497,52 @@ def Delete_Cart(request,product_id):
        
         # .................CHECKOUT......................
         
-        
+login_required(login_url='login')
+@never_cache       
 def Checkout(request):
     
-    user=request.user
-    print(user)
-    value=Cart.objects.filter(customuser=user)
-    sub_total=request.session.get("sub_total")
-    address=User_Address.objects.filter( customuser=user)
-    context={
-        
-        'value' :value,
-        'sub_total':sub_total,
-         'address' : address,
-    }
-    
-    
-    return render(request,'dashbord/checkout.html',context)
+            value=Cart.objects.filter(customuser=request.user)
+            for i in value:
+                
+                pro=Product_size.objects.filter(product=i.product,size=i.size)
+                
+                for j in pro:
+                    
+                   if j.stock>=i.qty:
+                       pass
+                    #    new_stock=j.stock-i.qty
+                    #    print(new_stock,"............23")
+                    #    Product_size.objects.filter(product=i.product,size=i.size).update(stock=new_stock)
+                    #    print("we have stock")
+                   else:
+                       
+                    messages.error(request,f"{i.product.name} out stock please choose any another product")
+                    return redirect("user_cart")
+                       
+                for i in value:
+                        
+                   for j in pro:
+                    
+                        if j.stock>=i.qty:
+                            
+                            new_stock=j.stock-i.qty
+                            print(new_stock,"............23")
+                            Product_size.objects.filter(product=i.product,size=i.size).update(stock=new_stock)
+                            print("we have stock")
+                            
+            user=request.user
+            print(user)
+            value=Cart.objects.filter(customuser=user)
+            sub_total=request.session.get("sub_total")
+            address=User_Address.objects.filter( customuser=user)
+            context={
+                
+                'value' :value,
+                'sub_total':sub_total,
+                'address' : address,
+            }
+            
+            
+            return render(request,'dashbord/checkout.html',context)
         
         # .................END CHECKOUT......................

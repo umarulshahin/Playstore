@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
+from phonenumber_field.modelfields import PhoneNumberField
 
 
              # ....coustome_user....
@@ -49,13 +50,17 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __int__(self):
         yield self.id 
     
-     # ....coustomer_user end....
+     # .............coustomer_user end.............
+     
+     
+     # .............User ADDRESS.............
+
      
 class User_Address(models.Model):
     
     name=models.CharField(max_length=100,null=False)
     email=models.EmailField(null=False, blank=False)
-    phone=models.IntegerField(null=False, blank=False)
+    phone = PhoneNumberField(null=False, blank=False)
     house=models.TextField(null=False,blank=False)
     street=models.TextField(null=False,blank=False)
     city=models.TextField(null=False,blank=False)
@@ -64,3 +69,6 @@ class User_Address(models.Model):
     pin_code=models.TextField(null=False,blank=False,verbose_name='Postal Code')
     location=models.CharField(max_length=10, null=False,blank=False)
     customuser=models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    
+    
+     # .............END USER ADDRESS.............

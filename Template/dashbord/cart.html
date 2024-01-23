@@ -149,7 +149,15 @@
     </tr>
 
     
-    
+    <div class="container">
+
+        {% for error in messages %}
+      
+        <p class="text-center" style="color:red">{{error}}</p>
+      
+        {%endfor%}
+      
+      </div>
 <tr class="shipping_area">
     <td></td>
 </tr>

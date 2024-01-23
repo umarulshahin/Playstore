@@ -33,9 +33,5 @@ urlpatterns = [
     
     path('resend_otp/',views.Resend_Otp,name='resend_otp'), 
     
-    
-    
-    
-
 
  ]
