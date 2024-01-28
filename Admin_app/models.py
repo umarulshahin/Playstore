@@ -1,4 +1,6 @@
 from django.db import models
+from user_app.models import *
+from django.utils import timezone
 
 # Create your models here.
 
@@ -28,7 +30,7 @@ class Product(models.Model):
     
     def __iter__(self):
         
-        yield  self.id
+        return  self.id
 
     
 class Product_image(models.Model):
@@ -37,9 +39,56 @@ class Product_image(models.Model):
     
 
 class Product_size(models.Model):
-    size=models.CharField(max_length=50,null=True)
-    stock=models.IntegerField(null=True)
+    size=models.CharField(max_length=50,null=False)
+    stock=models.IntegerField(null=False)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    
+    
+class Order(models.Model):
+    
+    ORDER_STATUS = (
+        
+        ('pending', 'Pending'),
+        ('processing','processing'),
+        ('shipped','shipped'),
+        ('delivered','delivered'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+        ('refunded','refunded'),
+
+    )
+    
+    user = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    order_id = models.CharField(max_length=100,null=False,unique=True)
+    user_address = models.TextField()
+    total_amount = models.CharField(max_length=100,null=False)
+    payment_type = models.CharField(max_length=100,null=False)
+    status = models.CharField(max_length=100,choices=ORDER_STATUS,default='Pending')
+    order_id = models.CharField(max_length=100,null=False,unique=True)
+    created_date =models.DateTimeField(default=timezone.now)
+    
+    def __int__(self):
+        
+        return self.id
+    
+    
+
+class Order_Items(models.Model):
+    
+    order=models.ForeignKey(Order,on_delete=models.CASCADE)
+    product=models.ForeignKey(Product,on_delete=models.CASCADE)
+    qty=models.IntegerField(null=False,blank=False)
+    size=models.IntegerField(null=False,blank=False)
+    price=models.IntegerField(null=False,blank=False)
+    total_price=models.IntegerField(null=False,blank=False)
+ 
+    
+    
+    
+    
+    
+    
+    
     
     
 

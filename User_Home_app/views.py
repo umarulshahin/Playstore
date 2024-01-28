@@ -9,6 +9,9 @@ from django.contrib import messages
 import re 
 from django.http.response import JsonResponse
 from django.views.decorators.http import require_POST
+from django.db.models import *
+import uuid
+import json
 
 # Create your views here.
 
@@ -69,12 +72,12 @@ def View_Product(request,id):
                
                   # ................. USER PROFILE......................
 
-login_required(login_url='login')
+@login_required(login_url='/user_app/Login/')
 @never_cache
 def User_Profile(request,id):
     
-    user = request.user
-    if user:
+    if request.user.is_authenticated:
+        
         user_details = CustomUser.objects.get(id=id)
         
         context = {
@@ -138,11 +141,11 @@ def Edit_Profile(request,id):
                      
                       # .................ADDRESS AND ADD ADDRESS......................
                      
-login_required(login_url='login')     
+@login_required(login_url='/user_app/Login/')
 @never_cache                
 def Addresses(request):    
     
-    if request.user:
+    if request.user.is_authenticated:
         
         user=CustomUser.objects.get(email=request.user)
         value=User_Address.objects.filter(customuser=user.id)
@@ -164,7 +167,7 @@ def Addresses(request):
 def Add_Address(request):
     
     
-    if request.user:
+    if request.user.is_authenticated:
     
         user=CustomUser.objects.get(email=request.user)
         
@@ -182,7 +185,7 @@ def Add_Address(request):
                 location=request.POST.get("location")
                 
                 
-                pattern = r'^[\w-]+$'
+                pattern = r'^[a-zA-Z0-9].*'
                 pattern_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
                 pattern_Phone= r'^\d{3}-?\d{3}-?\d{4}$'
                     
@@ -190,9 +193,9 @@ def Add_Address(request):
                         messages.error(request, "please Fill Required Field")
                         return redirect("addresses")
                     
-                if not re.match(pattern,name and house and street and city or country and pin_code or location):
-                        messages.error(request,"Please Enter Valid values")
-                        return redirect("addresses") 
+                if not all(re.match(pattern, value) and value.strip() for value in [name, email, phone, house, street, city,country, state, pin_code, location,]):
+                        messages.error(request, "Please Enter Valid values")
+                        return redirect("addresses")
                     
                 elif not re.match(pattern_email,email):
                         messages.error(request,"Please enter valid email address")
@@ -231,7 +234,8 @@ def Add_Address(request):
                 return redirect("addresses")
         
         
-    return redirect("addresses")
+        return redirect("addresses")
+    return redirect('login')
     
            # .................END ADD ADDRESS......................
          
@@ -239,12 +243,14 @@ def Add_Address(request):
          
 def Delete_Address(request,id):
     
-       if id:
+        if id:
            
            User_Address.objects.filter(id=id).delete()
            
            
            return redirect("addresses")
+        
+        return redirect("addresses")
         
         
     
@@ -269,7 +275,7 @@ def Edit_Address(request):
             E_location=request.POST.get("editlocation")
             address_id = request.POST.get('editid')
             
-            pattern = r'^[\w-]+$'
+            pattern = r'^[a-zA-Z0-9].*'
             pattern_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
             pattern_Phone= r'^\d{3}-?\d{3}-?\d{4}$'
                 
@@ -277,7 +283,7 @@ def Edit_Address(request):
                     messages.error(request, "please Fill Required Field")
                     return redirect("addresses")
                 
-            if not re.match(pattern,E_name and E_house and E_street and E_city or E_country and E_pin_code or E_location):
+            if not all(re.match(pattern, value) and value.strip() for value in [E_name, E_house, E_street, E_city, E_country, E_pin_code, E_location]):
                     messages.error(request,"Please Enter Valid values")
                     return redirect("addresses") 
                 
@@ -314,7 +320,7 @@ def Edit_Address(request):
          
          # .................ADD TO CART......................
 
-login_required(login_url='login')
+@login_required(login_url='/user_app/Login/')
 @never_cache   
 def Add_to_Cart(request):
     
@@ -367,9 +373,12 @@ def Add_to_Cart(request):
          
          
           # .................User CART......................
-login_required(login_url='login')
+          
+@login_required(login_url='/user_app/Login/')
 @never_cache          
 def User_Cart(request):
+    
+    if request.user.is_authenticated:
     
             cart=Cart.objects.filter(customuser=request.user)
             
@@ -401,12 +410,12 @@ def User_Cart(request):
             
             
             return render(request,'dashbord/cart.html',context)
+    return redirect('login')
                 
            # .................END USER CART......................
            
            # .................UPDATE AND STOCK MANAGE, TOTAL PRICE, SUB_TOTAL  CART......................
            
-@login_required(login_url="Login")
 @never_cache
 @require_POST
 def update_quantity_view(request):
@@ -468,7 +477,6 @@ def update_quantity_view(request):
           # .................DELETE PRODUCT FROM CART......................
         
         
-@login_required(login_url="Login")
 @never_cache
 def Delete_Cart(request,product_id):
     
@@ -497,52 +505,306 @@ def Delete_Cart(request,product_id):
        
         # .................CHECKOUT......................
         
-login_required(login_url='login')
+@login_required(login_url='/user_app/Login/')
 @never_cache       
 def Checkout(request):
     
-            value=Cart.objects.filter(customuser=request.user)
-            for i in value:
-                
-                pro=Product_size.objects.filter(product=i.product,size=i.size)
-                
-                for j in pro:
-                    
-                   if j.stock>=i.qty:
-                       pass
-                    #    new_stock=j.stock-i.qty
-                    #    print(new_stock,"............23")
-                    #    Product_size.objects.filter(product=i.product,size=i.size).update(stock=new_stock)
-                    #    print("we have stock")
-                   else:
-                       
-                    messages.error(request,f"{i.product.name} out stock please choose any another product")
-                    return redirect("user_cart")
-                       
+        if  request.user.is_authenticated:       
+              
+                value=Cart.objects.filter(customuser=request.user)
                 for i in value:
-                        
-                   for j in pro:
                     
-                        if j.stock>=i.qty:
+                    pro=Product_size.objects.filter(product=i.product,size=i.size)
+                    
+                    for j in pro:
+                        
+                        if j.stock < i.qty:
                             
-                            new_stock=j.stock-i.qty
-                            print(new_stock,"............23")
-                            Product_size.objects.filter(product=i.product,size=i.size).update(stock=new_stock)
-                            print("we have stock")
-                            
-            user=request.user
-            print(user)
-            value=Cart.objects.filter(customuser=user)
-            sub_total=request.session.get("sub_total")
-            address=User_Address.objects.filter( customuser=user)
-            context={
+                            messages.error(request,f"{i.product.name} out stock please choose any another product")
+                            return redirect("user_cart")
+                        
+                    
+                user=request.user
+                value=Cart.objects.filter(customuser=user)
+                sub_total=request.session.get("sub_total")
+                address=User_Address.objects.filter( customuser=user)
+                context={
+                    
+                    'value' :value,
+                    'sub_total':sub_total,
+                    'address' : address,
+                }
                 
-                'value' :value,
-                'sub_total':sub_total,
-                'address' : address,
-            }
-            
-            
-            return render(request,'dashbord/checkout.html',context)
+                
+                return render(request,'dashbord/checkout.html',context)
+        return redirect('login')
         
         # .................END CHECKOUT......................
+        
+        
+        # ................. EDIT CHECKOUT ADDRESS......................
+
+def Checkout_Edit_Address(request):
+    
+          if request.method == "POST" :
+        
+            E_name=request.POST.get("editName")
+            E_email=request.POST.get("editEmail")
+            E_phone=request.POST.get("editphone")
+            E_house=request.POST.get("editHouse")
+            E_street=request.POST.get("editStreet")
+            E_city=request.POST.get("editcity")
+            E_state=request.POST.get("editstate")
+            E_country=request.POST.get("editcountry")
+            E_pin_code=request.POST.get("editpin_code")
+            E_location=request.POST.get("editlocation")
+            address_id = request.POST.get('editid')
+            
+ 
+            pattern = r'^[a-zA-Z0-9].*'
+            pattern_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            pattern_Phone= r'^\d{3}-?\d{3}-?\d{4}$'
+                
+            if not (E_name or E_email or E_phone or E_house or E_street or E_city or E_country or E_pin_code or E_location):
+                    messages.error(request, "please Fill Required Field")
+                    return redirect("checkout")
+                
+            if not all(re.match(pattern, value) and value.strip() for value in [E_name, E_house, E_street, E_city, E_country, E_pin_code, E_location]):
+                    messages.error(request,"Please Enter Valid values")
+                    return redirect("checkout") 
+                
+            elif not re.match(pattern_email,E_email):
+                    messages.error(request,"Please enter valid email address")
+                    return redirect("checkout")
+                
+                # elif CustomUser.objects.filter(email=email).exists():
+                #     messages.error(request,"Email already exists")
+                #     return render(request,'dashbord/profile.html')
+                
+            elif not re.match(pattern_Phone,E_phone):
+                    messages.error(request,"Please enter valid Phone number")
+                    return redirect("checkout")
+                
+            
+        
+            User_Address.objects.filter(id=address_id).update(name=E_name,
+                                                  email=E_email,
+                                                  phone=E_phone,
+                                                  house=E_house,
+                                                  street=E_street,
+                                                  city=E_city,
+                                                  state=E_state,
+                                                  country=E_country,
+                                                  pin_code=E_pin_code,
+                                                  location=E_location
+                                                  )
+        
+
+            return redirect("checkout")
+        
+        # .................END EDIT CHECKOUT ADDRESS......................
+        
+        
+        # .................ADD CHECKOUT ADDRESS......................
+        
+def Checkout_Add_Address(request):
+    
+    
+    if request.user.is_authenticated:
+    
+    
+        user=CustomUser.objects.get(email=request.user)
+        
+        if request.method == "POST":
+        
+                name=request.POST.get("name")
+                email=request.POST.get("email")
+                phone=request.POST.get("phone")
+                house=request.POST.get("house")
+                street=request.POST.get("street")
+                city=request.POST.get("city")
+                state=request.POST.get("state")
+                country=request.POST.get("country")
+                pin_code=request.POST.get("pin_code")
+                location=request.POST.get("location")
+                
+                pattern = r'^[a-zA-Z0-9].*'
+                pattern_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+                pattern_Phone= r'^\d{3}-?\d{3}-?\d{4}$'
+                    
+                if not (name or email or phone or house or street or city or country or pin_code or location):
+                        messages.error(request, "please Fill Required Field")
+                        return redirect("checkout")
+                    
+                if not all(re.match(pattern, value) and value.strip() for value in [name, email, phone, house, country, state, street , city, pin_code, location]):
+                        messages.error(request,"Please Enter Valid values")
+                        return redirect("checkout") 
+                    
+                elif not re.match(pattern_email,email):
+                        messages.error(request,"Please enter valid email address")
+                        return redirect("checkout")
+                    
+                    # elif CustomUser.objects.filter(email=email).exists():
+                    #     messages.error(request,"Email already exists")
+                    #     return render(request,'dashbord/profile.html')
+                    
+                elif not re.match(pattern_Phone,phone):
+                        messages.error(request,"Please enter valid Phone number")
+                        return redirect("checkout")
+                    
+                
+                value=CustomUser.objects.get(id=user.id)
+                
+                
+                User_Address.objects.create(
+                    
+                    name=name,
+                    email=email,
+                    phone=phone,
+                    house=house,
+                    street=street,
+                    city=city,
+                    state=state,
+                    country=country,
+                    pin_code=pin_code,
+                    location=location,
+                    customuser= value,
+                                            
+                                            
+                                            )
+        
+        
+                return redirect("checkout")
+        
+        
+        return redirect("checkout")
+    return redirect("login")
+        
+        
+        # .................END ADD CHECKOUT ADDRESS......................
+        
+        
+        # .................USER ORDER......................
+        
+def User_Order(request):
+    
+    
+    if  request.user.is_authenticated:
+        
+        if request.method == 'POST':
+            
+            user=int(CustomUser.objects.get(email=request.user))
+            user_id=CustomUser.objects.get(id=user)
+          
+          
+            address=request.POST.get('address')
+            payment_method=request.POST.get('paymentMethod')
+            
+            total=Cart.objects.filter(customuser=user_id).aggregate(total=Sum('total_price'))
+            
+
+            address=User_Address.objects.filter(id=address)
+            for j in address:
+               user_add={'name' :j.name , 'email' : j.email, 'phone' : j.phone, 
+                     'house' :j.house, 'street': j.street, 'city': j.city, 
+                     'state':j.state, 'country':j.country, 'pin_code':j.pin_code,
+                     'location': j.location} 
+               
+               
+            # ..................stock rechecking.................
+            
+            
+            value=Cart.objects.filter(customuser=request.user)
+            for i in value:
+                    
+                    pro=Product_size.objects.filter(product=i.product,size=i.size)
+                    
+                    for j in pro:
+                        
+                        if j.stock < i.qty:
+                            
+                            messages.error(request,f"{i.product.name} out stock please choose any another product")
+                            return redirect("user_cart")
+                        
+                        for i in value:
+                                        
+                                    for j in pro:
+                                    
+                                        if j.stock >= i.qty:
+                                            
+                                            new_stock=j.stock-i.qty
+                                            Product_size.objects.filter(product=i.product,size=i.size).update(stock=new_stock)
+                                            
+                        
+            
+            #    ...............order_id genarating.............
+            
+            
+            unique_id = uuid.uuid4()
+            order_id = str(unique_id)[:8]
+    
+            
+            # ..................order creating.................
+            
+            
+            Order.objects.create(user = user_id,
+                                 user_address =user_add,
+                                 total_amount = total['total'],
+                                 payment_type = payment_method,
+                                 order_id = order_id 
+                                 )
+            
+            id=Order.objects.get(order_id=order_id)
+            value=Cart.objects.filter(customuser=user_id)
+            
+            
+            for i in value:
+              
+                Order_Items.objects.create(order=id,
+                                       product=i.product,
+                                       qty=i.qty,
+                                       size=i.size,
+                                       price=i.price,
+                                       total_price=i.total_price)
+                
+            
+        
+            Cart.objects.filter(customuser=user_id).delete()
+  
+            return redirect('confirmation')
+        
+        # ................. END USER ORDER ......................
+        
+        
+        # ................. ORDER CONFIRMATION ..................
+        
+def Confirmation(request):
+    
+    user=CustomUser.objects.get(email=request.user)
+    order=Order.objects.filter(user_id=user.id).last()
+    item=Order_Items.objects.filter(order=order.id)
+    
+    print(type(order.user_address))
+    pairs = order.user_address.strip('{}').split(',')
+
+    # Create a dictionary from the key-value pairs
+    my_dict = {}
+    for pair in pairs:
+        key, value = pair.split(':')
+        my_dict[key.strip(" '")] = value.strip(" '")
+    
+    print(my_dict)
+    context={
+        'order' : order,
+        'item' : item,
+        'house' : my_dict['house'],
+        'street' : my_dict['street'],
+        'city' : my_dict['city'] ,
+        'country' : my_dict['country'] 
+    }
+    
+    return render(request,'dashbord/confirmation.html',context)
+
+
+
+       # .................END ORDER CONFIRMATION ......................

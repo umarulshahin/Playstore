@@ -24,11 +24,19 @@ urlpatterns = [
     
     path('cart/',views.User_Cart,name="user_cart"),
     
-    path('update-quantity/',views.update_quantity_view, name='update_quantity'),
+    path('update-quantity/',views.update_quantity_view, name="update_quantity"),
     
-    path('delete_cart/<int:product_id>/', views.Delete_Cart, name='delete_cart'),
+    path('delete_cart/<int:product_id>/', views.Delete_Cart, name="delete_cart"),
     
     path('checkout/',views.Checkout,name="checkout"),
+    
+    path('edit_checkout_address/',views.Checkout_Edit_Address, name="edit_checkout_address"),
+    
+    path('checkout_add_address/',views.Checkout_Add_Address, name="checkout_add_address"),
+    
+    path('user_order',views.User_Order,name='user_order'),
+    
+    path('confirmation',views.Confirmation,name='confirmation'),
 
     
     

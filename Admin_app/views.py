@@ -58,7 +58,7 @@ def Admin(request):
               
 @admin_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-@login_required(login_url="admin_login")
+@login_required(login_url="/Admin_app/")
 @never_cache
 def Admin_dashbord(request):
     
@@ -86,7 +86,7 @@ def Admin_logout(request):
                 
 @admin_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-@login_required(login_url="admin_login")
+@login_required(login_url="/Admin_app/")
 @never_cache
 def User_list(request):
     
@@ -132,7 +132,7 @@ def User_unblock(request,id):
                 
 @admin_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-@login_required(login_url="admin_login")
+@login_required(login_url="/Admin_app/")
 @never_cache
 def Category_list(request): 
     
@@ -227,7 +227,7 @@ def Add_category(request):
                  
 @admin_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-@login_required(login_url="admin_login")
+@login_required(login_url="/Admin_app/")
 @never_cache    
 def Sub_category(request):
     
@@ -320,7 +320,7 @@ def Add_Sub_Category(request):
                     # ................Product .........................
 @admin_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-@login_required(login_url="admin_login")
+@login_required(login_url="/Admin_app/")
 @never_cache    
 def Product_list(request):
     
@@ -510,10 +510,16 @@ def Add_Size(request,id):
                 return redirect("product_list")
             
         else:
-               
             value=Product.objects.get(id=id)
+            if Product_size.objects.filter(size=size,product=value).exists():
+                
+                messages.error(request, "This size already listed")
+                return redirect("product_list")
             
-            Product_size.objects.create(size=size,stock=stock,product=value)
+            else:
+                    value=Product.objects.get(id=id)
+                    
+                    Product_size.objects.create(size=size,stock=stock,product=value)
         
     return redirect("product_list")
 

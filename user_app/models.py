@@ -48,7 +48,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.email
     
     def __int__(self):
-        yield self.id 
+        return self.id 
     
      # .............coustomer_user end.............
      

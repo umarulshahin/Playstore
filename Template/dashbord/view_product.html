@@ -219,8 +219,10 @@
                                         <div class="size-selector"> 
                                             <!-- Add your size radio buttons here -->
                                             {% for size in pro.product_size_set.all %}
+                                              {% if size.stock >= 1 %}
                                                 <input type="radio" id="size-{{ size.size }}" name="size" value="{{ size.size }}" class="hidden-radio" required>
                                                 <label for="size-{{ size.size }}" class="size-circle">{{ size.size }}</label>
+                                                {% endif %}
                                             {% endfor %}
                                             <input type="hidden" value="{{pro.id}}" class="prod_id">
                                             <input type="hidden" value="1" class="prod_qty">
