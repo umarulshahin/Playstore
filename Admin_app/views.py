@@ -550,6 +550,20 @@ def Edit_Size(request,id):
 
                     
                     # ................END EDIT SIZE .........................
+                    
+                    
+                    # ................ORDER LIST .........................
+                    
+def Order_List(request):
+    
+    order=Order.objects.all()
+    context={
+        'order' : order,
+    }
+    
+    return render(request,'Admin/order_list.html',context)
+                    
+                    # ................END ORDER LIST .........................
     
 
 

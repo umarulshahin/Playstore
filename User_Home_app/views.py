@@ -854,9 +854,8 @@ def My_Order(request):
        
 def Order_Details(request,id):
     
-    print(id,"...........252")
-    user=CustomUser.objects.get(email=request.user)
-    order=Order.objects.filter(user_id=user.id).last()
+    
+    order=Order.objects.get(id=id)
     item=Order_Items.objects.filter(order_id=id)
     
     context={
