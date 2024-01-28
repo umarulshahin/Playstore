@@ -32,23 +32,13 @@
 						<h4>Order Info</h4>
 						<ul class="list">
 							<li><a href="#"><span>Order Id</span> {{order.order_id}}</a></li>
-							<li><a href="#"><span>Date</span> :{{order.created_date}}</a></li>
+							<li><a href="#"><span>Date</span> :{{order.created_date|date}}</a></li>
 							<li><a href="#"><span>Total</span> : {{order.total_amount}}</a></li>
 							<li><a href="#"><span>Payment Method</span> : {{order.payment_type }}</a></li>
 						</ul>
 					</div>
 				</div>
-				<!-- <div class="col-lg-4">
-					<div class="details_item">
-						<h4>Billing Address</h4>
-						<ul class="list">
-							<li><a href="#"><span>Street</span> : 56/8</a></li>
-							<li><a href="#"><span>City</span> : Los Angeles</a></li>
-							<li><a href="#"><span>Country</span> : United States</a></li>
-							<li><a href="#"><span>Postcode </span> : 36952</a></li>
-						</ul>
-					</div>
-				</div> -->
+			
 				<div class="col-lg-4">
 					<div class="details_item">
 						<h4>Shipping Address</h4>
@@ -111,13 +101,7 @@
 								</td>
 							</tr>
 							<tr>
-								<!-- <td>
-									<h4>Shipping</h4>
-								</td> -->
 								
-								<!-- <td>
-									<p>Flat rate: $50.00</p>
-								</td> -->
 							</tr>
 							<tr>
 								<td>

@@ -1,0 +1,245 @@
+
+{% extends 'dashbord/dashbord.html' %}
+
+{% block content %}
+
+<style>
+    .custom-img-container {
+        position: relative;
+    }
+
+    .custom-img-text {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+</style>
+    <!-- Start Header Area -->
+        <!-- Start Banner Section -->
+        <section class="banner-area organic-breadcrumb">
+            <div class="container">
+                <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+                    <div class="col-first">
+                        <h1>Shopping</h1>
+                        <nav class="d-flex align-items-center">
+                            <a href="#">Home<span class="lnr lnr-arrow-right"></span></a>
+                            <a href="#">Tracking</a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="container my-5">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-10 hh-grayBox mx-auto text-center pt-4 pb-2">
+                                        {% if order.status == 'Pending' %}
+                                            <div class="row justify-content-between">
+                                                <div class="order-tracking completed">
+                                                    <span class="is-complete"></span>
+                                                    <p>{{order.created_date|date}}<br></p>
+                                                    <p>Ordered<br></p>
+                                                </div>
+                                                <div class="order-tracking ">
+                                                    <span class="is-complete"></span>
+                                                    <p>Processing<br></p>
+                                                </div>
+                                                <div class="order-tracking ">
+                                                    <span class="is-complete"></span>
+                                                    <p>Shipped<br></p>
+                                                </div>
+                                                <div class="order-tracking ">
+                                                    <span class="is-complete"></span>
+                                                    <p>Delivered<br></p>
+                                                </div>
+                                            </div>
+                                            {% elif order.status == 'processing' %}
+                                                <div class="row justify-content-between">
+                                                    <div class="order-tracking completed">
+                                                        <span class="is-complete"></span>
+                                                        <p>Ordered<br></p>
+                                                    </div>
+                                                    <div class="order-tracking completed">
+                                                        <span class="is-complete"></span>
+                                                        <p><%= order[0].updated.toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %><br></p>
+                                                        <p>Processing<br></p>
+                                                    </div>
+                                                    <div class="order-tracking ">
+                                                        <span class="is-complete"></span>
+                                                        <p>Shipped<br></p>
+                                                    </div>
+                                                    <div class="order-tracking ">
+                                                        <span class="is-complete"></span>
+                                                        <p>Delivered<br></p>
+                                                    </div>
+                                                </div>
+                                                {% elif order.status == 'shipped' %}
+                                            <div class="row justify-content-between">
+                                                <div class="order-tracking completed">
+                                                    <span class="is-complete"></span>
+                                                    <p>Ordered<br></p>
+                                                </div>
+                                                <div class="order-tracking completed">
+                                                    <span class="is-complete"></span>
+                                                    <p>Processing<br></p>
+                                                </div>
+                                                <div class="order-tracking completed">
+                                                    <span class="is-complete"></span>
+                                                    <p><%= order[0].updated.toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %><br></p>
+                                                    <p>Shipped<br></p>
+                                                </div>
+                                                <div class="order-tracking ">
+                                                    <span class="is-complete"></span>
+                                                    <p>Delivered<br></p>
+                                                </div>
+                                            </div>
+                                            
+                                            {% elif order.status == 'delivered' %}
+                                            <div class="row justify-content-between">
+                                                <div class="order-tracking completed">
+                                                    <span class="is-complete"></span>
+                                                    <p>Ordered<br></p>
+                                                </div>
+                                                <div class="order-tracking completed">
+                                                    <span class="is-complete"></span>
+                                                    <p>Processing<br></p>
+                                                </div>
+                                                <div class="order-tracking completed">
+                                                    <span class="is-complete"></span>
+                                                    <p>Shipped<br></p>
+                                                </div>
+                                                <div class="order-tracking completed">
+                                                    <span class="is-complete"></span>
+                                                    <p><%= order[0].updated.toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %><br></p>
+                                                    <p>Delivered<br></p>
+                                                </div>
+                                            </div>
+                                            
+                                            {% elif order.status == 'cancelled' %}
+                                            <div class="row justify-content-between">
+                                                
+                                                <div class="order-tracking completed cancelled" >
+                                                    <span class="is-complete"></span>
+                                                    <p>Ordered<br></p>
+                                                </div>
+                                                <div class="order-tracking completed cancelledd" >
+                                                    <span class="is-complete"></span>
+                                                    <p> Cancel Requested<br></p>
+                                                </div>
+                                                <div class="order-tracking completed cancelledd" >
+                                                    <span class="is-complete"></span>
+                                                    <p>Accepted<br></p>
+                                                </div>
+                                                <div class="order-tracking completed cancelledd">
+                                                    <span class="is-complete"></span>
+                                                    <p><%= order[0].updated.toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %><br></p>
+                                                    <p>Cancelled<br></p>
+                                                </div>
+                                            </div>
+                                            {% elif order.status == 'refunded' %}
+                                            <div class="row justify-content-between">
+                                                
+                                                <div class="order-tracking completed cancelled" >
+                                                    <span class="is-complete"></span>
+                                                    <p>Ordered<br></p>
+                                                </div>
+                                                <div class="order-tracking completed cancelledd" >
+                                                    <span class="is-complete"></span>
+                                                    <p> Cancel Requested<br></p>
+                                                </div>
+                                                <div class="order-tracking completed cancelledd" >
+                                                    <span class="is-complete"></span>
+                                                    <p>Accepted<br></p>
+                                                </div>
+                                                <div class="order-tracking completed cancelledd">
+                                                    <span class="is-complete"></span>
+                                                    <p><%= order[0].updated.toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %><br></p>
+                                                    <p>Cancelled<br></p>
+                                                </div>
+                                            </div>
+                                           {% else %}
+                                           <h2>NO order Details</h2>
+
+                                           {% endif %}
+                                        
+                                      </div>
+                                  </div>
+                          
+       
+
+                                  <!-- <div>
+                                    
+                                    <% if (order[0].status !== 'Cancelled' && order[0].status !== 'delivered') { %>
+                                        <a href="/cancelorder/<%= order[0]._id %>"> Cancel</a>
+                                    <% } %>
+                                
+                                    <% if (order[0].status == 'delivered' && new Date(order[0].updated.getTime() + 5 * 24 * 60 * 60 * 1000) >= new Date()) { %>
+                                        <a href="/returnorder/<%= order[0]._id %>"> Return</a>
+                                    <% } %>
+                                </div> -->
+                                <a href="/pdf/<%= order[0]._id %>" class="btn btn-success mb-3">Download</a>
+                                <h5>Order ID: {{ order.order_id }}</h5>
+                                <!-- <p>Delivery Address: <%= order[0].address[0].save_as %>,
+                                    <%= order[0].address[0].houseName %>,
+                                    <%= order[0].address[0].city %>,
+                                    <%= order[0].address[0].pincode %> -->
+                                </p>
+                                
+                                
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th>Product Name</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for item in item %}
+
+                                                <tr>
+                                                    
+                                                    <td class="align-middle">
+                                                        <div class="custom-img-container text-center">
+                                                            <img src="{{ item.product.image.url }}" alt="" class="img-fluid" style="max-width: 150px; max-height: 150px;">
+                                                            
+                                                        </div>
+                                                    </td>
+                                                    <td></td>
+                                                    <td class="align-middle">{{ item.product.name }}</td>
+                                                    <td class="align-middle">{{ item.qty }}</td>
+                                                    <td class="align-middle">{{ item.price }}</td>
+                                                    <td class="align-middle">{{ item.total_price }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                
+                                            <!-- Additional rows -->
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td class="align-middle">Subtotal</td>
+                                                <td class="align-middle">{{order.total_amount}}</td>
+                                            </tr>
+                                
+                                            <tr>
+                                                <td colspan="2"></td>
+                                                <td class="align-middle">Payment Method</td>
+                                                <td class="align-middle">{{order.payment_type}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+        
+{% endblock %}
+       

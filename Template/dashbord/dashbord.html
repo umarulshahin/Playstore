@@ -162,7 +162,7 @@ font-family: 'Russo One', sans-serif;
 									<ul class="dropdown-menu">
 										<li class="nav-item"><a class="nav-link" href="{% url 'user_profile' user.id %}">My Account</a></li>
 										<li class="nav-item"><a class="nav-link" href="tracking.html">My Wishlist</a></li>
-										<li class="nav-item"><a class="nav-link" href="elements.html">My Order</a></li>
+										<li class="nav-item"><a class="nav-link" href="{% url 'my_order' %}">My Order</a></li>
 										<li class="nav-item"><a class="nav-link" href="login.html">My Wallet</a></li>
 										<li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
 									</ul>

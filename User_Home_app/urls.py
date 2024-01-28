@@ -37,6 +37,10 @@ urlpatterns = [
     path('user_order',views.User_Order,name='user_order'),
     
     path('confirmation',views.Confirmation,name='confirmation'),
+    
+    path('my_order',views.My_Order,name="my_order"),
+    
+    path('order_details<int:id>',views.Order_Details,name="order_details")
 
     
     

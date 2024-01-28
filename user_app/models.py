@@ -60,7 +60,7 @@ class User_Address(models.Model):
     
     name=models.CharField(max_length=100,null=False)
     email=models.EmailField(null=False, blank=False)
-    phone = PhoneNumberField(null=False, blank=False)
+    phone = models.CharField(null=False, blank=False)
     house=models.TextField(null=False,blank=False)
     street=models.TextField(null=False,blank=False)
     city=models.TextField(null=False,blank=False)

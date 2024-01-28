@@ -793,7 +793,6 @@ def Confirmation(request):
         key, value = pair.split(':')
         my_dict[key.strip(" '")] = value.strip(" '")
     
-    print(my_dict)
     context={
         'order' : order,
         'item' : item,
@@ -808,3 +807,65 @@ def Confirmation(request):
 
 
        # .................END ORDER CONFIRMATION ......................
+       
+       
+       # .................MY ORDER ......................
+       
+def My_Order(request):
+    
+    user=CustomUser.objects.get(email=request.user)
+    order=Order.objects.filter(user_id=user.id)
+    
+    addresses=[]
+    for i in order:
+        
+        pairs = i.user_address.strip('{}').split(',')
+
+        # Create a dictionary from the key-value pairs
+        
+        my_dict = {}
+        for pair in pairs:
+            key, value = pair.split(':')
+            my_dict[key.strip(" '")] = value.strip(" '")
+            
+            address = {'house': my_dict.get('house', ''),
+            'street': my_dict.get('street', ''),
+            'city': my_dict.get('city', ''),
+            'country': my_dict.get('country', ''),
+            'pin_code': my_dict.get('pin_code', ''),
+            'location': my_dict.get('location', ''),
+            'phone': my_dict.get('phone', ''),
+            'name': my_dict.get('name', ''),
+        }
+        
+        addresses.append({ 'address': address})
+        value=zip(order,addresses)
+        context={
+                
+            'value':value
+            
+            }
+    
+    return render(request,'dashbord/my_order.html',context)
+       
+       # .................END MY ORDER ......................
+       
+       # ................. ORDER DETAILS......................
+       
+def Order_Details(request,id):
+    
+    print(id,"...........252")
+    user=CustomUser.objects.get(email=request.user)
+    order=Order.objects.filter(user_id=user.id).last()
+    item=Order_Items.objects.filter(order_id=id)
+    
+    context={
+        'order' : order,
+        'item' : item,
+    }
+    
+    return render(request,'dashbord/order_details.html',context)
+       
+       # .................END ORDER DETAILS......................
+       
+       
