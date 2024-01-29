@@ -62,9 +62,12 @@
               
             </div>
            <div>
-              <a class="btn btn-orange" style="color: white;" onclick="confirm('/cancelorder/{{ item.order.order_id }}')"> Cancel</a>
-              
+            {% if item.status == 'Pending' or item.status == 'processing' %}
+            <a class="btn btn-orange" style="color: white;" onclick="confirm('{% url 'cancellation' item.id %}')">Cancel</a>
+            {% elif item.status == 'delivered' %}
               <a class="btn btn-orange" style="color: white;" onclick="confirm('/returnorder/{{ item.order.order_id }}')"> Return</a>
+
+            {% endif %}
             </div>
           </div>
           <!-- Add more HTML content for your order if needed -->
@@ -99,7 +102,7 @@
            })
            .then((result) => {
                if (result.isConfirmed) {
-                   
+                
                    window.location.href = itemId;
                } else {
                    console.log("User canceled");

@@ -38,8 +38,8 @@
                                             <div class="row justify-content-between">
                                                 <div class="order-tracking completed">
                                                     <span class="is-complete"></span>
-                                                    <p>{{order.created_date|date}}<br></p>
                                                     <p>Ordered<br></p>
+                                                    <p>{{order.status_date|date}}<br></p>
                                                 </div>
                                                 <div class="order-tracking ">
                                                     <span class="is-complete"></span>
@@ -62,8 +62,8 @@
                                                     </div>
                                                     <div class="order-tracking completed">
                                                         <span class="is-complete"></span>
-                                                        <p><%= order[0].updated.toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %><br></p>
                                                         <p>Processing<br></p>
+                                                        <p>{{order.status_date|date}}<br></p>
                                                     </div>
                                                     <div class="order-tracking ">
                                                         <span class="is-complete"></span>
@@ -86,8 +86,8 @@
                                                 </div>
                                                 <div class="order-tracking completed">
                                                     <span class="is-complete"></span>
-                                                    <p><%= order[0].updated.toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %><br></p>
                                                     <p>Shipped<br></p>
+                                                    <p>{{order.status_date|date}}<br></p>
                                                 </div>
                                                 <div class="order-tracking ">
                                                     <span class="is-complete"></span>
@@ -111,8 +111,8 @@
                                                 </div>
                                                 <div class="order-tracking completed">
                                                     <span class="is-complete"></span>
-                                                    <p><%= order[0].updated.toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %><br></p>
                                                     <p>Delivered<br></p>
+                                                    <p>{{order.status_date|date}}<br></p>
                                                 </div>
                                             </div>
                                             
@@ -133,8 +133,8 @@
                                                 </div>
                                                 <div class="order-tracking completed cancelledd">
                                                     <span class="is-complete"></span>
-                                                    <p><%= order[0].updated.toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %><br></p>
                                                     <p>Cancelled<br></p>
+                                                    <p>{{order.status_date|date}}<br></p>
                                                 </div>
                                             </div>
                                             {% elif order.status == 'refunded' %}
@@ -154,8 +154,8 @@
                                                 </div>
                                                 <div class="order-tracking completed cancelledd">
                                                     <span class="is-complete"></span>
-                                                    <p><%= order[0].updated.toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %><br></p>
                                                     <p>Cancelled<br></p>
+                                                    <p>{{order.status_date|date}}<br></p>
                                                 </div>
                                             </div>
                                            {% else %}

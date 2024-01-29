@@ -819,10 +819,7 @@ def My_Order(request):
     addresses=[]
     for i in order:
         
-        pairs = i.user_address.strip('{}').split(',')
-
-        # Create a dictionary from the key-value pairs
-        
+        pairs = i.user_address.strip('{}').split(',')        
         my_dict = {}
         for pair in pairs:
             key, value = pair.split(':')
@@ -854,10 +851,9 @@ def My_Order(request):
        
 def Order_Details(request,id):
     
-    
     order=Order.objects.get(id=id)
     item=Order_Items.objects.filter(order_id=id)
-    
+        
     context={
         'order' : order,
         'item' : item,
@@ -866,5 +862,33 @@ def Order_Details(request,id):
     return render(request,'dashbord/order_details.html',context)
        
        # .................END ORDER DETAILS......................
+       
+       # .................ORDER CANCELLATION......................
+  
+def Cancellation(request,id):
+    
+    order=Order.objects.get(id=id)
+    date=timezone.now()
+    if order:
+       
+       if order.payment_type == 'cashOnDelivery' :
+            user_order=Order_Items.objects.filter(order_id=id)
+            for i in user_order:
+                
+                print(i.size,i.product,i.qty,i.total_price,"..........235")
+                
+                stock=Product_size.objects.get(product=i.product,size=i.size)
+                
+                stock.stock += i.qty
+                stock.save()
+    
+            order.status= 'cancelled'
+            order.status_date=date
+            order.save()
+    
+    return redirect('my_order')
+         
+       
+       # .................END ORDER CANCELLATION......................
        
        

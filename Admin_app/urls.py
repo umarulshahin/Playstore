@@ -79,7 +79,11 @@ urlpatterns = [
     # ..............Endsize.....................
 
  
-    path('order_list/',views.Order_List,name="order_list"),
+    path('user_order/',views.User_Orders,name="user_orders"),
+    
+    path('order_list/<int:id>',views.Order_List,name="order_list"),
+    
+    path('order_status/<int:id>',views.Order_Status,name="order_status"),
     
 
 ]

@@ -7,6 +7,7 @@ from .views import *
 from django.views.decorators.cache import  never_cache,cache_control
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
+from django.utils import timezone
 
 
 # Create your views here.
@@ -428,6 +429,7 @@ def Update_Product(request,id):
     if request.method == "POST" :
         
         up= Product.objects.get(id=id)
+        
         name=request.POST.get("product_name")
         price=request.POST.get("price")
         discount=float(request.POST.get("discount"))
@@ -552,18 +554,77 @@ def Edit_Size(request,id):
                     # ................END EDIT SIZE .........................
                     
                     
-                    # ................ORDER LIST .........................
+                    # ................USER ORDERS .........................
                     
-def Order_List(request):
+def User_Orders(request):
     
     order=Order.objects.all()
+    
+    addresses=[]
+    for i in order:
+        
+        pairs = i.user_address.strip('{}').split(',')        
+        my_dict = {}
+        for pair in pairs:
+            key, value = pair.split(':')
+            my_dict[key.strip(" '")] = value.strip(" '")
+            
+            address = {'house': my_dict.get('house', ''),
+            'street': my_dict.get('street', ''),
+            'city': my_dict.get('city', ''),
+            'country': my_dict.get('country', ''),
+            'pin_code': my_dict.get('pin_code', ''),
+            'location': my_dict.get('location', ''),
+            'phone': my_dict.get('phone', ''),
+            'name': my_dict.get('name', ''),
+        }
+        
+        addresses.append({ 'address': address})
+        value=zip(order,addresses)
+    
+    context={
+        'value' : value,
+    }
+    
+    return render(request,'Admin/user_orders.html',context)
+                    
+                    # ................END USER ORDERS  .........................
+                    
+                    # ................ USER ORDER LIST .........................
+def Order_List(request,id):
+    
+    order=Order.objects.get(id=id)
+    item=Order_Items.objects.filter(order_id=id)
+        
     context={
         'order' : order,
+        'item' : item,
     }
+    
     
     return render(request,'Admin/order_list.html',context)
                     
-                    # ................END ORDER LIST .........................
+                    # ................END USER ORDER LIST .........................
+                    
+                    # ................ORDER STATUS .........................
+def Order_Status(request,id):
+    
+    if request.method =='POST':
+        
+        action=request.POST.get("action")
+    
+    order=Order.objects.get(id=id)
+    date=timezone.now()
+    if action and action != 'refunded':
+        
+        order.status= action
+        order.status_date=date
+        order.save()
+          
+    
+    return redirect('user_orders')
+                    
+                    # ................END ORDER STATUS .........................
     
 
 

@@ -54,7 +54,7 @@ class Order(models.Model):
         ('delivered','delivered'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
-        ('refunded','refunded'),
+        ('refunded','Refunded'),
 
     )
     
@@ -63,9 +63,10 @@ class Order(models.Model):
     user_address = models.TextField()
     total_amount = models.CharField(max_length=100,null=False)
     payment_type = models.CharField(max_length=100,null=False)
-    status = models.CharField(max_length=100,choices=ORDER_STATUS,default='Pending')
+    status = models.CharField(max_length=100,choices=ORDER_STATUS,default='pending')
+    status_date = models.DateTimeField(default=timezone.now,null=False)
     order_id = models.CharField(max_length=100,null=False,unique=True)
-    created_date =models.DateTimeField(default=timezone.now)
+    created_date =models.DateTimeField(default=timezone.now,null=False)
     
     def __int__(self):
         
