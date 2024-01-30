@@ -20,7 +20,7 @@ urlpatterns = [
     
     path('edit_address/',views.Edit_Address,name="edit_address"),
     
-    path('add-to-cart/',views.Add_to_Cart,name="add_to_cart"),
+    path('add-to-cart',views.Add_to_Cart,name="add_to_cart"),
     
     path('cart/',views.User_Cart,name="user_cart"),
     
@@ -34,15 +34,17 @@ urlpatterns = [
     
     path('checkout_add_address/',views.Checkout_Add_Address, name="checkout_add_address"),
     
-    path('user_order/',views.User_Order,name='user_order'),
+    path('user_order',views.User_Order,name='user_order'),
     
-    path('confirmation/',views.Confirmation,name='confirmation'),
+    path('confirmation',views.Confirmation,name='confirmation'),
     
     path('my_order/',views.My_Order,name="my_order"),
     
     path('order_details/<int:id>',views.Order_Details,name="order_details"),
     
     path('cancellation/<int:id>',views.Cancellation,name="cancellation"),
+    
+    path('pay_with_upi',views.Pay_With_Upi,name="pay_with_upi"),
 
     
     
