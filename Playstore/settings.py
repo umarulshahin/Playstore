@@ -171,3 +171,9 @@ AUTHENTICATION_BACKEND = (
 
 LOGIN_REDIRECT_URL="/"
 LOGOUT_REDIRECT_URL="/"
+
+
+RAZORPAY_KEY_ID = "rzp_test_NqH0AQ919F3Q3B"
+RAZORPAY_KEY_SECRET = "90Ku7HA85h4ej9uv0AptcwpK"
+#For To Enable Popus in Django or else it will block the payment popup
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"

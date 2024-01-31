@@ -11,7 +11,7 @@ from django.http.response import JsonResponse
 from django.views.decorators.http import require_POST
 from django.db.models import *
 import uuid
-import json
+import razorpay
 
 # Create your views here.
 
@@ -543,7 +543,7 @@ def Checkout(request):
         
         
         # ................. EDIT CHECKOUT ADDRESS......................
-
+@never_cache
 def Checkout_Edit_Address(request):
     
           if request.method == "POST" :
@@ -606,7 +606,7 @@ def Checkout_Edit_Address(request):
         
         
         # .................ADD CHECKOUT ADDRESS......................
-        
+@never_cache       
 def Checkout_Add_Address(request):
     
     
@@ -686,6 +686,7 @@ def Checkout_Add_Address(request):
         
         # .................USER ORDER......................
         
+@never_cache        
 def User_Order(request):
     
     
@@ -696,7 +697,7 @@ def User_Order(request):
             user=int(CustomUser.objects.get(email=request.user))
             user_id=CustomUser.objects.get(id=user)
           
-          
+            print(user_id.id)
             address=request.POST.get('address')
             payment_method=request.POST.get('paymentMethod')
             
@@ -753,7 +754,7 @@ def User_Order(request):
                                     
                                     # ..................order creating.................
                                     
-                                    
+                                print(user_id) 
                                 Order.objects.create(user = user_id,
                                                     user_address =user_add,
                                                     total_amount = total['total'],
@@ -870,7 +871,7 @@ def User_Order(request):
         
         
         # ................. ORDER CONFIRMATION ..................
-        
+@never_cache       
 def Confirmation(request):
     
     user=CustomUser.objects.get(email=request.user)
@@ -903,45 +904,50 @@ def Confirmation(request):
        
        
        # .................MY ORDER ......................
-       
+@never_cache      
 def My_Order(request):
     
     user=CustomUser.objects.get(email=request.user)
     order=Order.objects.filter(user_id=user.id)
     
-    addresses=[]
-    for i in order:
-        
-        pairs = i.user_address.strip('{}').split(',')        
-        my_dict = {}
-        for pair in pairs:
-            key, value = pair.split(':')
-            my_dict[key.strip(" '")] = value.strip(" '")
-            
-            address = {'house': my_dict.get('house', ''),
-            'street': my_dict.get('street', ''),
-            'city': my_dict.get('city', ''),
-            'country': my_dict.get('country', ''),
-            'pin_code': my_dict.get('pin_code', ''),
-            'location': my_dict.get('location', ''),
-            'phone': my_dict.get('phone', ''),
-            'name': my_dict.get('name', ''),
-        }
-        
-        addresses.append({ 'address': address})
-        value=zip(order,addresses)
-        context={
-                
-            'value':value
-            
-            }
     
-    return render(request,'dashbord/my_order.html',context)
+    if order:
+        addresses=[]
+        for i in order:
+            
+            pairs = i.user_address.strip('{}').split(',')        
+            my_dict = {}
+            for pair in pairs:
+                key, value = pair.split(':')
+                my_dict[key.strip(" '")] = value.strip(" '")
+                
+                address = {'house': my_dict.get('house', ''),
+                'street': my_dict.get('street', ''),
+                'city': my_dict.get('city', ''),
+                'country': my_dict.get('country', ''),
+                'pin_code': my_dict.get('pin_code', ''),
+                'location': my_dict.get('location', ''),
+                'phone': my_dict.get('phone', ''),
+                'name': my_dict.get('name', ''),
+            }
+            
+            addresses.append({ 'address': address})
+            value=zip(order,addresses)
+            context={
+                    
+                'value':value
+                
+                }
+        
+        return render(request,'dashbord/my_order.html',context)
+    
+    return render(request,'dashbord/my_order.html')
+
        
        # .................END MY ORDER ......................
        
        # ................. ORDER DETAILS......................
-       
+@never_cache      
 def Order_Details(request,id):
     
     order=Order.objects.get(id=id)
@@ -957,14 +963,28 @@ def Order_Details(request,id):
        # .................END ORDER DETAILS......................
        
        # .................ORDER CANCELLATION......................
-  
+@never_cache  
 def Cancellation(request,id):
     
     order=Order.objects.get(id=id)
     date=timezone.now()
     if order:
        
-       if order.payment_type == 'cashOnDelivery' :
+        if order.payment_type == 'cashOnDelivery' :
+            user_order=Order_Items.objects.filter(order_id=id)
+            for i in user_order:
+                
+                
+                stock=Product_size.objects.get(product=i.product,size=i.size)
+                
+                stock.stock += i.qty
+                stock.save()
+    
+            order.status= 'cancelled'
+            order.status_date=date
+            order.save()
+            
+        elif order.payment_type == 'paid by Razorpay' :
             user_order=Order_Items.objects.filter(order_id=id)
             for i in user_order:
                 
@@ -992,7 +1012,7 @@ def Pay_With_Upi(request):
             user=int(CustomUser.objects.get(email=request.user))
             user_id=CustomUser.objects.get(id=user)
           
-            
+          
             total=Cart.objects.filter(customuser=user_id).aggregate(total=Sum('total_price'))
             
             # .........stock cheking ...........
@@ -1009,9 +1029,12 @@ def Pay_With_Upi(request):
                             messages.error(request,f"{i.product.name} out stock please choose any another product")
                             return redirect("user_cart")
             total=total['total']
-            
+            client = razorpay.Client(auth=("Rrzp_test_NqH0AQ919F3Q3B", "90Ku7HA85h4ej9uv0AptcwpK"))
+           
+          
+                
             return JsonResponse({
-                    'total_amount' : total ,'username' :user_id.username,'email' : user_id.email,'phone':user_id.ph_no
+                    'total_amount' : total ,'username' :user_id.username,'email' : user_id.email,'phone':user_id.ph_no,
                     })
 
        # .................END RAZORPAY......................

@@ -60,17 +60,18 @@ class Order(models.Model):
     
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
     order_id = models.CharField(max_length=100,null=False,unique=True)
-    user_address = models.TextField()
-    total_amount = models.CharField(max_length=100,null=False)
+    user_address = models.TextField(null=False)
+    total_amount = models.IntegerField(null=False)
     payment_type = models.CharField(max_length=100,null=False)
     status = models.CharField(max_length=100,choices=ORDER_STATUS,default='pending')
     status_date = models.DateTimeField(default=timezone.now,null=False)
     order_id = models.CharField(max_length=100,null=False,unique=True)
     created_date =models.DateTimeField(default=timezone.now,null=False)
     
-    def __int__(self):
-        
-        return self.id
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.id = self.id
+        self.total_amount = int(self.total_amount)
     
     
 

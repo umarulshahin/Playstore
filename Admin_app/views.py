@@ -3,11 +3,14 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from user_app.models import *
 from .models import *
+from User_Home_app.models import *
+from django.db.models import Q
 from .views import *
 from django.views.decorators.cache import  never_cache,cache_control
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.utils import timezone
+from django.db.models import *
 
 
 # Create your views here.
@@ -64,7 +67,44 @@ def Admin(request):
 def Admin_dashbord(request):
     
     
-    return render(request,"Admin/admin_dashbord.html")
+    total_sale=Order.objects.exclude(Q(status="cancelled") &~ Q(status="refunded")).aggregate(total=Sum('total_amount'))
+    all_amount=Order.objects.aggregate(total=Sum("total_amount"))
+    cod_total=Order.objects.filter(payment_type="cashOnDelivery").aggregate(total=Sum('total_amount'))
+    upi_total=Order.objects.filter(payment_type="paid by Razorpay").aggregate(total=Sum('total_amount'))
+    pending=Order.objects.filter(status='pending').aggregate(total=Count("status"))
+    processing=Order.objects.filter(status='processing').aggregate(total=Count("status"))
+    shipped=Order.objects.filter(status='shipped').aggregate(total=Count("status"))
+    delivered=Order.objects.filter(status='delivered').aggregate(total=Count("status"))
+    cancelled=Order.objects.filter(status='cancelled').aggregate(total=Count("status"))
+    refund=Order.objects.filter(status='refunded').aggregate(total=Count("status"))
+
+
+
+    print(pending['total'])
+    print(processing['total'])
+    print(shipped['total'])
+    print(delivered['total'])
+    print(cancelled['total'])
+    print(refund['total'])
+    
+
+
+   
+    context={
+        'total_sale' : total_sale['total'],
+        'all_amount' : all_amount['total'],
+        'cod_total'  : cod_total['total'],
+        'upi_total'  : upi_total['total'],
+        'pending'    : pending['total'],
+        'procrssing' : processing['total'],
+        'sipped'     : shipped['total'],
+        'delivered'  : delivered['total'],
+        'cancelled'  : cancelled['total'],
+        'refund'     : refund['total']
+    }
+    
+    
+    return render(request,"Admin/admin_dashbord.html",context)
 
                # ............ End Admin Dashbord ....................
                
