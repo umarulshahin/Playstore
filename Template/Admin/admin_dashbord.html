@@ -416,7 +416,7 @@
                 </div>
                 <span class="fw-semibold d-block mb-1">Revenue</span>
                 <div class="user-progress d-flex align-items-center gap-1">
-                    <h3 class="card-title mb-2">₹ {{total_sale}}</h3>
+                    <h3 class="card-title mb-2">{{total_sale}} K</h3>
                 <span class="text-muted"></span>
                   </div>
                 
@@ -452,8 +452,8 @@
                     </div>
                   </div>
                 </div>
-                <span>Sales</span>
-                <h3 class="card-title text-nowrap mb-1">₹ {{all_amount}}</h3>
+                <span>Total Sales</span>
+                <h3 class="card-title text-nowrap mb-1"> {{all_amount}} K</h3>
                 <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> +28.42%</small>
               </div>
             </div>
@@ -490,7 +490,7 @@
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
               <div class="d-flex flex-column align-items-center gap-1">
-                <h2 class="mb-2">{{ordersCount}}</h2>
+                <h2 class="mb-2">{{all_category}}</h2>
                 <span>Total Orders</span>
               </div>
               <div id="orderStatisticsChart"></div>
@@ -505,18 +505,54 @@
                 </div>
                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                   <div class="me-2">
-                    <h6 class="mb-0"></h6>
+                    <h6 class="mb-0">PUMA</h6>
                   </div>
                   <div class="user-progress">
-                    <small class="fw-semibold"> Orders</small>
+                    <small class="fw-semibold">{{puma}} Orders</small>
                   </div>
                 </div>
               </li>
-           
+
+              <li class="d-flex mb-4 pb-1">
+                <div class="avatar flex-shrink-0 me-3">
+                  <span class="avatar-initial rounded bg-label-primary"
+                    ></i
+                  ></span>
+                </div>
+                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                  <div class="me-2">
+                    <h6 class="mb-0">ADIDAS</h6>
+                  </div>
+                  <div class="user-progress">
+                    <small class="fw-semibold">{{adidas}} Orders</small>
+                  </div>
+                </div>
+              </li>
+
+              <li class="d-flex mb-4 pb-1">
+                <div class="avatar flex-shrink-0 me-3">
+                  <span class="avatar-initial rounded bg-label-primary"
+                    ></i
+                  ></span>
+                </div>
+                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                  <div class="me-2">
+                    <h6 class="mb-0">NIKE</h6>
+                  </div>
+                  <div class="user-progress">
+                    <small class="fw-semibold">{{nike}} Orders</small>
+                  </div>
+                </div>
+              </li>
+
+              
+              
             </ul>
           </div>
         </div>
       </div>
+
+      
       <!--/ Order Statistics -->
       <!-- Transactions -->
       <div class="col-md-6 col-lg-4 order-2 mb-4">
@@ -563,7 +599,7 @@
 
               <li class="d-flex mb-4 pb-1">
                 <div class="avatar flex-shrink-0 me-3">
-                   <span class="avatar-initial rounded bg-label-warning"
+                   <span class="avatar-initial rounded bg-label-primary"
                      ></i
                    ></span>
                  </div>
@@ -580,7 +616,7 @@
 
                <li class="d-flex mb-4 pb-1">
                 <div class="avatar flex-shrink-0 me-3">
-                   <span class="avatar-initial rounded bg-label-warning"
+                   <span class="avatar-initial rounded bg-label-info"
                      ></i
                    ></span>
                  </div>
@@ -597,7 +633,7 @@
 
                <li class="d-flex mb-4 pb-1">
                 <div class="avatar flex-shrink-0 me-3">
-                   <span class="avatar-initial rounded bg-label-warning"
+                   <span class="avatar-initial rounded bg-label-success"
                      ></i
                    ></span>
                  </div>
@@ -614,7 +650,7 @@
 
                <li class="d-flex mb-4 pb-1">
                 <div class="avatar flex-shrink-0 me-3">
-                   <span class="avatar-initial rounded bg-label-warning"
+                   <span class="avatar-initial rounded bg-label-danger"
                      ></i
                    ></span>
                  </div>
@@ -631,7 +667,7 @@
 
                <li class="d-flex mb-4 pb-1">
                 <div class="avatar flex-shrink-0 me-3">
-                   <span class="avatar-initial rounded bg-label-warning"
+                   <span class="avatar-initial rounded bg-label-dark"
                      ></i
                    ></span>
                  </div>
@@ -738,12 +774,6 @@
   </div>
   <!-- / Content -->
 
-     
-
-
-     {%endblock%}
-
-
 
       </div>
 
@@ -751,7 +781,7 @@
       <div class="layout-overlay layout-menu-toggle"></div>
     </div>
     <!-- / Layout wrapper -->
-
+    {%endblock%}
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
     <script src="{% static '/admin/assets/vendor/libs/jquery/jquery.js' %}"></script>

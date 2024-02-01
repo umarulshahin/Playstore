@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
-from phonenumber_field.modelfields import PhoneNumberField
 
 
              # ....coustome_user....
@@ -50,6 +49,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __int__(self):
         return self.id 
     
+    class Meta:
+        ordering = ['-id']
+    
      # .............coustomer_user end.............
      
      
@@ -70,5 +72,6 @@ class User_Address(models.Model):
     location=models.CharField(max_length=10, null=False,blank=False)
     customuser=models.ForeignKey(CustomUser,on_delete=models.CASCADE)
     
-    
+    class Meta:
+        ordering = ['-id']
      # .............END USER ADDRESS.............

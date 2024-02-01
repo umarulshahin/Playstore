@@ -96,7 +96,7 @@ def Signup(request):
         
         # ........... Form Validation ............
         
-        if not (username or L_name or email or phone or password or con_Password):
+        if not (username and L_name and email and phone and password and con_Password):
             messages.error(request, "please Fill Required Field")
             return render(request,'user_auth/Signup.html')
         

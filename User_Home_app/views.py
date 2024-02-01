@@ -12,6 +12,8 @@ from django.views.decorators.http import require_POST
 from django.db.models import *
 import uuid
 import razorpay
+from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import make_password, check_password
 
 # Create your views here.
 
@@ -858,7 +860,7 @@ def User_Order(request):
                                             
                                         
                                         Cart.objects.filter(customuser=user_id).delete()
-                                        print("........2324")
+                                      
                 
                                         return redirect('confirmation')
                                 else:
@@ -1038,5 +1040,68 @@ def Pay_With_Upi(request):
                     })
 
        # .................END RAZORPAY......................
+       
+       # .................NEW PASSWORD......................
+@login_required(login_url='/user_app/Login/')
+@never_cache      
+def New_Password(request):
+    
+        
+        
+    if  request.user.is_authenticated:
+        
+            if request.method =='POST':
+                old_pass=request.POST.get("old_password")
+                new_pass=request.POST.get("new_password")
+                con_pass=request.POST.get("con_password")
+                
+                print(old_pass,new_pass,con_pass,"........234")
+                
+                pattern = r'^[a-zA-Z0-9].*'
+                pattern_pass = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$'
+                
+                if not (old_pass and new_pass and con_pass ):
+                    messages.error(request, "please Fill Required Field")
+                    return render(request,"dashbord/new_password.html")
+                
+                elif not re.match(pattern_pass,new_pass):
+                    messages.error(request,"The password is too weak")
+                    return render(request,"dashbord/new_password.html")
+                        
+                elif new_pass != con_pass:
+                    
+                    messages.error(request,"New Password and confirm password doesn't match ")
+                    return render(request,"dashbord/new_password.html")
+                
+                else:
+                        try:
+                            
+                            
+                            user= authenticate(request,email=request.user,password=old_pass)
+                            
+                        except Exception as e:
+                            
+                            messages.error(request,"Old Password doesn't match ")
+                            return render(request,"dashbord/new_password.html")
+                 
+                        try:
+                                  
+                            user=CustomUser.objects.get(email=request.user)
+                            hashed_password = make_password(new_pass)
+                            user.password = hashed_password
+                            user.save()
+                                    
+                            messages.success(request,"New password updated")
+                            return redirect("new_password")
+                        
+                        except Exception as e:
+                            return render(request,"dashbord/404.html")
+                            
+                            
+                        
+                    
+    
+    return render(request,"dashbord/new_password.html")
+       # .................END NEW PASSWORD......................
        
        

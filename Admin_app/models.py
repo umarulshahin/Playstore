@@ -72,6 +72,8 @@ class Order(models.Model):
         super().__init__(*args, **kwargs)
         self.id = self.id
         self.total_amount = int(self.total_amount)
+    class Meta:
+        ordering = ['-id']
     
     
 
@@ -83,6 +85,9 @@ class Order_Items(models.Model):
     size=models.IntegerField(null=False,blank=False)
     price=models.IntegerField(null=False,blank=False)
     total_price=models.IntegerField(null=False,blank=False)
+    
+    class Meta:
+        ordering = ['-id']
  
     
     

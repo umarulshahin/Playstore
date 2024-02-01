@@ -69,6 +69,11 @@ def Admin_dashbord(request):
     
     total_sale=Order.objects.exclude(Q(status="cancelled") &~ Q(status="refunded")).aggregate(total=Sum('total_amount'))
     all_amount=Order.objects.aggregate(total=Sum("total_amount"))
+    
+    total_sale=total_sale['total']//1000
+    all_amount=all_amount['total']//1000
+    
+    
     cod_total=Order.objects.filter(payment_type="cashOnDelivery").aggregate(total=Sum('total_amount'))
     upi_total=Order.objects.filter(payment_type="paid by Razorpay").aggregate(total=Sum('total_amount'))
     pending=Order.objects.filter(status='pending').aggregate(total=Count("status"))
@@ -77,22 +82,19 @@ def Admin_dashbord(request):
     delivered=Order.objects.filter(status='delivered').aggregate(total=Count("status"))
     cancelled=Order.objects.filter(status='cancelled').aggregate(total=Count("status"))
     refund=Order.objects.filter(status='refunded').aggregate(total=Count("status"))
-
-
-
-    print(pending['total'])
-    print(processing['total'])
-    print(shipped['total'])
-    print(delivered['total'])
-    print(cancelled['total'])
-    print(refund['total'])
+    
+    
+    adidas=Product.objects.filter(sub_category="2").aggregate(total=Count('order_items'))       
+    puma=Product.objects.filter(sub_category="1").aggregate(total=Count('order_items'))   
+    nike=Product.objects.filter(sub_category="3").aggregate(total=Count('order_items'))
+    all=Product.objects.all().aggregate(total=Count('order_items'))
     
 
 
    
     context={
-        'total_sale' : total_sale['total'],
-        'all_amount' : all_amount['total'],
+        'total_sale' : total_sale,
+        'all_amount' : all_amount,
         'cod_total'  : cod_total['total'],
         'upi_total'  : upi_total['total'],
         'pending'    : pending['total'],
@@ -100,7 +102,11 @@ def Admin_dashbord(request):
         'sipped'     : shipped['total'],
         'delivered'  : delivered['total'],
         'cancelled'  : cancelled['total'],
-        'refund'     : refund['total']
+        'refund'     : refund['total'],
+        'puma'       : puma['total'],
+        'adidas'     : adidas['total'],
+        'nike'       : nike['total'],
+        'all_category': all['total'],
     }
     
     

@@ -45,6 +45,8 @@ urlpatterns = [
     path('cancellation/<int:id>',views.Cancellation,name="cancellation"),
     
     path('pay_with_upi',views.Pay_With_Upi,name="pay_with_upi"),
+    
+    path('new_password/',views.New_Password,name="new_password"),
 
     
     

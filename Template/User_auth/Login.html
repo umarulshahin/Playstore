@@ -89,11 +89,14 @@
 						
 							<div class="container">
 
-								{% for error in messages %}
-
-								<p class="text-center" style="color:red">{{error}}</p>
-
-								{%endfor%}
+								<div class="container">
+									{% for message in messages %}
+										{% if message.tags == 'error' %}
+											<p class="text-center" style="color:red">{{ message }}</p>
+										{% elif message.tags == 'success' %}
+											<p class="text-center" style="color:rgb(61, 214, 61)">{{ message }}</p>
+										{% endif %}
+									{% endfor %}
 
 							
 							</div>
