@@ -178,7 +178,7 @@
                                         <a href="/returnorder/<%= order[0]._id %>"> Return</a>
                                     <% } %>
                                 </div> -->
-                                <a href="/pdf/<%= order[0]._id %>" class="btn btn-success mb-3">Download</a>
+                                <a href="{% url 'orders_bill' order.id %}" class="btn btn-success mb-3">Download</a>
                                 <h5>Order ID: {{ order.order_id }}</h5>
                                 <!-- <p>Delivery Address: <%= order[0].address[0].save_as %>,
                                     <%= order[0].address[0].houseName %>,
@@ -197,6 +197,7 @@
                                                 <th>Quantity</th>
                                                 <th>Price</th>
                                                 <th>Total</th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -215,7 +216,10 @@
                                                     <td class="align-middle">{{ item.qty }}</td>
                                                     <td class="align-middle">{{ item.price }}</td>
                                                     <td class="align-middle">{{ item.total_price }}</td>
-                                                </tr>
+
+                                                    <!-- <td class="align-middle"><a class="btn btn-primary " href="{% url 'order_list' order.id %}"
+                                                        ><i class="bx bx-show me-1"></i>Return</a></td>
+                                                </tr> -->
                                             {% endfor %}
                                 
                                             <!-- Additional rows -->

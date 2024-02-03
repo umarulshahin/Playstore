@@ -47,6 +47,8 @@ urlpatterns = [
     path('pay_with_upi',views.Pay_With_Upi,name="pay_with_upi"),
     
     path('new_password/',views.New_Password,name="new_password"),
+    
+    path('orders_bill<int:id>',views.Orders_Bill,name="orders_bill"),
 
     
     

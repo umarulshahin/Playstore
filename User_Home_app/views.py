@@ -14,6 +14,9 @@ import uuid
 import razorpay
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password, check_password
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from reportlab.platypus import Table, TableStyle
 
 # Create your views here.
 
@@ -1092,7 +1095,7 @@ def New_Password(request):
                             user.save()
                                     
                             messages.success(request,"New password updated")
-                            return redirect("new_password")
+                            return redirect("login")
                         
                         except Exception as e:
                             return render(request,"dashbord/404.html")
@@ -1102,6 +1105,67 @@ def New_Password(request):
                     
     
     return render(request,"dashbord/new_password.html")
+
        # .................END NEW PASSWORD......................
+       
+       # .................USER ORDERS BILL DOWNLOADING......................
+from reportlab.lib import colors     
+def Orders_Bill(request,id):
+    
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="sales_invoice.pdf"'
+
+        buffer = BytesIO()
+        p = canvas.Canvas(buffer)
+
+        p.drawString(250, 650, "Sales Invoice")
+
+        order_item = Order_Items.objects.filter(order=id)
+        order = Order.objects.get(id=id)
+
+        # Display information above the table
+        p.drawString(100,605, f"Customer : {order.user.username}")
+        p.drawString(100,590, f"Date : {order.created_date.strftime('%Y-%m-%d')}")
+        p.drawString(100,573, f"Order id : {order.order_id}")
+        
+
+        # Create a table and set its style
+        data = [['Item', 'Quantity', 'Unit Price', 'Total']]
+        for item in order_item:
+            data.append([item.product.name, item.qty, item.price, item.total_price])
+
+        table = Table(data, colWidths=[150, 80, 80, 80])
+        style = TableStyle([
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ])
+        table.setStyle(style)
+
+        # Draw the table on the PDF
+        table.wrapOn(p, 0, 0)
+        table.drawOn(p, 100, 500)  # Adjust the Y-coordinate as needed
+        
+       
+
+        # Display "Total Amount" below the table
+        p.drawString(360,470, f"Total Amount : {order.total_amount}")
+
+        # Close the PDF object cleanly.
+        p.showPage()
+        p.save()
+
+        # Get the value of the BytesIO buffer and write it to the response.
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+        return response
+
+        
+       
+       # .................END USER ORDERS BILL DOWNLOADING......................
        
        
