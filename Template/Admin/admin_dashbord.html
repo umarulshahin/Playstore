@@ -446,9 +446,23 @@
                     >
                       <i class="bx bx-dots-vertical-rounded"></i>
                     </button>
-                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt6">
+                    <!-- <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt6">
                       <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                      <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                      <a class="dropdown-item" href="javascript:void(0);">Delete</a> -->
+                      <div class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="cardOpt6">
+                        <h3>Sales Report</h3>
+                        <form id="reportForm" action="{% url 'admin_dashbord' %}" method="post">
+                          {% csrf_token %}
+                        <label for="startDate">Start Date:</label>
+                        <input type="date" id="startDate" name="startDate">
+  
+                        <label for="endDate">End Date:</label>
+                        <input type="date" id="endDate" name="endDate">
+  
+                       <button class="btn btn-warning mt-2" type="submit" style="margin-left: 0;">Download Report</button>
+  
+                      </form>
+                    
                     </div>
                   </div>
                 </div>
@@ -694,23 +708,8 @@
         <div class="card h-100">
           <div class="card-header d-flex align-items-center justify-content-between">
             <h5 class="card-title m-0 me-2">Transactions</h5>
-            <div class="dropdown">
-              <button
-                class="btn p-0"
-                type="button"
-                id="transactionID"
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                <i class="bx bx-dots-vertical-rounded"></i>
-              </button>
-              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="transactionID">
-                <a class="dropdown-item" href="javascript:void(0);">Last 28 Days</a>
-                <a class="dropdown-item" href="javascript:void(0);">Last Month</a>
-                <a class="dropdown-item" href="javascript:void(0);">Last Year</a>
-              </div>
-            </div>
+
+            
           </div>
           <div class="card-body">
             <ul class="p-0 m-0">
@@ -768,21 +767,69 @@
             </ul>
           </div>
         </div>
+       
+       </div>
       </div>
+      
       <!--/ Transactions -->
     </div>
   </div>
+  <div class="container">
+    <div class="col-md-6 col-lg-6 order-2 mb-4">
+          <canvas id="myChart"></canvas>
+  </div>   
+
+  </div>
   <!-- / Content -->
 
-
       </div>
-
       <!-- Overlay -->
       <div class="layout-overlay layout-menu-toggle"></div>
     </div>
+   
+   
+   
+   
     <!-- / Layout wrapper -->
     {%endblock%}
     <!-- Core JS -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   
+   <script>
+       document.addEventListener('DOMContentLoaded', function() {
+           // Example data
+           var data = {
+               labels: ['Puma', 'Adidas', 'Nike'],
+               datasets: [{
+                   label: 'Dataset 1',
+                   data: [{{puma}}, {{adidas}}, {{nike}}],
+                   backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                   borderColor: 'rgba(75, 192, 192, 1)',
+                   borderWidth: 2
+               }]
+           };
+   
+           // Chart configuration
+           var config = {
+               type: 'bar',
+               data: data,
+               options: {
+                   scales: {
+                       y: {
+                           beginAtZero: true
+                       }
+                   }
+               }
+           };
+   
+           // Create the chart
+           var ctx = document.getElementById('myChart').getContext('2d');
+           var myChart = new Chart(ctx, config);
+       });
+   </script>
+
+
     <!-- build:js assets/vendor/js/core.js -->
     <script src="{% static '/admin/assets/vendor/libs/jquery/jquery.js' %}"></script>
     <script src="{% static '/admin/assets/vendor/libs/popper/popper.js' %}"></script>

@@ -66,51 +66,100 @@ def Admin(request):
 @never_cache
 def Admin_dashbord(request):
     
+    if request.method =="POST":
+        
+        start_date=request.POST.get("startDate")
+        end_date=request.POST.get("endDate")
+        
+        total_sale=Order.objects.filter(status__in=['pending','processing','shipped','delivered'], created_date__range=(start_date, end_date)).aggregate(total=Sum('total_amount'))
+        all_amount=Order.objects.filter(created_date__range=(start_date, end_date)).aggregate(total=Sum("total_amount"))
+        
+        total_sale=total_sale['total']//1000
+        all_amount=all_amount['total']//1000
+        
+        cod_total=Order.objects.filter(payment_type="cashOnDelivery", created_date__range=(start_date, end_date),status__in=['pending','processing','shipped','delivered']).aggregate(total=Sum('total_amount'))
+        upi_total=Order.objects.filter(payment_type="paid by Razorpay",created_date__range=(start_date, end_date),status__in=['pending','processing','shipped','delivered']).aggregate(total=Sum('total_amount'))
+        
+        pending=Order.objects.filter(status='pending',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
+        processing=Order.objects.filter(status='processing',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
+        shipped=Order.objects.filter(status='shipped',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
+        delivered=Order.objects.filter(status='delivered',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
+        cancelled=Order.objects.filter(status='cancelled',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
+        refund=Order.objects.filter(status='refunded',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
+            
+        adidas = Order_Items.objects.filter(order__created_date__range=(start_date,end_date),Sub_Category="2").aggregate(total=Sum('qty'))              
+        puma= Order_Items.objects.filter(order__created_date__range=(start_date,end_date),Sub_Category="1").aggregate(total=Sum('qty'))
+        nike= Order_Items.objects.filter(order__created_date__range=(start_date,end_date),Sub_Category="3").aggregate(total=Sum('qty'))
+        
+        all=Order.objects.filter(created_date__range=(start_date, end_date)).aggregate(total=Count('id'))
+        
+        context={
+                'total_sale' : total_sale,
+                'all_amount' : all_amount,
+                'cod_total'  : cod_total['total'],
+                'upi_total'  : upi_total['total'],
+                'pending'    : pending['total'],
+                'procrssing' : processing['total'],
+                'sipped'     : shipped['total'],
+                'delivered'  : delivered['total'],
+                'cancelled'  : cancelled['total'],
+                'refund'     : refund['total'],
+                'puma'       : puma['total'],
+                'adidas'     : adidas['total'],
+                'nike'       : nike['total'],
+                'all_category': all['total'],
+                
+               
+            }
+            
+            
+        return render(request,"Admin/admin_dashbord.html",context)
+        
     
-    total_sale=Order.objects.exclude(Q(status="cancelled") &~ Q(status="refunded")).aggregate(total=Sum('total_amount'))
-    all_amount=Order.objects.aggregate(total=Sum("total_amount"))
-    
-    total_sale=total_sale['total']//1000
-    all_amount=all_amount['total']//1000
-    
-    
-    cod_total=Order.objects.filter(payment_type="cashOnDelivery").aggregate(total=Sum('total_amount'))
-    upi_total=Order.objects.filter(payment_type="paid by Razorpay").aggregate(total=Sum('total_amount'))
-    pending=Order.objects.filter(status='pending').aggregate(total=Count("status"))
-    processing=Order.objects.filter(status='processing').aggregate(total=Count("status"))
-    shipped=Order.objects.filter(status='shipped').aggregate(total=Count("status"))
-    delivered=Order.objects.filter(status='delivered').aggregate(total=Count("status"))
-    cancelled=Order.objects.filter(status='cancelled').aggregate(total=Count("status"))
-    refund=Order.objects.filter(status='refunded').aggregate(total=Count("status"))
-    
-    
-    adidas=Product.objects.filter(sub_category="2").aggregate(total=Count('order_items'))       
-    puma=Product.objects.filter(sub_category="1").aggregate(total=Count('order_items'))   
-    nike=Product.objects.filter(sub_category="3").aggregate(total=Count('order_items'))
-    all=Product.objects.all().aggregate(total=Count('order_items'))
-    
-
-
-   
-    context={
-        'total_sale' : total_sale,
-        'all_amount' : all_amount,
-        'cod_total'  : cod_total['total'],
-        'upi_total'  : upi_total['total'],
-        'pending'    : pending['total'],
-        'procrssing' : processing['total'],
-        'sipped'     : shipped['total'],
-        'delivered'  : delivered['total'],
-        'cancelled'  : cancelled['total'],
-        'refund'     : refund['total'],
-        'puma'       : puma['total'],
-        'adidas'     : adidas['total'],
-        'nike'       : nike['total'],
-        'all_category': all['total'],
-    }
-    
-    
-    return render(request,"Admin/admin_dashbord.html",context)
+    else:
+            total_sale=Order.objects.exclude(Q(status="cancelled") &~ Q(status="refunded")).aggregate(total=Sum('total_amount'))
+            all_amount=Order.objects.aggregate(total=Sum("total_amount"))
+            
+            total_sale=total_sale['total']//1000
+            all_amount=all_amount['total']//1000
+            
+            
+            cod_total=Order.objects.filter(payment_type="cashOnDelivery").aggregate(total=Sum('total_amount'))
+            upi_total=Order.objects.filter(payment_type="paid by Razorpay").aggregate(total=Sum('total_amount'))
+            
+            pending=Order.objects.filter(status='pending').aggregate(total=Count("status"))
+            processing=Order.objects.filter(status='processing').aggregate(total=Count("status"))
+            shipped=Order.objects.filter(status='shipped').aggregate(total=Count("status"))
+            delivered=Order.objects.filter(status='delivered').aggregate(total=Count("status"))
+            cancelled=Order.objects.filter(status='cancelled').aggregate(total=Count("status"))
+            refund=Order.objects.filter(status='refunded').aggregate(total=Count("status"))
+            
+            
+            adidas=Order_Items.objects.filter(Sub_Category="2").aggregate(total=Sum('qty'))
+            puma=Order_Items.objects.filter(Sub_Category="1").aggregate(total=Sum('qty'))   
+            nike=Order_Items.objects.filter(Sub_Category="3").aggregate(total=Sum('qty'))
+            all=Order.objects.all().aggregate(total=Count('id'))
+            
+        
+            context={
+                'total_sale' : total_sale,
+                'all_amount' : all_amount,
+                'cod_total'  : cod_total['total'],
+                'upi_total'  : upi_total['total'],
+                'pending'    : pending['total'],
+                'procrssing' : processing['total'],
+                'sipped'     : shipped['total'],
+                'delivered'  : delivered['total'],
+                'cancelled'  : cancelled['total'],
+                'refund'     : refund['total'],
+                'puma'       : puma['total'],
+                'adidas'     : adidas['total'],
+                'nike'       : nike['total'],
+                'all_category': all['total'],
+            }
+            
+            
+            return render(request,"Admin/admin_dashbord.html",context)
 
                # ............ End Admin Dashbord ....................
                
@@ -121,10 +170,11 @@ def Admin_dashbord(request):
 def Admin_logout(request):
     
     if 'email_admin' in request.session:
+        
         email_admin_value = request.session.get('email_admin')
         del request.session['email_admin']
-       
         logout(request)
+        
         return redirect("admin_login")
 
                 # ............End Admin Logout  ....................
@@ -138,7 +188,6 @@ def Admin_logout(request):
 def User_list(request):
     
     user=CustomUser.objects.filter(is_staff=False).values()
-   
     
     context={
         
@@ -200,12 +249,10 @@ def Change_Status(request,id):
     
     cate=Category.objects.get(id=id)
     
-    
     if not cate.is_deleted :
         
         cate.is_deleted = True
         cate.save()
-        
         
     else:
         
@@ -260,8 +307,6 @@ def Add_category(request):
             messages.error(request, "This Category Alredy Exist")
             return redirect("category_list")
             
-            
-        
         
         Category.objects.create(name=name)
         
@@ -294,6 +339,7 @@ def Sub_category(request):
                   # ................Sub Category Status Change.........................
                   
 def Status_Change(request,id):
+    
     status=Sub_Category.objects.get(id=id)
     
     if not status.is_deleted:
@@ -450,8 +496,6 @@ def Add_Product(request):
             Product_image.objects.create(product=pro_id,image_url=r_images[i])
             
         return redirect("product_list") 
-        
-    
                     
                     # ................End Add Product .........................
                     
@@ -485,10 +529,6 @@ def Update_Product(request,id):
         r_image=request.FILES.getlist("related_images")
         delete=request.POST.getlist("selected_images")
         
-      
-       
-        
-
      
         if int(price) < 1:
             
@@ -501,7 +541,6 @@ def Update_Product(request,id):
              return redirect("product_list")
          
             
-    
         sub=Sub_Category.objects.get(id=sub_category)
         
         up.name=name

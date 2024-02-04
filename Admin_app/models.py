@@ -80,11 +80,13 @@ class Order(models.Model):
 class Order_Items(models.Model):
     
     order=models.ForeignKey(Order,on_delete=models.CASCADE)
-    product=models.ForeignKey(Product,on_delete=models.CASCADE)
+    product=models.ForeignKey(Product,on_delete=models.PROTECT)
+    Sub_Category=models.ForeignKey(Sub_Category,on_delete=models.PROTECT)
     qty=models.IntegerField(null=False,blank=False)
     size=models.IntegerField(null=False,blank=False)
     price=models.IntegerField(null=False,blank=False)
     total_price=models.IntegerField(null=False,blank=False)
+    
     
     class Meta:
         ordering = ['-id']

@@ -86,5 +86,7 @@ urlpatterns = [
     path('order_status/<int:id>',views.Order_Status,name="order_status"),
     
 
+    
+
 ]
 

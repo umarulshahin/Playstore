@@ -766,15 +766,17 @@ def User_Order(request):
                                                     payment_type = payment_method,
                                                     order_id = order_id 
                                                         )
-                                    
+                                
                                 id=Order.objects.get(order_id=order_id)
                                 value=Cart.objects.filter(customuser=user_id)
+                                request.session['order_id']=id.id
                                     
                                     
                                 for i in value:
                                     
                                     Order_Items.objects.create(order=id,
                                                             product=i.product,
+                                                            Sub_Category=i.product.sub_category,
                                                             qty=i.qty,
                                                             size=i.size,
                                                             price=i.price,
@@ -801,7 +803,6 @@ def User_Order(request):
                                     'location': j.location} 
                             
                             # .................stock checking ............
-                        print(user_add,"..........352")
                         value=Cart.objects.filter(customuser=request.user)
                         for i in value:
                                 
@@ -846,15 +847,18 @@ def User_Order(request):
                                                             payment_type = payment_method,
                                                             order_id = order_id 
                                                                 )
-
+                                        
                                         id=Order.objects.get(order_id=order_id)
                                         value=Cart.objects.filter(customuser=user_id)
+                                        
+                                        request.session['order_id']=id.id
                                             
                                             
                                         for i in value:
                                             
                                             Order_Items.objects.create(order=id,
                                                                     product=i.product,
+                                                                    Sub_Category=i.product.sub_category,
                                                                     qty=i.qty,
                                                                     size=i.size,
                                                                     price=i.price,
@@ -879,9 +883,10 @@ def User_Order(request):
 @never_cache       
 def Confirmation(request):
     
-    user=CustomUser.objects.get(email=request.user)
-    order=Order.objects.filter(user_id=user.id).last()
-    item=Order_Items.objects.filter(order=order.id)
+    id=str(request.session.get('order_id'))
+    
+    order=Order.objects.get(id=id)
+    item=Order_Items.objects.filter(order=id)
     
     print(type(order.user_address))
     pairs = order.user_address.strip('{}').split(',')
@@ -900,6 +905,7 @@ def Confirmation(request):
         'city' : my_dict['city'] ,
         'country' : my_dict['country'] 
     }
+    
     
     return render(request,'dashbord/confirmation.html',context)
 
