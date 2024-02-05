@@ -358,13 +358,13 @@
 
   <div class="container-xxl flex-grow-1 container-p-y">
     <div class="row">
-      <div class="col-lg-8 mb-4 order-0">
+      <div class="col-lg-6 mb-4 order-0">
         <div class="card">
           <div class="d-flex align-items-end row">
-            <div class="col-sm-7">
+            <div class="col-sm-5">
               <div class="card-body">
                 <h5 class="card-title text-primary">Congratulations {{adminName}}! 🎉</h5>
-                <p class="mb-4">
+                <p class="mb-5">
                   You have done <span class="fw-bold">72%</span> more sales today. Check your new badge in
                   your profile.
                 </p>
@@ -384,9 +384,9 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-4 col-md-4 order-1">
+      <div class="col-lg-6 col-md-6 order-1">
         <div class="row">
-          <div class="col-lg-6 col-md-12 col-6 mb-4">
+          <div class="col-lg-4 col-md-5 col-4 mb-4">
             <div class="card">
               <div class="card-body">
                 <div class="card-title d-flex align-items-start justify-content-between">
@@ -397,7 +397,7 @@
                       class="rounded"
                     />
                   </div>
-                  <div class="dropdown">
+                  <!-- <div class="dropdown">
                     <button
                       class="btn p-0"
                       type="button"
@@ -412,7 +412,7 @@
                       <a class="dropdown-item" href="javascript:void(0);">View More</a>
                       <a class="dropdown-item" href="javascript:void(0);">Delete</a>
                     </div>
-                  </div>
+                  </div> -->
                 </div>
                 <span class="fw-semibold d-block mb-1">Revenue</span>
                 <div class="user-progress d-flex align-items-center gap-1">
@@ -424,7 +424,12 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-6 col-md-12 col-6 mb-4">
+
+         
+
+         
+
+          <div class="col-lg-4 col-md-5 col-4 mb-4">
             <div class="card">
               <div class="card-body">
                 <div class="card-title d-flex align-items-start justify-content-between">
@@ -450,7 +455,6 @@
                       <a class="dropdown-item" href="javascript:void(0);">View More</a>
                       <a class="dropdown-item" href="javascript:void(0);">Delete</a> -->
                       <div class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="cardOpt6">
-                        <h3>Sales Report</h3>
                         <form id="reportForm" action="{% url 'admin_dashbord' %}" method="post">
                           {% csrf_token %}
                         <label for="startDate">Start Date:</label>
@@ -459,19 +463,54 @@
                         <label for="endDate">End Date:</label>
                         <input type="date" id="endDate" name="endDate">
   
-                       <button class="btn btn-warning mt-2" type="submit" style="margin-left: 0;">Download Report</button>
+                       <button class="btn btn-warning mt-2" type="submit" style="margin-left: 0;">Submit</button>
   
                       </form>
                     
                     </div>
                   </div>
                 </div>
+                
                 <span>Total Sales</span>
                 <h3 class="card-title text-nowrap mb-1"> {{all_amount}} K</h3>
                 <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> +28.42%</small>
               </div>
             </div>
+            
           </div>
+
+
+          <div class="col-lg-4 col-md-5 col-4 mb-4">
+            <div class="card">
+              <div class="card-body">
+                <h5>Sales Report</h5>
+                <div class="card-title d-flex align-items-start justify-content-between">
+               
+                    
+                    <div>
+                        <form id="reportForm" action="{% url 'sales_report' %}" method="post">
+                          {% csrf_token %}
+                        <label for="startDate">Start Date:</label>
+                        <input type="date" id="startDate" name="startDate">
+  
+                        <label for="endDate">End Date:</label>
+                        <input type="date" id="endDate" name="endDate">
+  
+                       <button class="btn btn-warning mt-2" type="submit">Download</button>
+  
+                      </form>
+                    </div>
+                </div>
+
+
+                
+                
+              </div>
+            </div>
+          </div>
+
+          
+
         </div>
       </div>
     </div>
@@ -775,7 +814,7 @@
     </div>
   </div>
   <div class="container">
-    <div class="col-md-6 col-lg-6 order-2 mb-4">
+    <div class="col-md-6 col-lg-5  mb-4">
           <canvas id="myChart"></canvas>
   </div>   
 
@@ -802,7 +841,7 @@
            var data = {
                labels: ['Puma', 'Adidas', 'Nike'],
                datasets: [{
-                   label: 'Dataset 1',
+                   label: 'Total Sale',
                    data: [{{puma}}, {{adidas}}, {{nike}}],
                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
                    borderColor: 'rgba(75, 192, 192, 1)',

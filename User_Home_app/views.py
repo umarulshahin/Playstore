@@ -17,6 +17,8 @@ from django.contrib.auth.hashers import make_password, check_password
 from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Table, TableStyle
+from reportlab.lib import colors     
+
 
 # Create your views here.
 
@@ -1115,7 +1117,6 @@ def New_Password(request):
        # .................END NEW PASSWORD......................
        
        # .................USER ORDERS BILL DOWNLOADING......................
-from reportlab.lib import colors     
 def Orders_Bill(request,id):
     
         response = HttpResponse(content_type='application/pdf')
@@ -1158,7 +1159,7 @@ def Orders_Bill(request,id):
        
 
         # Display "Total Amount" below the table
-        p.drawString(360,470, f"Total Amount : {order.total_amount}")
+        # p.drawString(360,470, f"Total Amount : {order.total_amount}")
 
         # Close the PDF object cleanly.
         p.showPage()

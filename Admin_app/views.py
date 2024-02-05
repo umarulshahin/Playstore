@@ -11,6 +11,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.utils import timezone
 from django.db.models import *
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from reportlab.platypus import Table, TableStyle
+from reportlab.lib import colors     
 
 
 # Create your views here.
@@ -710,6 +714,146 @@ def Order_Status(request,id):
     return redirect('user_orders')
                     
                     # ................END ORDER STATUS .........................
+                    
+                    # ................SALES REPORTS .........................
+@never_cache                   
+def Sales_Report(request):
+    
+    
+    if request.method == "POST":
+        
+            start_date=request.POST.get("startDate")
+            end_date=request.POST.get("endDate")
+    
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="sales_Reports.pdf"'
+
+            buffer = BytesIO()
+            p = canvas.Canvas(buffer)
+
+            p.drawString(250, 650, "Sales Report")
+
+
+            # Display information above the table
+            p.drawString(100,600, f"Sale Started : {start_date}")
+            p.drawString(100,580, f"Sale ended : {end_date}")
+            
+            p.drawString(260, 560, "Transactions")
+            
+            total_sale=Order.objects.filter(status__in=['pending','processing','shipped','delivered'], created_date__range=(start_date, end_date)).aggregate(total=Sum('total_amount'))
+            all_amount=Order.objects.filter(created_date__range=(start_date, end_date)).aggregate(total=Sum("total_amount"))
+            cod_total=Order.objects.filter(payment_type="cashOnDelivery", created_date__range=(start_date, end_date),status__in=['pending','processing','shipped','delivered']).aggregate(total=Sum('total_amount'))
+            upi_total=Order.objects.filter(payment_type="paid by Razorpay",created_date__range=(start_date, end_date),status__in=['pending','processing','shipped','delivered']).aggregate(total=Sum('total_amount'))
+            # Create a table and set its style
+            data = [['Cash on Delivery', 'Online payment','Total','total revenue']]
+            data.append([cod_total['total'],upi_total['total'],total_sale['total'],all_amount['total']])
+
+            table = Table(data, colWidths=[100, 80, 80, 80])
+            style = TableStyle([
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ])
+            table.setStyle(style)
+
+            # Draw the table on the PDF
+            table.wrapOn(p, 0, 0)
+            table.drawOn(p, 150, 500)  
+            
+            p.drawString(250, 460, "Orders")
+            
+            pending=Order.objects.filter(status='pending',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
+            processing=Order.objects.filter(status='processing',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
+            shipped=Order.objects.filter(status='shipped',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
+            delivered=Order.objects.filter(status='delivered',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
+            cancelled=Order.objects.filter(status='cancelled',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
+            refund=Order.objects.filter(status='refunded',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
+            
+            all=Order.objects.filter(created_date__range=(start_date, end_date)).aggregate(total=Count('id'))
+
+            
+            data = [['Pending','Processing','Shipped','Delivered','Cancelled','Refunded','Total Orders']]
+            data.append([pending['total'],processing['total'],shipped['total'],delivered['total'],cancelled['total'],refund['total'],all['total'],])
+
+            table = Table(data, colWidths=[80, 80, 80, 80, 80, 80, 80])
+            style = TableStyle([
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ])
+            table.setStyle(style)
+
+            # Draw the table on the PDF
+            table.wrapOn(p, 0, 0)
+            table.drawOn(p, 25, 400) 
+            
+            p.drawString(250, 360, "Sub Catogery Orders")
+            
+            adidas = Order_Items.objects.filter(order__created_date__range=(start_date,end_date),Sub_Category="2").aggregate(total=Sum('qty'))              
+            puma= Order_Items.objects.filter(order__created_date__range=(start_date,end_date),Sub_Category="1").aggregate(total=Sum('qty'))
+            nike= Order_Items.objects.filter(order__created_date__range=(start_date,end_date),Sub_Category="3").aggregate(total=Sum('qty'))
+            
+            total=adidas['total']+puma['total']+nike['total']
+            data = [['Adidas','Puma','Nike','Total']]
+            data.append([adidas['total'],puma['total'],nike['total'],total])
+
+            table = Table(data, colWidths=[80, 80, 80, 80])
+            style = TableStyle([
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ])
+            table.setStyle(style)
+
+            # Draw the table on the PDF
+            table.wrapOn(p, 0, 0)
+            table.drawOn(p, 150, 300) 
+            
+            p.drawString(250, 250,"Product summary")
+                
+            data = [['Product','Quantity','Price',]]
+            pro=Product.objects.all()
+            for i in pro:
+                product=Order_Items.objects.filter(order__created_date__range=(start_date,end_date),product=i.id).aggregate(total=Sum('qty'))
+                
+                data.append([i.name,product['total'],i.price])
+
+                table = Table(data, colWidths=[80, 80, 80])
+                style = TableStyle([
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                ])
+                table.setStyle(style)
+
+                # Draw the table on the PDF
+            table.wrapOn(p, 0, 0)
+            table.drawOn(p, 150, 100) 
+                
+            # Close the PDF object cleanly.
+            p.showPage()
+            p.save()
+
+            # Get the value of the BytesIO buffer and write it to the response.
+            pdf = buffer.getvalue()
+            buffer.close()
+            response.write(pdf)
+            return response
+    return redirect('admin_dashbord')
+                    
+                    # ................END SALES REPORTS.........................
     
 
 
