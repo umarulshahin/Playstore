@@ -91,7 +91,11 @@
 
       <td>{{pro.price}}</td>
       <td>
+        {% if pro.image %}
           <img style="border-radius: 0; width: 100px; height: 100px;" src="{{ pro.image.url }}" alt="Product Image">
+        {%else%}
+            No Images
+        {% endif %}
       </td>
       <td>{{pro.description}}</td>
       <td>
@@ -185,11 +189,18 @@
                   
   
                   <label for="current_image">Current Main Image:</label>
+                  {% if pro.image %}
                   <img src="{{ pro.image.url }}" alt="Current Image" style="max-width: 200px; max-height: 200px;">
+                  {% else %}
+                   No Images
+                   {% endif %}
                   <br>
                   <input type="file" name="image" class="form-control" accept="image/*">
                   <!-- Add a hidden input field to store the current image URL -->
+                  {% if pro.image %}
                   <input type="hidden" name="current_image" value="{{ pro.image.url }}">
+              
+                   {% endif %}
                   
                   <br>
 
@@ -215,15 +226,14 @@
                         <br>
                     {% endfor %}
                 </div>
-                
-                <input type="hidden" name="related" value="{{ pro.image.url }}">
-                
-                  <!-- <br>
-                  <br> -->
-                  <!-- <input type="file" multiple name="related_images" class="form-control" accept="image/*">
-                  Add a hidden input field to store the current image URL
-                  <input type="hidden"  name="current_related_images" value="{{ pro.image.url }}"> -->
 
+                {% if pro.image %}
+                <input type="hidden" name="related" value="{{ pro.image.url }}">            
+                 {% endif %}
+                
+                
+                
+   
   
                   <label for="description">Description:</label>
                   <input type="text" name="description" class="form-control" value="{{pro.description}}" required>
@@ -373,7 +383,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <form method="post" action="{% url 'add_Product' %}" id="updateCategoryForm" enctype="multipart/form-data">
+            <form method="post" action="{% url 'add_Product' %}"  id="updateCategoryForm" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <label for="product_name">Product:</label>
@@ -390,7 +400,7 @@
 
                 <label for="image">Main Image:</label>
                 <input type="file" name="m_image"  class="form-control" accept="image/*" required>
-
+                
                 <label for="image">Related Images:</label>
                 <input type="file" name="r_images" multiple class="form-control" accept="image/*" required>
 
@@ -413,8 +423,6 @@
         </div>
     </div>
 </div>
-
-
 
 
 

@@ -468,6 +468,7 @@ def Product_Status(request,id):
                     
                     # ................Add Product .........................
                     
+from django.core.files.base import ContentFile                    
 def Add_Product(request):
     
     if request.method == "POST" :
@@ -479,7 +480,7 @@ def Add_Product(request):
         description=request.POST.get("description")
         m_image=request.FILES.get("m_image")
         r_images=request.FILES.getlist("r_images")
-        
+  
         
         if int(price) < 1:
             
@@ -488,11 +489,17 @@ def Add_Product(request):
          
         if int(discount) < 0:
             
-             messages.error(request, "Invalid Discound . Discound Should Be Zero or  Above Zero ")
-             return redirect("product_list")
+            messages.error(request, "Invalid Discound . Discound Should Be Zero or  Above Zero ")
+            return redirect("product_list")
         
+            
         sub=Sub_Category.objects.get(id=sub_category)
-        pro_id=Product.objects.create(name=name,price=price,discount=discount,sub_category=sub,description=description,image=m_image)
+        pro_id=Product.objects.create(name=name,
+                                      price=price,
+                                      discount=discount,
+                                      sub_category=sub,
+                                      description=description,
+                                      image=m_image)
  
     
         for i in range(len(r_images)):
@@ -851,6 +858,7 @@ def Sales_Report(request):
             buffer.close()
             response.write(pdf)
             return response
+        
     return redirect('admin_dashbord')
                     
                     # ................END SALES REPORTS.........................

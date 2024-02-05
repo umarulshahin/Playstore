@@ -1,6 +1,8 @@
 from django.db import models
 from user_app.models import *
 from django.utils import timezone
+import PIL 
+from PIL import Image
 
 # Create your models here.
 
@@ -31,11 +33,29 @@ class Product(models.Model):
     def __iter__(self):
         
         return  self.id
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        
+        img = Image.open(self.image.path)
+        if img.height > 500 or img.width > 700:
+            output_size = (500, 700)
+            img.thumbnail(output_size)
+            img.save(self.image.path)
+
 
     
 class Product_image(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     image_url = models.ImageField(upload_to ='img/product')
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        
+        img = Image.open(self.image_url.path)
+        if img.height > 500 or img.width > 700:
+            output_size = (500, 700)
+            img.thumbnail(output_size)
+            img.save(self.image_url.path)
     
 
 class Product_size(models.Model):

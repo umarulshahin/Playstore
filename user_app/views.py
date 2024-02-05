@@ -128,8 +128,7 @@ def Signup(request):
             messages.error(request,"Password mismath")
             return render(request,'user_auth/Signup.html')
         
-        user_data = CustomUser.objects.create_user(email=email,password=password,username=username,ph_no=phone)
-        user_data.save()
+
         
         
         # ...........End Form Validation ............
@@ -148,8 +147,13 @@ def Signup(request):
            
             return redirect("signup")
         
+        user_data = CustomUser.objects.create_user(email=email,password=password,username=username,ph_no=phone)
+        user_data.save()
+        
         request.session['otp']=values
         request.session['phone'] = phone
+        
+        
         
         return redirect("signup_otp")
     
@@ -278,14 +282,18 @@ def Forget_OTP_check(request):
         
         if action == "verify":
             
+            f_re_otp=request.session.get("F_re_otp")
             otp=request.session.get("otp")
             
-            if f_otp != str(otp) :
+            print(f_re_otp,"...............weegds")
+            
+            if f_otp == str(otp) or  f_otp ==str(f_re_otp) :
                 
-                messages.error(request,"OTP  Incurrct")
-                return redirect("forget_OTP_check")                
-            else:
                 return redirect("new_pass")
+               
+            else:
+                messages.error(request,"OTP  Incurrct")
+                return redirect("forget_OTP_check") 
             
         else:
     
@@ -389,12 +397,12 @@ def otp():
     
     # ........ End OTP Genarating ........
     
-    # ............. Resend OTP ..........
+    # .............Signup Resend OTP ..........
     
 
-def Resend_Otp(request):
+def Signup_Resend_Otp(request):
     
-    
+    print("...........egsdg")
     try: 
             
             re_otp=otp()
@@ -409,5 +417,21 @@ def Resend_Otp(request):
     return redirect('signup_otp') 
 
 
-     # .............End  Resend OTP ..........
+     # .............End Signup Resend OTP ..........
      
+     
+def Forgot_Resend_Otp(request):
+    
+    try: 
+            
+            re_otp=otp()
+            
+            
+    except Exception as e:
+           
+        messages.error(request,"OTP genaration failed")
+        return render(request,'user_auth/Signup_otp.html') 
+    print(re_otp,"................426")
+    request.session["F_re_otp"]=re_otp
+    return redirect('forget_OTP_check') 
+    

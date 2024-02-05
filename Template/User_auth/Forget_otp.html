@@ -33,6 +33,15 @@
 
 <body>
 
+	<style>
+		#timer {
+		  font-size: 10px;
+		}
+	
+		#buttonContainer {
+		  display: none;
+		}
+	  </style>
 	<!-- Start Header Area -->
 	
 	<!-- End Header Area -->
@@ -94,7 +103,14 @@
 							<div class="col-md-12 form-group">
 								<button type="submit" name="action" value="cancel" class="primary-btn">Cancel</button>
 							</div>
+
 						</form>
+						<div >
+							<h6>Resend OTP</h6>
+						<div id="timer"> 30 </div>
+						<div id="buttonContainer">
+						<p onclick="resetTimer()"><a href="{% url 'forgot_resent_otp' %}">Resend</a></p>
+						</div>
 						
 					</div>
 				</div>
@@ -173,6 +189,39 @@
 		</div>
 	</footer>
 	<!-- End footer Area -->
+	<script>
+		let timerInterval;
+	
+		document.addEventListener("DOMContentLoaded", function() {
+		  startTimer();
+		});
+	
+		function startTimer() {
+		  let seconds = 30;
+		  const timerElement = document.getElementById('timer');
+		  const buttonContainer = document.getElementById('buttonContainer');
+	
+		  timerInterval = setInterval(function() {
+			seconds--;
+			timerElement.textContent = seconds;
+	
+			if (seconds <= 0) {
+			  clearInterval(timerInterval);
+			  buttonContainer.style.display = 'block';
+			}
+		  }, 1000);
+		}
+	
+		function resetTimer() {
+		  const timerElement = document.getElementById('timer');
+		  const buttonContainer = document.getElementById('buttonContainer');
+	
+		  buttonContainer.style.display = 'none';
+		  clearInterval(timerInterval);
+		  timerElement.textContent = 30;
+		  startTimer();
+		}
+	  </script>
 
 
 	<script src="/js/vendor/jquery-2.2.4.min.js"></script>

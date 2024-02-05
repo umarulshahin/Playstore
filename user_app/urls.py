@@ -31,7 +31,9 @@ urlpatterns = [
     
     path('Block_check/<int:id>',views.Block_Check,name='block_check'),
     
-    path('resend_otp/',views.Resend_Otp,name='resend_otp'), 
+    path('resend_otp/',views.Signup_Resend_Otp,name='signup_resend_otp'), 
+    
+    path('forgot_resend_otp/',views.Forgot_Resend_Otp,name="forgot_resent_otp"),
     
 
  ]
