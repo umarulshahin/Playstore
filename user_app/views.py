@@ -87,7 +87,7 @@ def Signup(request):
          
         pattern = r'^[a-zA-Z0-9].*'
         pattern_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-        pattern_Phone= r'^\d{3}-?\d{3}-?\d{4}$'
+        pattern_Phone= r'^(?!0{10}$)\d{10}$'
         pattern_pass = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$'
         
         

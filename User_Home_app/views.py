@@ -108,7 +108,7 @@ def Edit_Profile(request,id):
         
         pattern = r'^[\w-]+$'
         pattern_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-        pattern_Phone= r'^\d{3}-?\d{3}-?\d{4}$'
+        pattern_Phone= r'^(?!0{10}$)\d{10}$'
         
         if not (username or email or phone ):
             messages.error(request, "please Fill Required Field")
@@ -194,7 +194,7 @@ def Add_Address(request):
                 
                 pattern = r'^[a-zA-Z0-9].*'
                 pattern_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-                pattern_Phone= r'^\d{3}-?\d{3}-?\d{4}$'
+                pattern_Phone= r'^(?!0{10}$)\d{10}$'
                     
                 if not (name or email or phone or house or street or city or country or pin_code or location):
                         messages.error(request, "please Fill Required Field")
@@ -284,7 +284,7 @@ def Edit_Address(request):
             
             pattern = r'^[a-zA-Z0-9].*'
             pattern_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-            pattern_Phone= r'^\d{3}-?\d{3}-?\d{4}$'
+            pattern_Phone= r'^(?!0{10}$)\d{10}$'
                 
             if not (E_name or E_email or E_phone or E_house or E_street or E_city or E_country or E_pin_code or E_location):
                     messages.error(request, "please Fill Required Field")
@@ -570,7 +570,7 @@ def Checkout_Edit_Address(request):
  
             pattern = r'^[a-zA-Z0-9].*'
             pattern_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-            pattern_Phone= r'^\d{3}-?\d{3}-?\d{4}$'
+            pattern_Phone= r'^(?!0{10}$)\d{10}$'
                 
             if not (E_name or E_email or E_phone or E_house or E_street or E_city or E_country or E_pin_code or E_location):
                     messages.error(request, "please Fill Required Field")
@@ -637,7 +637,7 @@ def Checkout_Add_Address(request):
                 
                 pattern = r'^[a-zA-Z0-9].*'
                 pattern_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-                pattern_Phone= r'^\d{3}-?\d{3}-?\d{4}$'
+                pattern_Phone= r'^(?!0{10}$)\d{10}$'
                     
                 if not (name or email or phone or house or street or city or country or pin_code or location):
                         messages.error(request, "please Fill Required Field")
@@ -1066,7 +1066,6 @@ def New_Password(request):
                 new_pass=request.POST.get("new_password")
                 con_pass=request.POST.get("con_password")
                 
-                print(old_pass,new_pass,con_pass,"........234")
                 
                 pattern = r'^[a-zA-Z0-9].*'
                 pattern_pass = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$'

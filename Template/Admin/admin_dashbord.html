@@ -561,7 +561,8 @@
                     <h6 class="mb-0">PUMA</h6>
                   </div>
                   <div class="user-progress">
-                    <small class="fw-semibold">{{puma}} Orders</small>
+                    <small class="fw-semibold" >{{puma}} Orders</small>
+                    <input type="hidden" id="puma" value="{{puma}}">
                   </div>
                 </div>
               </li>
@@ -578,6 +579,8 @@
                   </div>
                   <div class="user-progress">
                     <small class="fw-semibold">{{adidas}} Orders</small>
+                    <input type="hidden" id="adidas" value="{{adidas}}">
+
                   </div>
                 </div>
               </li>
@@ -594,6 +597,8 @@
                   </div>
                   <div class="user-progress">
                     <small class="fw-semibold">{{nike}} Orders</small>
+                    <input type="hidden" id="nike" value="{{nike}}">
+
                   </div>
                 </div>
               </li>
@@ -819,6 +824,8 @@
   </div>   
 
   </div>
+
+
   <!-- / Content -->
 
       </div>
@@ -828,6 +835,9 @@
    
    
    
+
+
+    
    
     <!-- / Layout wrapper -->
     {%endblock%}
@@ -838,11 +848,16 @@
    <script>
        document.addEventListener('DOMContentLoaded', function() {
            // Example data
+
+           let puma=document.getElementById('puma').value
+           let adidas=document.getElementById('adidas').value
+           let Nike=document.getElementById('nike').value
+           
            var data = {
                labels: ['Puma', 'Adidas', 'Nike'],
                datasets: [{
                    label: 'Total Sale',
-                   data: [{{puma}}, {{adidas}}, {{nike}}],
+                   data: [puma, adidas, Nike],
                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
                    borderColor: 'rgba(75, 192, 192, 1)',
                    borderWidth: 2
