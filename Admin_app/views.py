@@ -15,6 +15,8 @@ from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors     
+from django.db.models.functions import Coalesce
+
 
 
 # Create your views here.
@@ -632,7 +634,7 @@ def Edit_Size(request,id):
             size = request.POST.get('size' + str(size_obj.id))
             stock = request.POST.get('stock' + str(size_obj.id))
             
-            if int(size) <= 0 or int(stock) <= 0 :
+            if int(size) < 0 or int(stock) < 0 :
                 
                 messages.error(request, "Invalid Size or Stock .Size and Stock Should Be Above Zero ")
                 return redirect("product_list")
@@ -722,7 +724,7 @@ def Order_Status(request,id):
                     # ................END ORDER STATUS .........................
                     
                     # ................SALES REPORTS .........................
-from django.db.models.functions import Coalesce
+
 @never_cache                   
 def Sales_Report(request):
     
