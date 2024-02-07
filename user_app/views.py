@@ -206,7 +206,7 @@ def Logout(request):
     if 'user_email' in request.session:
         
         logout(request)
-        del request.session['user_email']
+        request.session.flush()
         return redirect("Dashbord")
     else:
         logout(request)

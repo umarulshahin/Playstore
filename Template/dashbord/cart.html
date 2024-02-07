@@ -219,6 +219,7 @@
 
 
 
+
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
         <script>
@@ -293,117 +294,7 @@
         
                 
         
-        
-<!--        
-
-    
-    <script>
-        function updateQuantity(cartItemId, change) {
-            var quantityInput = document.getElementById('sst' + cartItemId);
-            var newQuantity = parseInt(quantityInput.value) + change;
-    
-            // Ensure the new quantity is not negative
-            if (newQuantity >= 1) {
-                quantityInput.value = newQuantity;
-    
-                // Use AJAX to update the quantity and get the updated total price and subtotal from the server
-                updateQuantityOnServer(cartItemId, newQuantity, function(data) {
-                    // Handle the response from the server if needed
-                    console.log(data);
-    
-                    // Update the total price in the HTML
-                    var totalPriceElement = document.getElementById('total' + cartItemId);
-                    if (totalPriceElement) {
-                        totalPriceElement.textContent = '₹ ' + data.total_price;
-                        console.log(data.total_price);
-                    }
-    
-                    // Update the subtotal in the HTML
-                    updateSubtotal(data.cart_subtotal2w);
-                });
-            }
-        }
-    
-        function updateSubtotal(cartSubtotal) {
-            // Update the subtotal in the HTML
-            var subtotalElement = document.getElementById('subtotal');
-            if (subtotalElement) {
-                subtotalElement.textContent = '₹ ' + cartSubtotal;
-                console.log(cartSubtotal);
-            }
-        }
-    
-        function updateQuantityOnServer(cartItemId, newQuantity, callback) {
-            var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    
-            // Use AJAX to send the updated quantity to the server (Django view)
-            fetch('/update-quantity/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': csrftoken,
-                },
-                body: new URLSearchParams({
-                    cartItemId: cartItemId,
-                    newQuantity: newQuantity,
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Invoke the callback with the response data
-                callback(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-
-
-        function updateQuantityOnServer(cartItemId, newQuantity, callback) {
-            var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        
-            // Use AJAX to send the updated quantity to the server (Django view)
-            fetch('/update-quantity/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': csrftoken,
-                },
-                body: new URLSearchParams({
-                    cartItemId: cartItemId,
-                    newQuantity: newQuantity,
-                }),
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Quantity exceeds available stock');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Invoke the callback with the response data
-                callback(data);
-        
-                // Ensure the subtotal is updated after updating the quantity
-                updateSubtotal(data.cart_subtotal2w);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-        
-                // Handle the error, show a notification, etc.
-                // Example: show a SweetAlert2 error notification
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: error.message,
-                });
-            });
-        }
-        
-    </script>
-        
-     -->
-
+  
 
     
 {% endblock %}

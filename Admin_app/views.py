@@ -38,7 +38,6 @@ def admin_required(view_func):
 def Admin(request):
     
     if 'email_admin' in request.session:
-        
         return redirect("admin_dashbord")
     
     if request.method == "POST":
@@ -723,6 +722,7 @@ def Order_Status(request,id):
                     # ................END ORDER STATUS .........................
                     
                     # ................SALES REPORTS .........................
+from django.db.models.functions import Coalesce
 @never_cache                   
 def Sales_Report(request):
     
@@ -802,11 +802,16 @@ def Sales_Report(request):
             
             p.drawString(250, 360, "Sub Catogery Orders")
             
-            adidas = Order_Items.objects.filter(order__created_date__range=(start_date,end_date),Sub_Category="2").aggregate(total=Sum('qty'))              
-            puma= Order_Items.objects.filter(order__created_date__range=(start_date,end_date),Sub_Category="1").aggregate(total=Sum('qty'))
-            nike= Order_Items.objects.filter(order__created_date__range=(start_date,end_date),Sub_Category="3").aggregate(total=Sum('qty'))
+            adidas = Order_Items.objects.filter(order__created_date__range=(start_date,end_date),Sub_Category="2").aggregate(total=Coalesce(Sum('qty'), Value(0)))            
+            puma= Order_Items.objects.filter(order__created_date__range=(start_date,end_date),Sub_Category="1").aggregate(total=Coalesce(Sum('qty'), Value(0)))
+            nike= Order_Items.objects.filter(order__created_date__range=(start_date,end_date),Sub_Category="3").aggregate(total=Coalesce(Sum('qty'), Value(0)))
             
+          
             total=adidas['total']+puma['total']+nike['total']
+          
+                
+                
+            
             data = [['Adidas','Puma','Nike','Total']]
             data.append([adidas['total'],puma['total'],nike['total'],total])
 

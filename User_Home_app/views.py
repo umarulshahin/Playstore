@@ -421,12 +421,16 @@ def User_Cart(request):
                 
            # .................END USER CART......................
            
+           
            # .................UPDATE AND STOCK MANAGE, TOTAL PRICE, SUB_TOTAL  CART......................
            
 @never_cache
 @require_POST
 def update_quantity_view(request):
     
+    
+    if request.method == 'POST':
+     
         cart_item_id = request.POST.get('cartItemId')
         new_quantity = int(request.POST.get('newQuantity'))
         
@@ -438,15 +442,41 @@ def update_quantity_view(request):
         
         stock=Product_size.objects.get(size=cart_item.size,product=cart_item.product)
         
-        if stock is not None and new_quantity > stock.stock :
-            
+        if stock is not None and new_quantity > stock.stock and stock.stock == 0:
+           
             return JsonResponse({'error': f'Not enough stock available. Current stock: {stock.stock}'}, status=400)
     
     
         total=int(cart_item.price) * int(new_quantity)
+      
         
-        if stock.stock >= new_quantity:
-        
+        if stock.stock >= new_quantity :
+            
+               
+                request.session['qty']=new_quantity
+                cart_item.qty = new_quantity
+                cart_item.total_price = total
+                cart_item.save()
+                
+                total_item=Cart.objects.filter(customuser=request.user)
+                sub_total = 0
+                
+                for i in total_item:
+                    
+                    sub_total += int(i.total_price)
+                
+                
+                cart_subtotal=request.session["sub_total"]=sub_total
+                
+                current_stock=stock.stock
+                
+                return JsonResponse({'success': True,'total_price': total,'cart_subtotal2w': cart_subtotal,'current_stock': current_stock})
+            
+         
+        elif  new_quantity <= request.session.get('qty'):    
+             
+                   
+                request.session['qty']=new_quantity
                 cart_item.qty = new_quantity
                 cart_item.total_price = total
                 cart_item.save()
@@ -467,14 +497,13 @@ def update_quantity_view(request):
             
         else:
             
+            
             total_item=Cart.objects.filter(customuser=request.user)
             sub_total = 0
                 
             for i in total_item:
                     
-                sub_total += int(i.total_price)
-                
-                
+                sub_total += int(i.total_price) 
             cart_subtotal=request.session["sub_total"]=sub_total
             return JsonResponse({'error': f'Not enough stock available. Current stock: {stock.stock}'}, status=400)
         
@@ -527,7 +556,7 @@ def Checkout(request):
                         
                         if j.stock < i.qty:
                             
-                            messages.error(request,f"{i.product.name} out stock please choose any another product")
+                            messages.error(request,f"{i.product.name} stock not enough ")
                             return redirect("user_cart")
                         
                     
