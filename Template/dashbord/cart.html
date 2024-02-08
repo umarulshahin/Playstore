@@ -98,9 +98,9 @@
                         <input type="text" name="qty" id="sst{{ cart_item.id }}" maxlength="12"
                             value="{{ cart_item.qty }}" title="Quantity:" class="input-text qty">
                         <button onclick="updateQuantity('{{ cart_item.id }}', 1)"
-                            class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
+                         class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
                         <button onclick="updateQuantity('{{ cart_item.id }}', -1)"
-                            class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
+                         class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
                     </div>
                 </td>   
                 
@@ -226,7 +226,7 @@
             function updateQuantity(cartItemId, change) {
                 var quantityInput = document.getElementById('sst' + cartItemId);
                 var newQuantity = parseInt(quantityInput.value) + change;
-        
+            
                 // Ensure the new quantity is not negative
                 if (newQuantity >= 1) {
                     quantityInput.value = newQuantity;

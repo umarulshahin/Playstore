@@ -453,7 +453,7 @@ def update_quantity_view(request):
         if stock.stock >= new_quantity :
             
                
-                request.session['qty']=new_quantity
+                request.session['qty']={new_quantity:cart_item_id}
                 cart_item.qty = new_quantity
                 cart_item.total_price = total
                 cart_item.save()
@@ -1145,59 +1145,84 @@ def New_Password(request):
        # .................END NEW PASSWORD......................
        
        # .................USER ORDERS BILL DOWNLOADING......................
+       
+from reportlab.lib.pagesizes import letter
 def Orders_Bill(request,id):
     
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="sales_invoice.pdf"'
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="sales_invoice.pdf"'
 
-        buffer = BytesIO()
-        p = canvas.Canvas(buffer)
+    # Set up PDF canvas
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer, pagesize=letter)
 
-        p.drawString(250, 650, "Sales Invoice")
+    # Get order items and order details
+    order_items = Order_Items.objects.filter(order=id)
+    order = Order.objects.get(id=id)
 
-        order_item = Order_Items.objects.filter(order=id)
-        order = Order.objects.get(id=id)
+    # Set up basic information on the PDF
+    p.drawString(250, 750, "Sales Invoice")
 
-        # Display information above the table
-        p.drawString(100,605, f"Customer : {order.user.username}")
-        p.drawString(100,590, f"Date : {order.created_date.strftime('%Y-%m-%d')}")
-        p.drawString(100,573, f"Order id : {order.order_id}")
-        
+    # Display order information
+    y_coordinate = 700
+    p.drawString(100, y_coordinate, f"Date: {order.created_date.strftime('%Y-%m-%d')}")
+    y_coordinate -= 20
+    p.drawString(100, y_coordinate, f"Order ID: {order.order_id}")
+    y_coordinate -= 20
+    p.drawString(100, y_coordinate, f"Customer: {order.user.username}")
 
-        # Create a table and set its style
-        data = [['Item', 'Quantity', 'Unit Price', 'Total']]
-        for item in order_item:
-            data.append([item.product.name, item.qty, item.price, item.total_price])
+    # Extract and display address information
+    address = order.user_address.strip('{}').split(',')
+    address_dict = {}
+    for pair in address:
+        key, value = pair.split(':')
+        address_dict[key.strip(" '")] = value.strip(" '")
 
-        table = Table(data, colWidths=[150, 80, 80, 80])
-        style = TableStyle([
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.white),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ])
-        table.setStyle(style)
+    y_coordinate -= 20
+    p.drawString(100, y_coordinate, "Address:")
+    for key, value in address_dict.items():
+        if key in ['house', 'street', 'city', 'country', 'pin_code']:
+            y_coordinate -= 15
+            p.drawString(120, y_coordinate, value)
 
-        # Draw the table on the PDF
-        table.wrapOn(p, 0, 0)
-        table.drawOn(p, 100, 500)  # Adjust the Y-coordinate as needed
-        
-       
+    # Create a table and set its style
+    data = [['Item', 'Size', 'Quantity', 'Unit Price', 'Total']]
+    for item in order_items:
+        data.append([item.product.name, item.size, item.qty, item.price, item.total_price])
 
-        # Display "Total Amount" below the table
-        # p.drawString(360,470, f"Total Amount : {order.total_amount}")
+    table = Table(data, colWidths=[150, 80, 80, 80, 80])
+    style = TableStyle([
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ])
+    table.setStyle(style)
 
-        # Close the PDF object cleanly.
-        p.showPage()
-        p.save()
+    # Calculate the height of the table
+    table_height = len(data) * 15
 
-        # Get the value of the BytesIO buffer and write it to the response.
-        pdf = buffer.getvalue()
-        buffer.close()
-        response.write(pdf)
-        return response
+    # Draw the table on the PDF
+    y_coordinate -= max(table_height, 200)  # Ensure enough space for table even if address is large
+    table.wrapOn(p, 0, 0)
+    table.drawOn(p, 100, y_coordinate)
+
+    # Display "Total Amount" below the table
+    total_amount = sum(item.total_price for item in order_items)
+    y_coordinate -= (table_height + 20)
+    p.drawString(360, y_coordinate, f"Total Amount: {total_amount}")
+
+    # Close the PDF object cleanly
+    p.showPage()
+    p.save()
+
+    # Get the value of the BytesIO buffer and write it to the response
+    pdf = buffer.getvalue()
+    buffer.close()
+    response.write(pdf)
+    return response
 
         
        
