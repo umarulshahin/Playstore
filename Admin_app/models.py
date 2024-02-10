@@ -14,7 +14,7 @@ class Category(models.Model):
 class Sub_Category(models.Model):
     
     name=models.CharField( max_length=250, )
-    category=models.ForeignKey(Category,on_delete=models.PROTECT)
+    category=models.ForeignKey(Category,on_delete=models.CASCADE)
     is_deleted=models.BooleanField(default=False)
     
 class Product(models.Model):
@@ -100,8 +100,8 @@ class Order(models.Model):
 class Order_Items(models.Model):
     
     order=models.ForeignKey(Order,on_delete=models.CASCADE)
-    product=models.ForeignKey(Product,on_delete=models.PROTECT)
-    Sub_Category=models.ForeignKey(Sub_Category,on_delete=models.PROTECT)
+    product=models.ForeignKey(Product,on_delete=models.SET_NULL, null=True)
+    Sub_Category=models.ForeignKey(Sub_Category,on_delete=models.SET_NULL, null=True)
     qty=models.IntegerField(null=False,blank=False)
     size=models.IntegerField(null=False,blank=False)
     price=models.IntegerField(null=False,blank=False)

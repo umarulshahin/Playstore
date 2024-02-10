@@ -1,6 +1,7 @@
 {% extends 'dashbord/dashbord.html' %}
 
 {% block content %}
+{% load static %}
 
 <section class="banner-area organic-breadcrumb">
     <div class="container">
@@ -79,6 +80,7 @@
             <div class="single-product-slider">
                 <div class="container">
             <div class="row justify-content-center">
+                {% if pro %}
                 {% for pro in pro %}
                    {% if pro.is_deleted == True %}
                     <div class="col-sm-6 col-lg-3 mx-auto">
@@ -105,6 +107,13 @@
                     </div>
                     {% endif %}
                 {% endfor %}
+                {% else%}
+                <div class="f-icon">
+                    <img src="{% static 'img/not found.jpg' %}" alt="">
+                </div>
+                
+
+                 {% endif %}
             </div>
         </div>
     </div>
