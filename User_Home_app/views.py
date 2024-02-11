@@ -19,6 +19,7 @@ from reportlab.pdfgen import canvas
 from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors     
 from reportlab.lib.pagesizes import letter
+from django.core.paginator import Paginator
 
 
 # Create your views here.
@@ -48,16 +49,38 @@ def Dashbord(request):
 
                # ................. All Product......................
                
-def All_Product(request):
+def All_Product(request,val):
     
     try:
-        pro=Product.objects.all()
         
-        context={
-            'pro' : pro
-        }
-        
-        return render(request,'dashbord/all_product.html',context)
+        if val == 'all':
+            
+            value=Product.objects.all()
+            sub=Sub_Category.objects.all()
+            
+            paginator=Paginator(value,2)
+            page_n=request.GET.get('page')
+            pro=paginator.get_page(page_n)
+            
+            context={
+                'pro' : pro,
+                'sub' : sub
+            }
+            
+            return render(request,'dashbord/all_product.html',context)
+        else:
+            
+            sub=Sub_Category.objects.get(name=val)
+            pro=Product.objects.filter(sub_category=sub.id)
+            sub=Sub_Category.objects.all()
+            
+            context={
+                'pro' : pro,
+                'sub' : sub
+            }
+            
+            return render(request,'dashbord/all_product.html',context)
+            
         
     except TypeError:
         return render(request,'dashbord/user_404.html')
@@ -519,27 +542,27 @@ def update_quantity_view(request):
                     return JsonResponse({'success': True,'total_price': total,'cart_subtotal2w': cart_subtotal,'current_stock': current_stock})
                 
             
-            elif  new_quantity <= request.session.get('qty'):    
+            # elif  new_quantity <= request.session.get('qty'):    
                 
                     
-                    request.session['qty']=new_quantity
-                    cart_item.qty = new_quantity
-                    cart_item.total_price = total
-                    cart_item.save()
+            #         request.session['qty']=new_quantity
+            #         cart_item.qty = new_quantity
+            #         cart_item.total_price = total
+            #         cart_item.save()
                     
-                    total_item=Cart.objects.filter(customuser=request.user)
-                    sub_total = 0
+            #         total_item=Cart.objects.filter(customuser=request.user)
+            #         sub_total = 0
                     
-                    for i in total_item:
+            #         for i in total_item:
                         
-                        sub_total += int(i.total_price)
+            #             sub_total += int(i.total_price)
                     
                     
-                    cart_subtotal=request.session["sub_total"]=sub_total
+            #         cart_subtotal=request.session["sub_total"]=sub_total
                     
-                    current_stock=stock.stock
+            #         current_stock=stock.stock
                     
-                    return JsonResponse({'success': True,'total_price': total,'cart_subtotal2w': cart_subtotal,'current_stock': current_stock})
+            #         return JsonResponse({'success': True,'total_price': total,'cart_subtotal2w': cart_subtotal,'current_stock': current_stock})
                 
             else:
                 
@@ -1326,6 +1349,8 @@ def Orders_Bill(request,id):
        
        # .................END USER ORDERS BILL DOWNLOADING......................
        
+        # .................SEARCH......................
+       
        
 def Search(request):
     
@@ -1334,16 +1359,44 @@ def Search(request):
         val=request.POST.get("search")
         
         pro=Product.objects.filter(name__icontains=val)
+        sub=Sub_Category.objects.all()
         
         context={
-            'pro' : pro
+            'pro' : pro,
+            'sub' : sub,
         }
         
         return render(request,'dashbord/all_product.html',context)
-        
-
-
-  
+       
     return redirect('Dashbord')
+
+     # .................END SEARCH......................
+     
+     # .................SORTING......................
+     
+def Sort(request,val):
+    
+    if val == 'low':
+        value=Product.objects.order_by('price')
+        sub=Sub_Category.objects.all()
+        context={
+            'pro' : value,
+            'sub' :sub
+        }
+        
+        return render(request,'dashbord/all_product.html',context)
+    else:
+        value=Product.objects.order_by('-price')
+        sub=Sub_Category.objects.all()
+        context={
+            'pro' : value,
+            'sub' : sub,
+        }
+        
+        return render(request,'dashbord/all_product.html',context)
+    
+    
+    # .................END SORTING......................
+   
        
        
