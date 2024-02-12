@@ -4,7 +4,7 @@ from . import views
 urlpatterns = [
     path('',views.Dashbord,name="Dashbord"),
     
-    path('all_product/<str:val>',views.All_Product,name="all_product"),
+    path('all_product/',views.All_Product,name="all_product"),
     
     path('view_product/<int:id>',views.View_Product,name="view_product"),
     
@@ -50,9 +50,9 @@ urlpatterns = [
     
     path('orders_bill<int:id>',views.Orders_Bill,name="orders_bill"),
     
-    path('search/',views.Search,name="search"),
-    
-    path('sort/<str:val>',views.Sort,name="sort"),
+    path('suggestions/', views.Suggestions, name="suggestions"),  
+      
+    # path('sort/<str:val>',views.Sort,name="sort"),
 
     
     

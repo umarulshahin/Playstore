@@ -20,6 +20,8 @@ from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors     
 from reportlab.lib.pagesizes import letter
 from django.core.paginator import Paginator
+from django.views.decorators.http import require_GET
+
 
 
 # Create your views here.
@@ -49,44 +51,74 @@ def Dashbord(request):
 
                # ................. All Product......................
                
-def All_Product(request,val):
+def All_Product(request):
     
     try:
         
-        if val == 'all':
+        search=request.GET.get('search')     
+        sub=request.GET.get('sub')   
+        sort=request.GET.get('sorting',"")
+        filter=request.GET.get('filter',"")
+        page=request.GET.get('page',"")
+        
+        
+        if not (sub and sort and filter):
             
             value=Product.objects.all()
             sub=Sub_Category.objects.all()
             
-            paginator=Paginator(value,2)
-            page_n=request.GET.get('page')
-            pro=paginator.get_page(page_n)
+        
+        if filter and filter == "all":
             
-            context={
-                'pro' : pro,
-                'sub' : sub
-            }
+            value=Product.objects.all()
             
-            return render(request,'dashbord/all_product.html',context)
         else:
+            value=Product.objects.all()
+        
+        if search:
+            value=Product.objects.filter(name__icontains=search)
             
-            sub=Sub_Category.objects.get(name=val)
-            pro=Product.objects.filter(sub_category=sub.id)
-            sub=Sub_Category.objects.all()
+        if filter and filter != "all":   
             
-            context={
+            value=value.filter(sub_category=int(filter))
+            
+        if sort:
+            
+            value=value.order_by(sort)
+        
+        sub=Sub_Category.objects.all()     
+        
+        paginator=Paginator(value,2)
+        pro=paginator.get_page(page)
+            
+        context={
                 'pro' : pro,
                 'sub' : sub
             }
             
-            return render(request,'dashbord/all_product.html',context)
+        return render(request,'dashbord/all_product.html',context)
             
         
     except TypeError:
         return render(request,'dashbord/user_404.html')
 
 
-               # ................. End All Product......................
+        # ................. End All Product......................
+               
+         # .................SEARCH......................
+         
+@require_GET   
+def Suggestions(request):
+    prefix = request.GET.get('prefix', '')
+    suggestions = []
+    # Filter products based on name containing the prefix
+    products = Product.objects.filter(name__icontains=prefix)
+    # Get the names of filtered products
+    for product in products:
+        suggestions.append(product.name)
+    return JsonResponse({'suggestions': suggestions})
+
+
                
                # ................. View Product......................
                
@@ -1349,28 +1381,7 @@ def Orders_Bill(request,id):
        
        # .................END USER ORDERS BILL DOWNLOADING......................
        
-        # .................SEARCH......................
-       
-       
-def Search(request):
-    
-
-    if request.method =="POST":
-        val=request.POST.get("search")
-        
-        pro=Product.objects.filter(name__icontains=val)
-        sub=Sub_Category.objects.all()
-        
-        context={
-            'pro' : pro,
-            'sub' : sub,
-        }
-        
-        return render(request,'dashbord/all_product.html',context)
-       
-    return redirect('Dashbord')
-
-     # .................END SEARCH......................
+   
      
      # .................SORTING......................
      

@@ -33,7 +33,7 @@
 	<link rel="stylesheet" href="{% static 'css/main.css' %}">
 	<link rel="stylesheet" href="{% static 'path/to/jquery.magnify.css' %}">
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 </head>
 
@@ -122,6 +122,16 @@ font-family: 'Russo One', sans-serif;
 			max-width: 100%;
 			height: 530px;
 		}
+		.suggestions-container {
+			margin-right: 10px; /* Adjust this value as needed for spacing */
+		}
+		.invisible-button:hover {
+			/* Add your hover effect styles here */
+			/* For example, change background color */
+			background-color: #0ee123;
+		}
+	
+		
 		
 	 </style>
 	
@@ -151,7 +161,7 @@ font-family: 'Russo One', sans-serif;
 									<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
 									 aria-expanded="false">Shop</a>
 									<ul class="dropdown-menu">
-										<li class="nav-item"><a class="nav-link" href="{% url 'all_product' val='all' %}">All product</a></li>
+										<li class="nav-item"><a class="nav-link" href="{% url 'all_product' %}">All product</a></li>
 										<!-- <li class="nav-item"><a class="nav-link" href="single-product.html">Product Details</a></li> -->
 
 										<!-- <li class="nav-item"><a class="nav-link" href="{% url 'checkout' %}">Product Checkout</a></li> -->
@@ -206,14 +216,25 @@ font-family: 'Russo One', sans-serif;
 			</div>
 			<div class="search_input" id="search_input_box">
 				<div class="container">
-					<form class="d-flex justify-content-between" method="post" action="{% url 'search' %}">
-						{% csrf_token %}
-						<input type="text" class="form-control" name="search" id="search_input" placeholder="Search Here">
+					<form class="d-flex justify-content-between align-items-center" method="GET" action="/all_product/">
+						<div >
+						<input type="text" class="form-control" name="search" id="search-input" placeholder="Search Here">
+					</div>
+					<div class="suggestions-container m-0">
+						<!-- Your suggestion content here -->
+						<h5><button type="submit" id="suggestions" class="invisible-button " style="color:white; border: none; background: none; outline: none;"></button></h5>
+					</div>
 						<button type="submit" class="btn"></button>
 						<span class="lnr lnr-cross" id="close_search" title="Close Search"></span>
+						
 					</form>
+					
+				
 				</div>
 			</div>
+			
+				
+			
 		</header>
 		<!-- End Header Area -->
 
@@ -591,6 +612,77 @@ font-family: 'Russo One', sans-serif;
 	</footer>
 	
 	<!-- End footer Area -->
+	
+
+
+	
+
+	  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	  
+	  <!-- <script>
+		  $(function() {
+			  $("#search").autocomplete({
+				  source: '/api/suggestionapi/', // Correct URL for suggestion API
+				  minLength: 2,
+				  
+				  select: function(event, ui) {
+					console.log(".....wer")
+
+					  // Redirect to the selected product page or perform any other action
+					  window.location.href = '/all_product/' + ui.item.value;
+				  }
+			  });
+		  });
+	  </script> -->
+<script>
+	$(document).ready(function(){
+		$('#search-input').keyup(function(){
+			var prefix = $(this).val();
+			$.ajax({
+				type: 'GET',
+				url: '/suggestions/',
+				data: {'prefix': prefix},
+				success: function(data){
+					var suggestions = $('#suggestions');
+					suggestions.empty();
+					var suggestionList = $('<ul></ul>');
+					$.each(data.suggestions, function(index, value){
+						var suggestionItem = $('<li>' + value + '</li>');
+						suggestionItem.click(function() {
+							$('#search-input').val($(this).text());
+							suggestions.empty();
+						});
+						suggestionList.append(suggestionItem);
+					});
+					suggestions.append(suggestionList);
+				}
+			});
+		});
+	});
+	
+</script>
+	  <!-- <script>
+		$(document).ready(function(){
+			$('#search-input').keyup(function(){
+				var prefix = $(this).val();
+				console.log(prefix, "...234")
+				$.ajax({
+					type: 'GET',
+					url: '/suggestions/',
+					data: {'prefix': prefix},
+					success: function(data){
+						$('#suggestions').empty();
+						$.each(data.suggestions, function(index, value){
+							$('#suggestions').append('<li>' + value + '</li>');
+							console.log(value, "....234")
+						});
+					}
+				});
+			});
+		});
+	</script> -->
+	
 	
 	<script src="{% static 'js/vendor/jquery-2.2.4.min.js' %}"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
