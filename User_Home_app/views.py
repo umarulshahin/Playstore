@@ -65,12 +65,9 @@ def All_Product(request):
         if not (sub and sort and filter):
             
             value=Product.objects.all()
-            sub=Sub_Category.objects.all()
             
         
-        if filter and filter == "all":
-            
-            value=Product.objects.all()
+       
             
         else:
             value=Product.objects.all()
@@ -81,6 +78,10 @@ def All_Product(request):
         if filter and filter != "all":   
             
             value=value.filter(sub_category=int(filter))
+            
+        elif filter and filter == "all":
+            
+            value=Product.objects.all()
             
         if sort:
             
@@ -626,12 +627,8 @@ def Delete_Cart(request,product_id):
         if "sub_total" in request.session:
         
             sub=request.session.get("sub_total")
-            print(value.total_price)
-            print(sub)
             
             sub_total=  int(sub) - int(value.total_price)
-
-            print(sub_total)
             
             if "sub_total" in request.session:
                 del request.session["sub_total"]
@@ -1297,7 +1294,8 @@ def New_Password(request):
        
        # .................USER ORDERS BILL DOWNLOADING......................
        
-
+@login_required(login_url='/user_app/Login/')
+@never_cache 
 def Orders_Bill(request,id):
     
     try:
@@ -1380,34 +1378,54 @@ def Orders_Bill(request,id):
         
        
        # .................END USER ORDERS BILL DOWNLOADING......................
-       
-   
-     
-     # .................SORTING......................
-     
-def Sort(request,val):
+ 
+     # ................. ADD WISHLIST......................
+
+@login_required(login_url='/user_app/Login/')
+@never_cache 
+def Add_Wishlist(request):
     
-    if val == 'low':
-        value=Product.objects.order_by('price')
-        sub=Sub_Category.objects.all()
-        context={
-            'pro' : value,
-            'sub' :sub
-        }
+    if request.method== 'POST':
+        pro_id =int(request.POST.get('product_id'))
+        pro=Product.objects.get(id=pro_id)
+        user = get_object_or_404(CustomUser, email=request.user)   
         
-        return render(request,'dashbord/all_product.html',context)
+        if Wishlist.objects.filter(customuser=user,product=pro).exists():
+        
+            return JsonResponse({'success': 'already'})
+        
+        Wishlist.objects.create(customuser=user,product=pro) 
+      
+     
+        return JsonResponse({'success': "added"})
     else:
-        value=Product.objects.order_by('-price')
-        sub=Sub_Category.objects.all()
-        context={
-            'pro' : value,
-            'sub' : sub,
-        }
+        return JsonResponse({'success': False})
+    
+    # .................END WISHLIST......................
+    
+        # .................END WISHLIST......................
         
-        return render(request,'dashbord/all_product.html',context)
+def User_Wishlist(request):
     
+    wish=Wishlist.objects.filter(customuser=request.user)
     
-    # .................END SORTING......................
+    context={
+        
+        'wish': wish
+    }
+    
+    return render(request,'dashbord/wishlist.html',context)       
+ 
+            # .................END WISHLIST......................
+            
+            # .................REMOVE WISHLIST......................
+            
+def Remove_Wishlist(request,id):
+    
+    Wishlist.objects.get(id=id).delete()
+    return redirect("user_wishlist")
+            
+            # .................END REMOVE WISHLIST......................
    
        
        

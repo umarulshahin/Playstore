@@ -1,0 +1,91 @@
+{% extends 'dashbord/dashbord.html' %}
+
+{% block content %}
+{% load static %}
+
+<section class="banner-area organic-breadcrumb">
+    <div class="container">
+        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+            <div class="col-first">
+                <h1>Wishlist</h1>
+                <nav class="d-flex align-items-center">
+                    <a href="#">Wishlist<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="{% url 'Dashbord' %}">Home</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<div class="single-product-slider my-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            {% if wish %}
+            {% for pro in wish %}
+               {% if pro.product.is_deleted == True %}
+                <div class="col-sm-6 col-lg-3 mx-auto">
+                    <div class="single-product">
+                        <img class="img-fluid" src="{{ pro.product.image.url }}"
+                             style="width: 200px; height: 200px; object-fit: cover;">
+                        <div class="product-details">
+                            <h6>{{ pro.name }}</h6>
+                            <div class="price">
+                                <h6>Price: ₹ {{ pro.product.price }} </h6>
+                            </div>
+                            <div class="prd-bottom">
+                                <a href="#" class="social-info add-to-wishlist" data-product-id="{{pro.product.id }}">
+                                    {% csrf_token %}
+                                    <span class="lnr lnr-cart"></span>
+                                    <p class="hover-text">Add cart</p>
+                                </a>
+                                <a href="{% url 'view_product' pro.product.id %}" class="social-info">
+                                    <span class="lnr lnr-move"></span>
+                                    <p class="hover-text">View More</p>
+                                </a>
+                                <a href="#" onclick="confirmDelete('{% url 'remove_wishlist' pro.id %}')" class="social-info">
+                                    <span class="lnr lnr-trash"></span>
+                                    <p class="hover-text">Remove</p>
+                                    
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+            {% else%}
+            <div class="f-icon">
+                <img src="{% static 'img/not found.jpg' %}" alt="">
+            </div>
+            
+
+             {% endif %}
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDelete(deleteUrl) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Are you sure you want to Remove?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Confirm",
+            cancelButtonText: "Cancel",
+            dangerMode: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to the delete URL
+                window.location.href = deleteUrl;  // Corrected to use deleteUrl
+            } else {
+                console.log("User canceled");
+            }
+        });
+    }
+</script>
+
+{% endblock %}

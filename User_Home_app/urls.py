@@ -51,8 +51,13 @@ urlpatterns = [
     path('orders_bill<int:id>',views.Orders_Bill,name="orders_bill"),
     
     path('suggestions/', views.Suggestions, name="suggestions"),  
+    
+    path('add_wishlist/',views.Add_Wishlist,name="add_wishlist"),
+    
+    path('user_wishlist/',views.User_Wishlist,name="user_wishlist"),
+    
+    path('remove_wishlist/<int:id>',views.Remove_Wishlist,name="remove_wishlist"),
       
-    # path('sort/<str:val>',views.Sort,name="sort"),
 
     
     

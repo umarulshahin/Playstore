@@ -113,8 +113,8 @@
             <br>
             <br>
 
-            <div class="single-product-slider">
-                <div class="container">
+    <div class="single-product-slider">
+        <div class="container">
             <div class="row justify-content-center">
                 {% if pro %}
                 {% for pro in pro %}
@@ -129,7 +129,8 @@
                                     <h6>Price: ₹ {{ pro.price }} </h6>
                                 </div>
                                 <div class="prd-bottom">
-                                    <a href="/wishlist/{{ pro.id }}" class="social-info">
+                                    <a href="#" class="social-info add-to-wishlist" data-product-id="{{pro.id }}">
+                                        {% csrf_token %}
                                         <span class="lnr lnr-heart"></span>
                                         <p class="hover-text">Wishlist</p>
                                     </a>
@@ -161,6 +162,42 @@
 
 
 </body>
+
+
+<script> 
+    $(document).ready(function() {
+      $('.add-to-wishlist').click(function(e) {
+          e.preventDefault(); // Prevent default link behavior
+          
+          var productId = $(this).data('product-id');
+          var tokenId = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+          var data = {
+              'product_id': productId,
+              "csrfmiddlewaretoken": tokenId,
+          };
+          console.log(data,".........2334")
+          $.ajax({
+              type: 'POST',
+              url: '{% url "add_wishlist" %}', // URL to your Django view
+              data: data,
+              success: function(response) {
+                if (response.success === 'added') {
+                    alert('Product added to wishlist successfully');
+                } else if (response.success === 'already') {
+                    alert('Product already in Wishlist');
+                } else {
+                    alert('Failed to add product to wishlist');
+                }
+            },
+            error: function() {
+                alert('An error occurred');
+            }
+          });
+      });
+  });
+
+</script>
 
 <script>
     // for getting the sorting status to be displayed in sorting dropdown placeholder

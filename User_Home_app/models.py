@@ -12,3 +12,9 @@ class Cart(models.Model):
     price=models.IntegerField(null=False,blank=False)
     total_price=models.IntegerField(null=False,blank=False)
     
+class Wishlist(models.Model):
+    
+    customuser=models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    product=models.ForeignKey(Product,on_delete=models.CASCADE)
+    
+    

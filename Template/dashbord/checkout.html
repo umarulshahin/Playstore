@@ -522,8 +522,7 @@
 
                                         var token = $("[name='csrfmiddlewaretoken']").val();
                                         var selectedAddress = document.querySelector('input[name="address"]:checked').value;
-                                        console.log(token);
-                                        console.log(selectedAddress);
+                                       
                                         let address_id=selectedAddress
                             
                                         var data = {
@@ -532,7 +531,6 @@
                                             "address_id" :address_id, // Make sure responseb is accessible here
                                             "csrfmiddlewaretoken": token,
                                         };
-                                        console.log(data);
                             
                                         $.ajax({
                                             method: "POST",

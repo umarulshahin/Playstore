@@ -222,11 +222,11 @@
                                               {% if size.stock >= 1 %}
                                                 <input type="radio" id="size-{{ size.size }}" name="size" value="{{ size.size }}" class="hidden-radio" required>
                                                 <label for="size-{{ size.size }}" class="size-circle">{{ size.size }}</label>
-                                               
                                                 {% endif %}
-                                            {% endfor %}
-                                            <input type="hidden" value="{{pro.id}}" class="prod_id">
-                                            <input type="hidden" value="1" class="prod_qty">
+                                                {% endfor %}
+                                                <input type="hidden" value="{{pro.id}}" class="prod_id">
+                                                <input type="hidden" value="1" class="prod_qty">
+                                        
                                         </div>
                                 
                                         <!-- Interactive Icons (Add to Cart, Add to Wishlist) -->
@@ -235,13 +235,18 @@
                                                 <a href="#" id="AddToCart" class="btn btn-dark flex-grow-1">
                                                     <i class="fa fa-cart-plus icon-size"></i> Add to Cart
                                                 </a>
-                                                <a href="/wishlist/{{ pro.id }}" class="btn btn-primary ml-2 flex-grow-1">
+                                                <a href="#" class="btn btn-primary ml-2 flex-grow-1 add-wishlist" data-product-id="{{ pro.id }}">
+                                                    {% csrf_token %}
                                                     <i class="fa fa-heart icon-size"></i> Add Wishlist
                                                 </a>
+                                             
                                             </div>
                                         </div>
+                                        
                                     </form>
+                                    
                                 </div>
+                                
                                 
 
                                 
@@ -297,6 +302,43 @@
 
 
             <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+  
+            <script> 
+                $(document).ready(function() {
+                  $('.add-wishlist').click(function(e) {
+                      e.preventDefault(); // Prevent default link behavior
+                      
+                      var productId = $(this).data('product-id');
+                      var token = document.querySelector('[name=csrfmiddlewaretoken]').value;
+          
+                      var data = {
+                          'product_id': productId,
+                          "csrfmiddlewaretoken": token,
+                      };
+                      $.ajax({
+                          type: 'POST',
+                          url: '{% url "add_wishlist" %}', // URL to your Django view
+                          data: data,
+                          success: function(response) {
+                            if (response.success === 'added') {
+                                alert('Product added to wishlist successfully');
+                            } else if (response.success === 'already') {
+                                alert('Product already in Wishlist');
+                            } else {
+                                alert('Failed to add product to wishlist');
+                            }
+                        },
+                        error: function() {
+                            alert('An error occurred');
+                        }
+                      });
+                  });
+              });
+          
+          </script>
+              
+
 <script>
     $(document).ready(function() {
         $('#AddToCart').click(function(e) {

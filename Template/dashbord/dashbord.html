@@ -186,7 +186,7 @@ font-family: 'Russo One', sans-serif;
 
 									<ul class="dropdown-menu">
 										<li class="nav-item"><a class="nav-link" href="{% url 'user_profile' user.id %}">My Account</a></li>
-										<li class="nav-item"><a class="nav-link" href="tracking.html">My Wishlist</a></li>
+										<li class="nav-item"><a class="nav-link" href="{% url 'user_wishlist' %}">My Wishlist</a></li>
 										<li class="nav-item"><a class="nav-link" href="{% url 'my_order' %}">My Order</a></li>
 										<li class="nav-item"><a class="nav-link" href="login.html">My Wallet</a></li>
 										<li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
@@ -448,7 +448,8 @@ font-family: 'Russo One', sans-serif;
 										<h6>Price: ₹ {{ pro.price }} </h6>
 									</div>
 									<div class="prd-bottom">
-										<a href="/wishlist/{{ pro.id }}" class="social-info">
+										<a href="#" class="social-info add-to-wishlist-btn" data-product-id="{{ pro.id }}">
+											{% csrf_token %}
 											<span class="lnr lnr-heart"></span>
 											<p class="hover-text">Wishlist</p>
 										</a>
@@ -494,7 +495,8 @@ font-family: 'Russo One', sans-serif;
 											<h6>Price: ₹{{ product.price }}</h6>
 										</div>
 										<div class="prd-bottom">
-											<a href="/wishlist/{{ product.id }}" class="social-info">
+											<a href="#" class="social-info add-to-wishlist-btn" data-product-id="{{ product.id }}">
+												{% csrf_token %}
 												<span class="lnr lnr-heart"></span>
 												<p class="hover-text">Wishlist</p>
 											</a>
@@ -619,22 +621,40 @@ font-family: 'Russo One', sans-serif;
 
 	  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-	  
-	  <!-- <script>
-		  $(function() {
-			  $("#search").autocomplete({
-				  source: '/api/suggestionapi/', // Correct URL for suggestion API
-				  minLength: 2,
-				  
-				  select: function(event, ui) {
-					console.log(".....wer")
+	 <script> 
+	  $(document).ready(function() {
+		$('.add-to-wishlist-btn').click(function(e) {
+			e.preventDefault(); // Prevent default link behavior
+			
+			var productId = $(this).data('product-id');
+			var token = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-					  // Redirect to the selected product page or perform any other action
-					  window.location.href = '/all_product/' + ui.item.value;
-				  }
-			  });
-		  });
-	  </script> -->
+			var data = {
+				'product_id': productId,
+				"csrfmiddlewaretoken": token,
+			};
+			$.ajax({
+				type: 'POST',
+				url: '{% url "add_wishlist" %}', // URL to your Django view
+				data: data,
+				success: function(response) {
+					if (response.success === 'added') {
+						alert('Product added to wishlist successfully');
+					} else if (response.success === 'already') {
+						alert('Product already in Wishlist');
+					} else {
+						alert('Failed to add product to wishlist');
+					}
+				},
+				error: function() {
+					alert('An error occurred');
+				}
+			});
+		});
+	});
+
+</script>
+	
 <script>
 	$(document).ready(function(){
 		$('#search-input').keyup(function(){
