@@ -312,9 +312,7 @@ def Add_Address(request):
                             country=country,
                             pin_code=pin_code,
                             location=location,
-                            customuser= value,
-                                                    
-                                                    
+                            customuser= value,            
                                                     )
                 
                 
@@ -423,7 +421,7 @@ def Edit_Address(request):
 def Add_to_Cart(request):
     
     try:
-            
+        
         if request.method == "POST":
             if request.user.is_authenticated:
                 pro_id=request.POST.get('product_id')
@@ -431,6 +429,8 @@ def Add_to_Cart(request):
                 product = Product.objects.get(id=pro_id)
                 
                 product_check = Product.objects.get(id=pro_id)
+                
+              
                 if (pro_size):
                         if(product_check):
                             
@@ -449,7 +449,8 @@ def Add_to_Cart(request):
                                                     qty=pro_qty,
                                                     price=int(product_check.price),
                                                     total_price=total)
-                                
+                                wa=Wishlist.objects.get(product=pro_id,customuser=request.user).delete()
+                              
                                 return JsonResponse({'status' :"Product added successfully"})
 
                             

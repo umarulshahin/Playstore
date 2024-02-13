@@ -247,15 +247,7 @@
                                     
                                 </div>
                                 
-                                
-
-                                
-
-
-
-
-
-                                
+                 
                                     </div>
                                 </div>
                             </div>
@@ -366,9 +358,7 @@
                     console.log(response);
                     if (response.status === "Product added successfully") {
                         alertify.success(response.status);
-                    } else {
-                        alertify.error(response.status);
-                    }
+                    } 
                 },
                 error: function(xhr, status, error) {
                     console.error(xhr.responseText);
@@ -401,53 +391,6 @@
         // ...
     });
 </script>
-            <!-- <script>
-                $(document).ready(function() {
-                    $('#AddToCart').click(function(e) {
-                        e.preventDefault();
-                
-                        var product_id = $(this).closest('.product_data').find('.prod_id').val();
-                        var product_qty = $(this).closest('.product_data').find('.prod_qty').val();
-                        var product_size = $(this).closest('.product_data').find('.hidden-radio').val();
-                        var token = $('#addToCartForm input[name=csrfmiddlewaretoken]').val();
-                        console.log("product_id:",product_id)
-                        console.log("product_qty:",product_qty)
-                        console.log("product_size:",product_size)
-
-
-                
-                        $.ajax({
-                            method: "POST",
-                            url: "/add-to-cart",
-                            data: {
-                                'product_id': product_id,
-                                'product_qty': product_qty,
-                                'product_size': product_size,
-                                csrfmiddlewaretoken: token
-                            },
-                            success: function(response) {
-                                console.log(response);
-                                if (response.status === "Product added successfully") {
-                                    alertify.success(response.status);
-                                } else {
-                                    alertify.error(response.status);
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error(xhr.responseText);
-                                alertify.error("An error occurred. Please try again.");
-                            }
-                        });
-                    });
-                });
-                
-            </script> -->
-
-
-            
-            
-                 
-
 
 
             <script>
@@ -469,30 +412,7 @@
                 });
             </script>
             
-            <!-- <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    var additionalImages = document.querySelectorAll('.additional-image');
-        
-                    additionalImages.forEach(function (image) {
-                        image.addEventListener('click', function () {
-                            var newImageSrc = this.getAttribute('data-image');
-                            var index = this.getAttribute('value');
-                            document.getElementById('mainImage').src = newImageSrc;
-                            var magLink = document.getElementById('Mag');
-                            magLink.setAttribute('href', newImageSrc);
-                            console.log('Updated href:', magLink.getAttribute('href'));
-                            if (typeof MagicZoom !== 'undefined' && typeof MagicZoom.stop === 'function') {
-                                MagicZoom.stop('Mag');
-                                document.getElementById('mainImage').src = newImageSrc;
-                                MagicZoom.start('Mag');
-                            } else {
-                                console.warn('MagicZoom not available or stop function not defined.');
-                            }
-                        });
-                    });
-                });
-            </script>
-                 -->
+          
                 
 
 {% endblock %}
