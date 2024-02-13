@@ -195,8 +195,7 @@ def Admin_logout(request):
     try:
     
         if 'email_admin' in request.session:
-            
-            email_admin_value = request.session.get('email_admin')
+          
             del request.session['email_admin']
             logout(request)
             
@@ -466,7 +465,6 @@ def Update_Sub_Category(request,id):
 @admin_required
 @login_required(login_url="/Admin_app/")
 @never_cache                    
-
 def Delete_Sub_Category(request,id):
     
     try:
@@ -596,10 +594,16 @@ def Add_Product(request):
                 messages.error(request, "Invalid Price . Price Should Be Above Zero ")
                 return redirect("product_list")
             
-            if int(discount) < 0:
+            elif int(discount) < 0 :
                 
                 messages.error(request, "Invalid Discound . Discound Should Be Zero or  Above Zero ")
                 return redirect("product_list")
+            
+            elif int(discount) > price//2:
+                
+                messages.error(request, "Invalid Discound . Discound Should Be lessthan 50% ")
+                return redirect("product_list")
+                
             
                 
             sub=Sub_Category.objects.get(id=sub_category)
@@ -652,30 +656,45 @@ def Update_Product(request,id):
             up= Product.objects.get(id=id)
             
             name=request.POST.get("product_name")
-            price=request.POST.get("price")
-            discount=float(request.POST.get("discount"))
+            price=int(request.POST.get("price"))
+            discount=int(request.POST.get("discount"))
             sub_category=request.POST.get("category_type")
             description=request.POST.get("description")
             image=request.FILES.get("image")
             r_image=request.FILES.getlist("related_images")
             delete=request.POST.getlist("selected_images")
-            
-        
+              
+           
+            offer=0
             if int(price) < 1:
                 
                 messages.error(request, "Invalid Price . Price Should Be Above Zero ")
                 return redirect("product_list")
             
-            if discount < 0:
+            elif discount < 0:
                 
                 messages.error(request, "Invalid Discound . Discound Should Be Zero or Above Zero ")
                 return redirect("product_list")
             
+            elif discount>=1:
                 
+                dis=(price*discount)//100
+                
+                if dis > price//2:
+                    
+                    messages.error(request, "Invalid Discound . Discound Should Be less than 50% ")
+                    return redirect("product_list")
+                else:   
+                    
+                   offer=(price-dis)  
+            
+            
             sub=Sub_Category.objects.get(id=sub_category)
+      
             
             up.name=name
             up.price=price
+            up.offer_price=offer
             up.discount=discount
             up.description=description
             up.sub_category=sub

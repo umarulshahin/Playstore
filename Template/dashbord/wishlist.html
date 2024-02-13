@@ -37,9 +37,20 @@
                                 <img class="img-fluid" src="{{ pro.product.image.url }}"
                                      style="width: 200px; height: 200px; object-fit: cover;">
                                 <div class="product-details">
-                                    <h6>{{ pro.name }}</h6>
+                                    <h4>{{ pro.product.name }}</h4>
                                     <div class="price">
-                                        <h6>Price: ₹ {{ pro.product.price }} </h6>
+                                        {% if pro.product.offer_price >= 1 %}
+									    
+                                        <h5><strong class="product-price my-1">
+                                             <del class="m-1">₹ {{pro.product.price}}</del>
+                                             <h6>({{pro.product.discount}}% off)</h6>
+                                        </strong></h5>
+                                        <h4><strong>₹ {{pro.product.offer_price}}</strong></h4>
+                                        
+                                        
+                                    {% else %} 
+                                        <h4 class="product-price"><strong>₹ {{pro.product.price}}</strong></h4>
+                                {% endif %}
                                     </div>
                                     <div class="prd-bottom">
                                         <!-- Your original "Add to cart" button -->
@@ -136,12 +147,16 @@
                     console.log(response);
                     if (response.status === "Product added successfully") {
                    
-                        alertify.success(response.status);
+                        toastr.success(response.status);
                         setTimeout(function() {
                             window.location.reload();
                         }, 1000);
                         
-                    } 
+                    }  else {
+
+                        toastr.warning(response.status);
+                       
+                    }
                   
                 },
                 error: function(xhr, status, error) {

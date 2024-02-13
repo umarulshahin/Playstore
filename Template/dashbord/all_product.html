@@ -124,9 +124,20 @@
                             <img class="img-fluid" src="{{ pro.image.url }}"
                                  style="width: 200px; height: 200px; object-fit: cover;">
                             <div class="product-details">
-                                <h6>{{ pro.name }}</h6>
+                                <h4>{{ pro.name }}</h4>
                                 <div class="price">
-                                    <h6>Price: ₹ {{ pro.price }} </h6>
+                                    {% if pro.offer_price >= 1 %}
+									    
+                                    <h5><strong class="product-price my-1">
+                                         <del class="m-1">₹ {{pro.price}}</del>
+                                         <h6>({{pro.discount}}% off)</h6>
+                                    </strong></h5>
+                                    <h4><strong>₹ {{pro.offer_price}}</strong></h4>
+                                    
+                                    
+                                {% else %} 
+                                    <h4 class="product-price"><strong>₹ {{pro.price}}</strong></h4>
+                            {% endif %}
                                 </div>
                                 <div class="prd-bottom">
                                     <a href="#" class="social-info add-to-wishlist" data-product-id="{{pro.id }}">

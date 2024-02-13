@@ -434,22 +434,33 @@ def Add_to_Cart(request):
                 if (pro_size):
                         if(product_check):
                             
-                            if (Cart.objects.filter(customuser=request.user,product=pro_id,size=pro_size)):
+                            if Cart.objects.filter(customuser=request.user,product=pro_id,size=pro_size).exists():
                                 
                                 return JsonResponse({'status' :"Product already in  Cart"})
                             else:
                                 
                                 pro_qty=request.POST.get('product_qty')
+                            
                                 
-                                total= int(product_check.price) * int(pro_qty)
-                                
+                                if not product_check.offer_price or product_check.offer_price<=0:
+
+                                   total= int(product_check.price) * int(pro_qty)
+                                   
+                                else:
+                
+                                    total= int(product_check.offer_price) * int(pro_qty)
+                                    
                                 Cart.objects.create(customuser=request.user,
                                                     product=product,
                                                     size=pro_size,
                                                     qty=pro_qty,
                                                     price=int(product_check.price),
+                                                    offer_price=int(product_check.offer_price),
                                                     total_price=total)
-                                wa=Wishlist.objects.get(product=pro_id,customuser=request.user).delete()
+                                
+                                if Wishlist.objects.filter(product=pro_id,customuser=request.user).exists():
+                                    
+                                    Wishlist.objects.get(product=pro_id,customuser=request.user).delete()
                               
                                 return JsonResponse({'status' :"Product added successfully"})
 
@@ -549,8 +560,13 @@ def update_quantity_view(request):
             
                 return JsonResponse({'error': f'Not enough stock available. Current stock: {stock.stock}'}, status=400)
         
-        
-            total=int(cart_item.price) * int(new_quantity)
+            if not cart_item.offer_price or cart_item.offer_price <= 0:
+            
+               total=int(cart_item.price) * int(new_quantity)
+               
+            else:
+                
+                total=int(cart_item.offer_price) * int(new_quantity)
         
             
             if stock.stock >= new_quantity :
@@ -671,13 +687,29 @@ def Checkout(request):
                     
                 user=request.user
                 value=Cart.objects.filter(customuser=user)
-                sub_total=request.session.get("sub_total")
+                total=request.session.get("sub_total")
                 address=User_Address.objects.filter( customuser=user)
+                
+                sub_total=0
+                for j in value:
+                    
+                    sub_total += j.price * j.qty
+                   
+                discount=0                
+                for i in value:
+                    if i.offer_price >= 1:
+                        
+                      dis=i.price - i.offer_price
+                      discount += dis * i.qty
+                      
+               
                 context={
                     
                     'value' :value,
-                    'sub_total':sub_total,
+                    'total':total,
                     'address' : address,
+                    'discount' : discount,
+                    'sub_total' : sub_total
                 }
                 
                 
@@ -1017,6 +1049,7 @@ def User_Order(request):
                                                                         qty=i.qty,
                                                                         size=i.size,
                                                                         price=i.price,
+                                                                        offer_price=i.offer_price,
                                                                         total_price=i.total_price)
                                                     
                                                 
@@ -1337,11 +1370,11 @@ def Orders_Bill(request,id):
                     p.drawString(120, y_coordinate, value)
 
             # Create a table and set its style
-            data = [['Item', 'Size', 'Quantity', 'Unit Price', 'Total']]
+            data = [['Item', 'Size', 'Quantity', 'Unit Price', 'Offer Price' ,'Total']]
             for item in order_items:
-                data.append([item.product.name, item.size, item.qty, item.price, item.total_price])
+                data.append([item.product.name, item.size, item.qty, item.price, item.offer_price, item.total_price])
 
-            table = Table(data, colWidths=[150, 80, 80, 80, 80])
+            table = Table(data, colWidths=[100, 80, 80, 80, 80, 80,])
             style = TableStyle([
                 ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
                 ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),

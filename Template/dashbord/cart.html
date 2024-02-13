@@ -59,6 +59,7 @@
                                     <th scope="col">Product</th>
                                     <th scope="col">Size</th>
                                     <th scope="col">Price</th>
+                                    <th scope="col">Offer Price</th>
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Total</th>
                                 </tr>
@@ -88,7 +89,11 @@
                 </td>
                 <td>Size: {{ cart_item.size }}</td>
                 <td>
-                    <h5>₹ {{ cart_item.product.price }}</h5>
+                    <h5>₹ {{ cart_item.price }}</h5>
+                </td>
+                <td>
+                    
+                    <h5>₹ {{ cart_item.offer_price }}</h5>
 
                 </td>
                 {% csrf_token %}

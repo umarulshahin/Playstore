@@ -20,8 +20,9 @@ class Sub_Category(models.Model):
 class Product(models.Model):
     
     name=models.CharField(max_length=250)
-    price=models.BigIntegerField()
-    discount=models.DecimalField( max_digits=20, decimal_places= 2,null=True)
+    price=models.IntegerField(null=False)
+    discount=models.IntegerField( null=True)
+    offer_price=models.IntegerField( null=True)
     sub_category=models.ForeignKey(Sub_Category,on_delete=models.CASCADE) 
     description=models.TextField()
     is_deleted = models.BooleanField(default=False)
@@ -41,7 +42,8 @@ class Product(models.Model):
             output_size = (500, 700)
             img.thumbnail(output_size)
             img.save(self.image.path)
-
+    class Meta:
+        ordering = ['-id']
 
     
 class Product_image(models.Model):
@@ -105,6 +107,7 @@ class Order_Items(models.Model):
     qty=models.IntegerField(null=False,blank=False)
     size=models.IntegerField(null=False,blank=False)
     price=models.IntegerField(null=False,blank=False)
+    offer_price=models.IntegerField(null=True,blank=True,default=0)
     total_price=models.IntegerField(null=False,blank=False)
     
     

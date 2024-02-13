@@ -382,13 +382,13 @@ def otp():
         account_sid = os.getenv('TWILIO_ACCOUNT_SID')
         auth_token = os.getenv('TWILIO_AUTH_TOKEN')
         my_number = os.getenv('MY_NUMBER')
-        
+        print(otp,".............otp")
         client = Client(account_sid,auth_token)
         
         msg = client.messages.create(
             
             body = F"Your OTP is {otp}",
-            from_= "+13346030540",
+            from_= "+12059474365",
             to =my_number,
             
             
@@ -402,7 +402,6 @@ def otp():
 
 def Signup_Resend_Otp(request):
     
-    print("...........egsdg")
     try: 
             
             re_otp=otp()

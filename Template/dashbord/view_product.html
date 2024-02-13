@@ -201,9 +201,20 @@
                         <div class="col-lg-4 order-lg-3 order-3">
                             <div class="product-info ml-5 mt-5">
                                 <!-- Product Information (Name, Price, Description, etc.) -->
-                                <h1>{{pro.name}}</h1>
-                                <p class="lead"><h2 style="color: red">₹ {{pro.price}}</h2></p>
-                                <p><h4>{{pro.description}}</h4></p>
+                                <h1><strong>{{pro.name}}</strong></h1>
+                                <div class="price mt-3">
+                                {% if pro.offer_price >= 1 %}
+									    
+                                <h3><strong class="product-price my-1">
+                                     <del class="m-1">₹ {{pro.price}}</del>
+                                     {{pro.discount}}% off
+                                </strong></h3>
+                                <h2><strong>₹ {{pro.offer_price}}</strong> </h2>
+                            </div>
+                                
+                            {% else %} 
+                                <h3 class="product-price"><strong>₹ {{pro.price}}</strong></h3>
+                        {% endif %}
                                 
                                 <p>Average Ratings: <span class="fa fa-star"
                                         style="color: green; border: 1px solid green;"></span></p>
@@ -274,7 +285,20 @@
                                             style="width: 175px; height: 175px; object-fit: cover;">
                                         <div class="card-body">
                                             <h5 class="card-title">{{ relate.name }}</h5>
-                                            <p class="card-text">Price: ₹{{ relate.price }}</p>
+                                            <div class="price">
+                                                {% if relate.offer_price >= 1 %}
+                                                
+                                                <h5><strong class="product-price my-1">
+                                                     <del class="m-1">₹ {{relate.price}}</del>
+                                                     {{relate.discount}}% off
+                                                </strong></h5>
+                                                <h4><strong>₹ {{relate.offer_price}}</strong></h4>
+                                                
+                                                
+                                            {% else %} 
+                                                <h4 class="product-price"><strong>₹ {{relate.price}}</strong></h4>
+                                        {% endif %}
+                                            </div>
                                         </div>
                                     </div>
                                 </a>
@@ -357,8 +381,14 @@
                 success: function(response) {
                     console.log(response);
                     if (response.status === "Product added successfully") {
-                        alertify.success(response.status);
+                        toastr.success(response.status);
                     } 
+                    else {
+
+                        toastr.warning(response.status);
+                       
+                    }
+
                 },
                 error: function(xhr, status, error) {
                     console.error(xhr.responseText);

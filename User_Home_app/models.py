@@ -10,6 +10,7 @@ class Cart(models.Model):
     qty=models.IntegerField(null=False,blank=False)
     size=models.IntegerField(null=False,blank=False)
     price=models.IntegerField(null=False,blank=False)
+    offer_price=models.IntegerField(null=False,blank=False)
     total_price=models.IntegerField(null=False,blank=False)
     
 class Wishlist(models.Model):

@@ -75,6 +75,7 @@
           <th>Category</th>
           <th>Size and Stock</th>
           <th>Price</th>
+          <th>Offer Price</th>
           <th>Image</th>
           <th>Description</th>
           <th>Status</th>
@@ -103,6 +104,7 @@
       </td>
 
       <td>{{pro.price}}</td>
+      <td>{{pro.offer_price}}</td>
       <td>
         {% if pro.image %}
           <img style="border-radius: 0; width: 100px; height: 100px;" src="{{ pro.image.url }}" alt="Product Image">
