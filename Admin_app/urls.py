@@ -87,6 +87,10 @@ urlpatterns = [
     
     path('sales_report/',views.Sales_Report,name="sales_report"),
     
+    path('offers/',views.Offers,name="offers"),
+    
+    path("add_offer/",views.Add_Offer,name="add_offer")
+    
 
     
 

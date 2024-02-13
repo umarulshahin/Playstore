@@ -665,7 +665,10 @@ font-family: 'Russo One', sans-serif;
 						alert('Product added to wishlist successfully');
 					} else if (response.success === 'already') {
 						alert('Product already in Wishlist');
-					} else {
+					} else if (response.success === 'cart already') {
+
+						alert('Product already in Cart');
+					}else {
 						alert('Failed to add product to wishlist');
 					}
 				},

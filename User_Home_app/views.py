@@ -1428,6 +1428,8 @@ def Add_Wishlist(request):
         
             return JsonResponse({'success': 'already'})
         
+        if Cart.objects.filter(customuser=user,product=pro).exists():
+                return JsonResponse({'success': 'cart already'})
         Wishlist.objects.create(customuser=user,product=pro) 
       
      

@@ -113,6 +113,19 @@ class Order_Items(models.Model):
     
     class Meta:
         ordering = ['-id']
+        
+class Offer(models.Model):
+    
+    name = models.CharField(max_length=100,null=False)
+    discount = models.IntegerField(null=False)
+    start_date = models.DateField(null=False)
+    end_date = models.DateField(null=False)
+    is_delete=models.BooleanField(default=False)
+    
+    def _str_(self):
+        return self.name
+    
+    
  
     
     

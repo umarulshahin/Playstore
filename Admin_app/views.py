@@ -1047,6 +1047,36 @@ def Sales_Report(request):
         return render(request,'Admin/admin_404.html')
                     
                     # ................END SALES REPORTS.........................
+                    
+                     # ................OFFERS PAGE.........................
+                     
+def Offers(request):
+    
+    
+    off=Offer.objects.all()
+    context={
+        'offer' : off
+    }
+    
+    return render(request,'Admin/offers.html',context)
+
+                     
+                      # ................END OFFERS PAGE.........................
+                      
+def Add_Offer(request):
+    
+    if request.method == 'POST':
+        name=request.POST.get("category_name")
+        disc=request.POST.get("discount")
+        s_date=request.POST.get("start_date")
+        e_date=request.POST.get("end_date")
+        
+        Offer.objects.create(name=name,
+                             discount=disc,
+                             start_date=s_date,
+                             end_date=e_date)
+        
+    return redirect('offers')
     
 
 
