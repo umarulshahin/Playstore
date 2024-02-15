@@ -89,7 +89,17 @@ urlpatterns = [
     
     path('offers/',views.Offers,name="offers"),
     
-    path("add_offer/",views.Add_Offer,name="add_offer")
+    path("create_offer/",views.Creat_Offer,name="create_offer"),
+    
+    path('delete_offer/<int:id>',views.Delete_Offer,name="delete_offer"),
+    
+    path('offer_status/<int:id>',views.Offer_Status,name="offer_status"),
+    
+    path('update_offer/',views.Update_Offer,name="update_offer"),
+    
+    path('add_offer/',views.Add_Offer,name="add_offer"),
+    
+    path('offer_remove/<int:id>',views.Offer_Remove,name="offer_remove"),
     
 
     

@@ -16,6 +16,8 @@ from reportlab.pdfgen import canvas
 from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors     
 from django.db.models.functions import Coalesce
+import re 
+from datetime import datetime
 
 
 
@@ -394,12 +396,17 @@ def Add_category(request):
 def Sub_category(request):
     try:
         sub=Sub_Category.objects.all()
-        main = Category.objects.all()
-        
-        
+        main = Category.objects.all()       
+        today = datetime.today().date()
+  
+        off=Offer.objects.filter(end_date__gte=today,is_delete=True)
+         
+
         context={
             'sub':sub,
-            'main':main
+            'main':main,
+             'off' : off,
+            
         }
 
         return render(request,"admin/sub_category.html",context)
@@ -581,14 +588,14 @@ def Add_Product(request):
         if request.method == "POST" :
             
             name=request.POST.get("product_name")
-            price=request.POST.get("price")
-            discount=request.POST.get("discount")
+            price=int(request.POST.get("price"))
+            discount=int(request.POST.get("discount"))
             sub_category=request.POST.get("category_type")
             description=request.POST.get("description")
             m_image=request.FILES.get("m_image")
             r_images=request.FILES.getlist("r_images")
     
-            
+            offer=0
             if int(price) < 1:
                 
                 messages.error(request, "Invalid Price . Price Should Be Above Zero ")
@@ -599,16 +606,28 @@ def Add_Product(request):
                 messages.error(request, "Invalid Discound . Discound Should Be Zero or  Above Zero ")
                 return redirect("product_list")
             
-            elif int(discount) > price//2:
+            elif discount < 0:
                 
-                messages.error(request, "Invalid Discound . Discound Should Be lessthan 50% ")
+                messages.error(request, "Invalid Discound . Discound Should Be Zero or Above Zero ")
                 return redirect("product_list")
+            
+            elif discount>=1:
                 
+                dis=(price*discount)//100
+                
+                if dis > price//2:
+                    
+                    messages.error(request, "Invalid Discound . Discound Should Be less than 50% ")
+                    return redirect("product_list")
+                else:   
+                    
+                   offer=(price-dis)  
             
                 
             sub=Sub_Category.objects.get(id=sub_category)
             pro_id=Product.objects.create(name=name,
                                         price=price,
+                                        offer_price=offer,
                                         discount=discount,
                                         sub_category=sub,
                                         description=description,
@@ -620,6 +639,7 @@ def Add_Product(request):
                 Product_image.objects.create(product=pro_id,image_url=r_images[i])
                 
             return redirect("product_list") 
+        
     except TypeError:
         return render(request,'Admin/admin_404.html')
                     
@@ -1049,7 +1069,10 @@ def Sales_Report(request):
                     # ................END SALES REPORTS.........................
                     
                      # ................OFFERS PAGE.........................
-                     
+
+@admin_required
+@login_required(login_url="/Admin_app/")
+@never_cache                      
 def Offers(request):
     
     
@@ -1063,23 +1086,185 @@ def Offers(request):
                      
                       # ................END OFFERS PAGE.........................
                       
-def Add_Offer(request):
+                      
+                      # ................CREATE OFFERS PAGE.........................
+@admin_required
+@login_required(login_url="/Admin_app/")
+@never_cache                      
+def Creat_Offer(request):
     
-    if request.method == 'POST':
-        name=request.POST.get("category_name")
-        disc=request.POST.get("discount")
-        s_date=request.POST.get("start_date")
-        e_date=request.POST.get("end_date")
-        
-        Offer.objects.create(name=name,
-                             discount=disc,
-                             start_date=s_date,
-                             end_date=e_date)
-        
+        if request.method == 'POST':
+            name=request.POST.get("category_name")
+            disc=request.POST.get("discount")
+            s_date=request.POST.get("start_date")
+            e_date=request.POST.get("end_date")
+            
+            pattern = r'^[a-zA-Z0-9].*'
+            
+            s_date=datetime.strptime(s_date, '%Y-%m-%d').date()
+            e_date=datetime.strptime(e_date, '%Y-%m-%d').date()
+            today = datetime.today().date()
+            print(today)
+            
+            if not re.match(pattern,name or disc ):
+            
+                messages.error(request,"Please Enter Valid inputs")
+                return redirect('offers')
+            
+            elif int(disc) < 0 or int(disc) > 80:
+                
+                messages.error(request,"Invalid Discound . Discound Should Be Zero and Less Than 80%")
+                return redirect('offers')
+            
+            elif s_date < today or e_date < today :
+                
+                messages.error(request," Invalid Date.Start Date and End Date Should Be Today or  Above Today")
+                return redirect('offers')
+            
+            elif s_date > e_date:
+                
+                messages.error(request," Invalid Date. End Date Should Be Start Date or  Above Start Date")
+                return redirect('offers')
+            
+            elif Offer.objects.filter(name=name).exists():
+                
+                messages.error(request," Invalid Offer. Offer Name already added")
+                return redirect('offers')
+            else:
+                
+                Offer.objects.create(name=name,
+                            discount=disc,
+                            start_date=s_date,
+                            end_date=e_date)
+                
+                return redirect('offers')
+                
+        return redirect('offers')
+    
+    # ................ END CREATE OFFERS PAGE.........................
+    
+    
+     # ................DELETE OFFERS .........................
+
+@admin_required
+@login_required(login_url="/Admin_app/")
+@never_cache 
+def Delete_Offer(request,id):
+    
+    Offer.objects.get(id=id).delete()
     return redirect('offers')
     
+ # ................END DELETE OFFERS .........................
+ 
+ 
+ # ................OFFERS STATUS CHANGING   .........................
+ 
+@admin_required
+@login_required(login_url="/Admin_app/")
+@never_cache 
+def Offer_Status(request,id):
+    
+    off=Offer.objects.get(id=id)
+    
+    if off.is_delete:
+        
+        off.is_delete=False
+        off.save()
+        
+    else:
+        
+        off.is_delete=True
+        off.save()
+    
+    return redirect('offers')
 
-
+ # ................END OFFERS STATUS CHANGING.........................
+ 
+ 
+ # ................UPDATE OFFERS.........................
+ 
+@admin_required
+@login_required(login_url="/Admin_app/")
+@never_cache 
+def Update_Offer(request):
     
+    if request.method == "POST":
+            
+            id=request.POST.get("id")
+            name=request.POST.get("name")
+            off=request.POST.get("off")
+            s_date=request.POST.get("s_date")
+            e_date=request.POST.get("e_date")
+        
+        
+            pattern = r'^[a-zA-Z0-9].*'
+            
+            s_date=datetime.strptime(s_date, '%Y-%m-%d').date()
+            e_date=datetime.strptime(e_date, '%Y-%m-%d').date()
+            today = datetime.today().date()
+            
+            if not re.match(pattern,name or off ):
+            
+                messages.error(request,"Please Enter Valid inputs")
+                return redirect('offers')
+            
+            elif int(off) < 0 or int(off) > 80:
+                
+                messages.error(request,"Invalid Discound . Discound Should Be Zero and Less Than 80%")
+                return redirect('offers')
+            
+            elif s_date < today or e_date < today:
+                
+                messages.error(request," Invalid Date. Date Should Be Today or  Above Today")
+                return redirect('offers')
+            
+            elif s_date > e_date:
+                
+                messages.error(request," Invalid Date. End Date Should Be Start Date or  Above Start Date")
+                return redirect('offers')
+            
+            value=Offer.objects.exclude(id=id)
+            if value.filter(name=name):
+                
+                messages.error(request," Invalid Offer. Offer Name already added")
+                return redirect('offers')
+            
+            elif Offer.objects.get(id=id) :
+                 
+                Offer.objects.filter(id=id).update(name=name,
+                                                discount=off,
+                                                start_date=s_date,
+                                                end_date=e_date)
+                
+                return redirect('offers')
+       
+    return redirect('offers')
+ 
+ # ................UPDATE OFFERS.........................
+ 
+ # ................ ADD OFFERS IN SUB CATEGORY.........................
+ 
+def Add_Offer(request):
     
+    if request.method == "POST":
+        
+        id=request.POST.get("id")
+        offer=request.POST.get("offer_id")
+      
+        if offer and offer != '0':
+            
+            Sub_Category.objects.filter(id=id).update(offer=offer)
+            
+       
+    return redirect("sub_category") 
+ 
+ # ................ END ADD OFFERS IN SUB CATEGORY.........................
+ 
+def Offer_Remove(request,id):
     
+    sub=Sub_Category.objects.get(id=id)
+    if sub.offer:
+        sub.offer=None
+        sub.save()
+    
+    return redirect("sub_category")

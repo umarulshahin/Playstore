@@ -29,6 +29,7 @@
                     <th>Sl.No</th>
                     <th>Main Category Name</th>
                     <th>Sub Category Name</th>
+                    <th>Offers</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -39,6 +40,9 @@
                     <td>{{cate.id}}</td>
                     <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ cate.category.name }}</strong></td>
                     <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ cate.name }}</strong></td>
+                    <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ cate.offer.name }}</strong></td>
+
+
                     <td>
                         {% if not cate.is_deleted %}
                         <p>unlisted</p>
@@ -58,11 +62,49 @@
                                     <i class="bx bx-edit-alt me-1"></i> Update category</a>
                                 <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal{{ cate.id }}">
                                     <i class="bx bx-trash me-1"></i> Delete</a>
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#AddOfferModal{{ cate.id }}">
+                                            <i class="bx bx-plus me-1"></i>Add Offer  </a>
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#RemoveOfferModal{{ cate.id }}">
+                                                <i class="bx bx-trash me-1"></i>Remove Offer </a>
+                                      
                             </div>
                         </div>
                     </td>
                 </tr>
-                
+                <div class="modal fade" id="AddOfferModal{{ cate.id }}" tabindex="-1" aria-labelledby="AddOfferModal{{ cate.id }}Label" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="AddOfferModal{{ cate.id }}Label">Add Offer</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{% url 'add_offer' %}" method="POST">
+                                    {% csrf_token %}
+                                    <div class="form-group mb-3">
+                                        <input type="hidden" name="id" value="{{cate.id}}">
+                                        <label for="subcategoryId">Subcategory:</label>
+                                        <input type="text" class="form-control" id="subcategoryId{{ cate.id }}" name="subcategory_id" readonly value="{{ cate.name }}">
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="offerName{{ cate.id }}">Offer Name:</label>
+                                        <input type="text" class="form-control" id="offerName{{ cate.name }}" name="offer_name" readonly value="{{ cate.offer.name }}" >
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="availableOffers{{ cate.id }}">Available Offers:</label>
+                                        <select class="form-control" id="availableOffers{{ cate.offer.name }}" name="offer_id" required>
+                                            <option value="0">{{ off.name }}</option>
+                                           {% for off in off %}
+                                                <option value="{{ off.id }}">{{ off.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Create Offer</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Change status confirmation modal -->
                 <div class="modal fade" id="changeStatusModal{{ cate.id }}" tabindex="-1" role="dialog" aria-labelledby="changeStatusModalLabel{{ cate.id }}" aria-hidden="true">
@@ -131,6 +173,30 @@
                 </div>
 
                 <!-- Delete category confirmation modal -->
+
+              
+                
+                <!-- OFFER REMOVE  confirmation modal -->
+                <div class="modal fade" id="RemoveOfferModal{{ cate.id }}" tabindex="-1" role="dialog" aria-labelledby="RemoveOfferModal{{ cate.id }}" aria-hidden="true">
+                    <!-- Modal content goes here -->
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="RemoveOfferModal{{ cate.id }}">Delete Category</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to remove Offer "{{ cate.offer.name }}"?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <a href="{% url 'offer_remove' cate.id %}" class="btn btn-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OFFER REMOVE confirmation modal -->
 
                
                 

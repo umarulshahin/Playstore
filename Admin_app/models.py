@@ -6,17 +6,35 @@ from PIL import Image
 
 # Create your models here.
 
+class Offer(models.Model):
+    
+    name = models.CharField(max_length=100,null=False)
+    discount = models.IntegerField(null=False)
+    start_date = models.DateField(null=False)
+    end_date = models.DateField(null=False)
+    is_delete = models.BooleanField(default=False)
+    
+    def _str_(self):
+        return self.name
+    class Meta:
+        ordering = ['-id']
 
 class Category(models.Model):
     name=models.CharField( max_length=250 )
     is_deleted=models.BooleanField(default=False)
     
+    class Meta:
+        ordering = ['-id']
 class Sub_Category(models.Model):
     
     name=models.CharField( max_length=250, )
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
     is_deleted=models.BooleanField(default=False)
-    
+    offer=models.ForeignKey(Offer,on_delete=models.SET_NULL,null=True,blank=True)
+    class Meta:
+        ordering = ['-id']
+
+ 
 class Product(models.Model):
     
     name=models.CharField(max_length=250)
@@ -114,17 +132,7 @@ class Order_Items(models.Model):
     class Meta:
         ordering = ['-id']
         
-class Offer(models.Model):
-    
-    name = models.CharField(max_length=100,null=False)
-    discount = models.IntegerField(null=False)
-    start_date = models.DateField(null=False)
-    end_date = models.DateField(null=False)
-    is_delete=models.BooleanField(default=False)
-    
-    def _str_(self):
-        return self.name
-    
+
     
  
     

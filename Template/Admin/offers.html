@@ -38,14 +38,14 @@
             <tbody class="table-border-bottom-0">
                 {% for off in offer %}
                 <tr>
-                    <td>{{ cate.id }}</td>
+                    <td>{{ off.id }}</td>
                     <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ off.name }}</strong></td>
                     <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ off.discount}}%</strong></td>
                     <td>{{off.start_date}}</td>
                     <td>{{off.end_date}}</td>
 
                     <td>
-                        {% if not off.is_deleted %}
+                        {% if not off.is_delete %}
                         <p>Unlisted</p>
                         {% else %}
                         <p>Listed</p>
@@ -57,11 +57,11 @@
                                 <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#changeStatusModal{{ cate.id }}">
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#changeStatusModal{{ off.id }}">
                                     <i class="bx bx-edit-alt me-1"></i> Change status</a>
-                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#updateCategoryModal{{ cate.id }}">
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#updateCategoryModal{{ off.id }}">
                                     <i class="bx bx-edit-alt me-1"></i> Update category</a>
-                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal{{ cate.id }}">
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal{{ off.id }}">
                                     <i class="bx bx-trash me-1"></i> Delete</a>
                             </div>
                         </div>
@@ -70,66 +70,76 @@
                 
 
                 <!-- Change status confirmation modal -->
-                <div class="modal fade" id="changeStatusModal{{ cate.id }}" tabindex="-1" role="dialog" aria-labelledby="changeStatusModalLabel{{ cate.id }}" aria-hidden="true">
+                <div class="modal fade" id="changeStatusModal{{ off.id }}" tabindex="-1" role="dialog" aria-labelledby="changeStatusModalLabel{{ off.id }}" aria-hidden="true">
                     <!-- Modal content goes here -->
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="changeStatusModalLabel{{ cate.id }}">Change Status</h5>
+                                <h5 class="modal-title" id="changeStatusModalLabel{{ off.id }}">Change Status</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                Are you sure you want to change the status of category "{{ cate.name }}"?
+                                Are you sure you want to change the status of Offer "{{ off.name }}"?
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <a href="" class="btn btn-primary">Change Status</a>
+                                <a href="{% url 'offer_status' off.id %}" class="btn btn-primary">Change Status</a>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Update category modal -->
-                <div class="modal fade" id="updateCategoryModal{{ cate.id }}" tabindex="-1" role="dialog" aria-labelledby="updateCategoryModalLabel{{ cate.id }}" aria-hidden="true">
+                <div class="modal fade" id="updateCategoryModal{{ off.id }}" tabindex="-1" role="dialog" aria-labelledby="updateCategoryModalLabel{{ off.id }}" aria-hidden="true">
+
                     <!-- Modal content goes here -->
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="updateCategoryModalLabel{{ cate.id }}">Update Category</h5>
+                                <h5 class="modal-title" id="updateCategoryModalLabel{{ off.id }}">Update Offer</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <!-- Your existing update category form goes here -->
-                                <form method="post" action="" id="updateCategoryForm{{ cate.id }}">
+                                <form method="post" action="{% url 'update_offer' %}" id="updateoffersForm{{off.id}}">
                                     {% csrf_token %}
-                                    <label for="category_name">Category Name:</label>
-                                    <input type="text" name="category_name" class="form-control" value="{{ cate.name }}" required>
+                                    <input type="hidden" name="id" value="{{off.id}}">
+                                    <label for="category_name">Offer Name:</label>
+                                    <input type="text" name="name" class="form-control" value="{{off.name}}" required>
+                                    <label for="discount">Discount:</label>
+                                    <input type="text" name="off" class="form-control" value="{{off.discount}}" required>
+                                    <label for="start_date">Start Date:</label>
+                                    <input type="date" name="s_date" class="form-control" value="{{off.start_date}}" required>
+                                    <label for="end_date">End Date:</label>
+                                    <input type="date" name="e_date" class="form-control" value="{{end_date}}" required>
                                     <!-- Add other fields as needed -->
                                 </form>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary" form="updateCategoryForm{{ cate.id }}">Save changes</button>
+                                <button type="submit" class="btn btn-primary" form="updateoffersForm{{off.id}}">Save changes</button>
                             </div>
                         </div>
+                   
                     </div>
                 </div>
+                
+
 
                 <!-- Delete category confirmation modal -->
-                <div class="modal fade" id="deleteCategoryModal{{ cate.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteCategoryModalLabel{{ cate.id }}" aria-hidden="true">
+                <div class="modal fade" id="deleteCategoryModal{{ off.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteCategoryModalLabel{{ off.id }}" aria-hidden="true">
                     <!-- Modal content goes here -->
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="deleteCategoryModalLabel{{ cate.id }}">Delete Category</h5>
+                                <h5 class="modal-title" id="deleteCategoryModalLabel{{ off.id }}">Delete Offers</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                Are you sure you want to delete category "{{ cate.name }}"?
+                                Are you sure you want to delete Offer "{{ off.name }}"?
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <a href="" class="btn btn-danger">Delete</a>
+                                <a href="{% url 'delete_offer' off.id %}" class="btn btn-danger">Delete</a>
                             </div>
                         </div>
                     </div>
@@ -164,7 +174,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="{% url 'add_offer' %}" id="addoffersForm">
+                    <form method="post" action="{% url 'create_offer' %}" id="addoffersForm">
                         {% csrf_token %}
                         <label for="category_name">Offer Name:</label>
                         <input type="text" name="category_name" class="form-control" value="" required>

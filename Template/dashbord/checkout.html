@@ -65,10 +65,10 @@
                                 <!-- Add a dropdown list for coupons -->
                                 <select class="form-control" id="couponSelect" onchange="applyCoupon(event)">
                                     <option value="" disabled selected>Select Coupon</option>
-                                    <% coupon.forEach(couponItem => { %>
-                                        <option value="<%= couponItem.coupancode %>"><%= couponItem.coupancode  %> -Discount <%=  couponItem.
-                                            discountpercentage %> %</option>
-                                    <% }) %>
+                                   
+                                        <option value="<%= couponItem.coupancode %>">
+                                            </option>
+                                    
                                 </select>
                                 <div class="input-group-append">
                                     <a href="{% url 'checkout' %}" class="btn btn-danger ml-1">Clear</a>

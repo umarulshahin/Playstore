@@ -21,6 +21,7 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_GET
+from datetime import datetime
 
 
 
@@ -441,21 +442,48 @@ def Add_to_Cart(request):
                                 
                                 pro_qty=request.POST.get('product_qty')
                             
-                                
+                                s_dis=0
                                 if not product_check.offer_price or product_check.offer_price<=0:
-
-                                   total= int(product_check.price) * int(pro_qty)
+                                    
+                                   
+                                    print(type(product_check.price))
+                                    print(type(pro_qty))
+                                    total= int(product_check.price) * int(pro_qty)
+                                    offer_price=int(product_check.offer_price)
+                                    
+                                     #  SUB CATEGORY OFFER ADDING........................
+                                     
+                                    today = datetime.today().date()
+                                    sub=Sub_Category.objects.filter(offer__isnull=False,offer__end_date__gte=today,).prefetch_related('offer')
+                                    sub=sub.filter(is_deleted=True)
+                                       
+                                    if product_check.sub_category in sub:
+                                        
+                                        sub_id=product_check.sub_category.id
+                                        sub_data=Sub_Category.objects.filter(id=sub_id).prefetch_related('offer')
+                                        for off in sub_data:
+                                            dis=0
+                                            sub_off=Offer.objects.get(id=off.offer.id)
+                                            dis = (product_check.price * sub_off.discount)/100
+                                            dis = (dis * int(pro_qty))
+                                            s_dis += dis
+                                    
+                                            offer_price = int(product_check.price) - s_dis
+                                            total= int(offer_price) * int(pro_qty)
+                                            
+                                    #  END SUB CATEGORY OFFER ADDING........................
                                    
                                 else:
-                
-                                    total= int(product_check.offer_price) * int(pro_qty)
                                     
+                                    total= int(product_check.offer_price) * int(pro_qty)
+                                    offer_price=int(product_check.offer_price)
+                                   
                                 Cart.objects.create(customuser=request.user,
                                                     product=product,
                                                     size=pro_size,
                                                     qty=pro_qty,
                                                     price=int(product_check.price),
-                                                    offer_price=int(product_check.offer_price),
+                                                    offer_price=offer_price,
                                                     total_price=total)
                                 
                                 if Wishlist.objects.filter(product=pro_id,customuser=request.user).exists():
@@ -562,7 +590,7 @@ def update_quantity_view(request):
         
             if not cart_item.offer_price or cart_item.offer_price <= 0:
             
-               total=int(cart_item.price) * int(new_quantity)
+                total=int(cart_item.price) * int(new_quantity)
                
             else:
                 
@@ -668,7 +696,7 @@ def Delete_Cart(request,product_id):
 def Checkout(request):
     
     
-    try:
+    # try:
         
         if  request.user.is_authenticated:       
               
@@ -686,21 +714,44 @@ def Checkout(request):
                         
                     
                 user=request.user
+                # today = datetime.today().date()
                 value=Cart.objects.filter(customuser=user)
                 total=request.session.get("sub_total")
                 address=User_Address.objects.filter( customuser=user)
+                # sub=Sub_Category.objects.filter(offer__isnull=False,offer__end_date__gte=today,).prefetch_related('offer')
+                # sub=sub.filter(is_deleted=True)
                 
                 sub_total=0
                 for j in value:
                     
                     sub_total += j.price * j.qty
                    
-                discount=0                
+                discount=0    
+                s_dis=0            
                 for i in value:
+                    
                     if i.offer_price >= 1:
                         
                       dis=i.price - i.offer_price
                       discount += dis * i.qty
+                      
+                    # elif i.product.sub_category in sub:  
+                        
+                    #     sub_id=i.product.sub_category.id
+                    #     sub_data=Sub_Category.objects.filter(id=sub_id).prefetch_related('offer')
+                    #     for off in sub_data:
+                            
+                    #         sub_off=Offer.objects.get(id=off.offer.id)
+                    
+                    #         print(sub_off.discount,".........123")   
+                    #         print(i.price,".........23")
+                            
+                    #         dis = (i.price * sub_off.discount)/100
+                    #         dis = (dis * i.qty)
+                    #         s_dis += dis
+                    #         print(dis,"............we")
+                    #         print(s_dis,".........1")
+                    #     n=total-s_dis
                       
                
                 context={
@@ -716,8 +767,8 @@ def Checkout(request):
                 return render(request,'dashbord/checkout.html',context)
         return redirect('login')
     
-    except TypeError:
-        return render(request,'dashbord/user_404.html')   
+    # except TypeError:
+    #     return render(request,'dashbord/user_404.html')   
     
         # .................END CHECKOUT......................
         
@@ -934,16 +985,13 @@ def User_Order(request):
                                                             
                                     new_stock=j.stock-i.qty
                                     Product_size.objects.filter(product=i.product,size=i.size).update(stock=new_stock)
-                                                            
-                                        
+                
                                     
-                                        #    ...............order_id genarating.............
-                                        
+                                        #    ...............order_id genarating.............                
                                         
                                     unique_id = uuid.uuid4()
                                     order_id = str(unique_id)[:8]
                                 
-                                        
                                         # ..................order creating.................
                                         
                                     print(user_id) 
