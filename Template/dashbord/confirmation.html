@@ -84,7 +84,7 @@
                                        <p> x {{item.qty}}</p>
                                     </td>
                                     <td>
-                                        <p>{{item.total_price}}</p>
+                                        <p>₹ {{item.total_price}}</p>
                                     </td>
                                 </tr>
                           {% endfor %}
@@ -104,22 +104,48 @@
 									<!-- <p>{{order.total_amount}}</p> -->
 								</td>
 							</tr>
+							
 							<tr>
-								
+							</td>
+							
+							<td>
+								<h5></h5>
+							</td>
+							<td>
+								<h5></h5>
+							</td>
+							<td>
+								<h5></h5>
+							{% if order.coupon_discount %}
+							<td>
+								<h4 style="color: rgb(81, 187, 81);">Coupon </h4>
+							</td>
+							
+							<td>
+								<h6 style="color: rgb(81, 187, 81);">₹ {{order.coupon_discount}}</h6>
+							</td>
+						</td>
+							{% endif %}
 							</tr>
+
 							<tr>
+
 								<td>
 									<h5></h5>
 								</td>
 								<td>
 									<h5></h5>
 								</td>
+								<td>
+									<h5></h5>
+								
 								<td>
 									<h4>Subtotal</h4>
 								</td>
 								
 								<td>
-									<p>{{order.total_amount}}</p>
+									<h6> ₹ {{order.total_amount}}</h6>
+								</td>
 								</td>
 							</tr>
 						</tbody>

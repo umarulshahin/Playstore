@@ -705,7 +705,7 @@ def Delete_Cart(request,product_id):
 def Checkout(request):
     
     
-    # try:
+    try:
         
         if  request.user.is_authenticated:       
               
@@ -723,61 +723,64 @@ def Checkout(request):
                         
                     
                 user=request.user
-                # today = datetime.today().date()
                 value=Cart.objects.filter(customuser=user)
                 total=request.session.get("sub_total")
                 address=User_Address.objects.filter( customuser=user)
-                # sub=Sub_Category.objects.filter(offer__isnull=False,offer__end_date__gte=today,).prefetch_related('offer')
-                # sub=sub.filter(is_deleted=True)
-                
+              
                 sub_total=0
                 for j in value:
                     
                     sub_total += j.price * j.qty
                    
-                discount=0    
-                s_dis=0            
+                discount=0            
                 for i in value:
                     
                     if i.offer_price >= 1:
                         
                       dis=i.price - i.offer_price
                       discount += dis * i.qty
-                      
-                    # elif i.product.sub_category in sub:  
-                        
-                    #     sub_id=i.product.sub_category.id
-                    #     sub_data=Sub_Category.objects.filter(id=sub_id).prefetch_related('offer')
-                    #     for off in sub_data:
-                            
-                    #         sub_off=Offer.objects.get(id=off.offer.id)
+                cou=None      
+                if request.method == "POST":
+          
+                    coupon_id=request.POST.get("coupon_id")
                     
-                    #         print(sub_off.discount,".........123")   
-                    #         print(i.price,".........23")
-                            
-                    #         dis = (i.price * sub_off.discount)/100
-                    #         dis = (dis * i.qty)
-                    #         s_dis += dis
-                    #         print(dis,"............we")
-                    #         print(s_dis,".........1")
-                    #     n=total-s_dis
-                      
-               
+                    if coupon_id:
+                        
+                        cou=Coupon.objects.get(id=coupon_id)
+                        total-=cou.discount
+                        request.session["coupon_id"]=coupon_id
+                        
+                    else:
+                        request.session["coupon_id"]=None
+                        
+                coupon=Coupon.objects.all()
+                valid=[]
+                for i in coupon:
+                    
+                    if User_Coupon.objects.filter(customuser=request.user,coupon=i.id).exists():
+                        pass
+                    
+                    elif i.offer_valid_amount <= sub_total:
+                        
+                        valid.append(i)
+  
                 context={
                     
                     'value' :value,
                     'total':total,
                     'address' : address,
                     'discount' : discount,
-                    'sub_total' : sub_total
+                    'sub_total' : sub_total,
+                    'coupon' : valid,
+                    'coupon_amount' : cou,
                 }
                 
                 
                 return render(request,'dashbord/checkout.html',context)
         return redirect('login')
     
-    # except TypeError:
-    #     return render(request,'dashbord/user_404.html')   
+    except TypeError:
+        return render(request,'dashbord/user_404.html')   
     
         # .................END CHECKOUT......................
         
@@ -939,7 +942,7 @@ def Checkout_Add_Address(request):
 @never_cache        
 def User_Order(request):
     
-    try:
+    # try:
 
         
         if  request.user.is_authenticated:
@@ -949,7 +952,6 @@ def User_Order(request):
                 user=int(CustomUser.objects.get(email=request.user))
                 user_id=CustomUser.objects.get(id=user)
             
-                print(user_id.id)
                 address=request.POST.get('address')
                 payment_method=request.POST.get('paymentMethod')
                 
@@ -981,64 +983,90 @@ def User_Order(request):
                             
                             # ........... CASH ON DELIVERY ............
                             
-            
+                coupon_id=request.session.get("coupon_id")
                 
+              
                 if  payment_method == 'cashOnDelivery':    
                     
-                
-                    for i in value:
+                    valid_amount=0
+                    discount=0
+                    # for i in value:
                                                         
-                            for j in pro:
+                    #         for j in pro:
                                                     
-                                if j.stock >= i.qty:
+                    #             if j.stock >= i.qty:
                                                             
-                                    new_stock=j.stock-i.qty
-                                    Product_size.objects.filter(product=i.product,size=i.size).update(stock=new_stock)
-                
+                    #                 new_stock=j.stock-i.qty
+                    #                 Product_size.objects.filter(product=i.product,size=i.size).update(stock=new_stock)
                                     
-                                        #    ...............order_id genarating.............                
+                                    # ..................... Coupen Cheking......................
+                    print(user_id)    
+                    if coupon_id:
+                                      
+                        coupon=Coupon.objects.filter(id=coupon_id)
+                        for coupon in coupon:
+                            
+                            total['total']-=coupon.discount      
+                            valid_amount=coupon.offer_valid_amount
+                            discount=coupon.discount
+                            
+                            User_Coupon.objects.create(customuser=user_id,
+                                                        coupon=coupon)
+                                                
+                                    
+                        #    ...............order_id genarating.............                
                                         
-                                    unique_id = uuid.uuid4()
-                                    order_id = str(unique_id)[:8]
+                    unique_id = uuid.uuid4()
+                    order_id = str(unique_id)[:8]
                                 
-                                        # ..................order creating.................
+                     # ..................order creating.................
                                         
-                                    print(user_id) 
-                                    Order.objects.create(user = user_id,
-                                                        user_address =user_add,
-                                                        total_amount = total['total'],
-                                                        payment_type = payment_method,
-                                                        order_id = order_id 
+                    print(user_id) 
+                    Order.objects.create(user = user_id,
+                                         user_address =user_add,
+                                         total_amount = total['total'],
+                                         payment_type = payment_method,
+                                         order_id = order_id ,
+                                         coupon_valid_amount = valid_amount,
+                                         coupon_discount=discount
                                                             )
                                     
-                                    id=Order.objects.get(order_id=order_id)
-                                    value=Cart.objects.filter(customuser=user_id)
-                                    request.session['order_id']=id.id
+                    id=Order.objects.get(order_id=order_id)
+                    value=Cart.objects.filter(customuser=user_id)
+                    request.session['order_id']=id.id
                                         
-                                        
-                                    for i in value:
-                                        
-                                        Order_Items.objects.create(order=id,
-                                                                product=i.product,
-                                                                Sub_Category=i.product.sub_category,
-                                                                qty=i.qty,
-                                                                size=i.size,
-                                                                price=i.price,
-                                                                total_price=i.total_price)
+                                                                                
+                    Order_Items.objects.create(order=id,
+                                               product=i.product,
+                                               Sub_Category=i.product.sub_category,
+                                               qty=i.qty,
+                                               size=i.size,
+                                               price=i.price,
+                                               offer_price=i.offer_price,
+                                              total_price=i.total_price)
+                    for i in value:
+                                                            
+                        for j in pro:
+                                                        
+                          if j.stock >= i.qty:
+                                                                
+                                new_stock=j.stock-i.qty
+                                Product_size.objects.filter(product=i.product,size=i.size).update(stock=new_stock)
                                             
                                         
-                                    
-                                    Cart.objects.filter(customuser=user_id).delete()
+                    Cart.objects.filter(customuser=user_id).delete()
+                    del request.session['coupon_id']
             
-                                    return redirect('confirmation')
+                    return redirect('confirmation')
                                 
+             
                 if request.method == "POST":    
-                            
+                     
                         payment_method=request.POST.get("payment_mode")
                         address_id=request.POST.get("address_id")
-                        
+                       
                         if payment_method == "paid by Razorpay":
-                            
+                           
                             address=User_Address.objects.filter(id=address_id)
                             for j in address:
                                 user_add={'name' :j.name , 'email' : j.email, 'phone' : j.phone, 
@@ -1059,7 +1087,75 @@ def User_Order(request):
                                             messages.error(request,f"{i.product.name} out stock please choose any another product")
                                             return redirect("user_cart")
                                         
-                                        # .................stock rechecking ............
+                                        # .................stock Updatin ............
+                                        
+                            # value=Cart.objects.filter(customuser=request.user)
+                            # for i in value:
+                                
+                            #     pro=Product_size.objects.filter(product=i.product,size=i.size)
+                                                        
+                            #     for j in pro:
+                                                            
+                            #         if j.stock >= i.qty:
+                                                                    
+                            #                 new_stock=j.stock-i.qty
+                            #                 Product_size.objects.filter(product=i.product,size=i.size).update(stock=new_stock)
+                                                                    
+                            if coupon_id:
+                                      
+                                coupon=Coupon.objects.filter(id=coupon_id)
+                                for coupon in coupon:
+                                    
+                                    total['total']-=coupon.discount
+                                                        
+                                    valid_amount=coupon.offer_valid_amount
+                                    discount=coupon.discount
+                                    print("..........425")
+                                    print(user_id,coupon.id,".........srsrser")
+                                    
+                                    User_Coupon.objects.create(customuser=user_id,
+                                                coupon=coupon)
+                                                
+                             #    ...............order_id genarating.............
+                                                
+                                                
+                            unique_id = uuid.uuid4()
+                            order_id = str(unique_id)[:8]
+                                        
+                                                
+                            # ..................order creating.................
+                                                
+                                                
+                            Order.objects.create(user = user_id,
+                                                user_address =user_add,
+                                                total_amount = total['total'],
+                                                payment_type = payment_method,
+                                                order_id = order_id ,
+                                                coupon_valid_amount = valid_amount,
+                                                coupon_discount=discount
+                                                                
+                                                                    )
+                                            
+                            id=Order.objects.get(order_id=order_id)
+                            value=Cart.objects.filter(customuser=user_id)
+                                            
+                            request.session['order_id']=id.id
+                                            
+                                           
+                                                
+                                                
+                            for i in value:
+                                                
+                                Order_Items.objects.create(order=id,
+                                                        product=i.product,
+                                                        Sub_Category=i.product.sub_category,
+                                                        qty=i.qty,
+                                                        size=i.size,
+                                                        price=i.price,
+                                                        offer_price=i.offer_price,
+                                                        total_price=i.total_price)
+                                                
+                                    # .................stock Updatin ............
                                         
                             value=Cart.objects.filter(customuser=request.user)
                             for i in value:
@@ -1072,55 +1168,19 @@ def User_Order(request):
                                                                     
                                             new_stock=j.stock-i.qty
                                             Product_size.objects.filter(product=i.product,size=i.size).update(stock=new_stock)
-                                                                    
-                                                
-                                            
-                                                #    ...............order_id genarating.............
-                                                
-                                                
-                                            unique_id = uuid.uuid4()
-                                            order_id = str(unique_id)[:8]
-                                        
-                                                
-                                                # ..................order creating.................
-                                                
-                                                
-                                            Order.objects.create(user = user_id,
-                                                                user_address =user_add,
-                                                                total_amount = total['total'],
-                                                                payment_type = payment_method,
-                                                                order_id = order_id 
-                                                                    )
-                                            
-                                            id=Order.objects.get(order_id=order_id)
-                                            value=Cart.objects.filter(customuser=user_id)
-                                            
-                                            request.session['order_id']=id.id
-                                                
-                                                
-                                            for i in value:
-                                                
-                                                Order_Items.objects.create(order=id,
-                                                                        product=i.product,
-                                                                        Sub_Category=i.product.sub_category,
-                                                                        qty=i.qty,
-                                                                        size=i.size,
-                                                                        price=i.price,
-                                                                        offer_price=i.offer_price,
-                                                                        total_price=i.total_price)
-                                                    
                                                 
                                             
                                             Cart.objects.filter(customuser=user_id).delete()
-                                        
+                                            del request.session['coupon_id']
                     
                                             return redirect('confirmation')
                                     else:
                                         
                                         messages.error(request,f"{i.product.name} out stock please choose any another product")
                                         return redirect("user_cart")
-    except TypeError:
-        return render(request,'dashbord/user_404.html')                       
+                            
+    # except TypeError:
+    #     return render(request,'dashbord/user_404.html')                       
         
         # ................. END USER ORDER ......................
         
@@ -1136,7 +1196,6 @@ def Confirmation(request):
             order=Order.objects.get(id=id)
             item=Order_Items.objects.filter(order=id)
             
-            print(type(order.user_address))
             pairs = order.user_address.strip('{}').split(',')
 
             # Create a dictionary from the key-value pairs
@@ -1291,6 +1350,18 @@ def Pay_With_Upi(request):
           
             total=Cart.objects.filter(customuser=user_id).aggregate(total=Sum('total_price'))
             
+            
+            
+            coupon_id=request.session.get("coupon_id")
+            total=total['total']   
+            print(coupon_id,".......3412")
+            if coupon_id:
+                
+                coupon=Coupon.objects.get(id=coupon_id)
+                total-=coupon.discount
+                
+                print(total,".......234")
+                
             # .........stock cheking ...........
             
             value=Cart.objects.filter(customuser=request.user)
@@ -1304,11 +1375,11 @@ def Pay_With_Upi(request):
                             
                             messages.error(request,f"{i.product.name} out stock please choose any another product")
                             return redirect("user_cart")
-            total=total['total']
+            
             client = razorpay.Client(auth=("Rrzp_test_NqH0AQ919F3Q3B", "90Ku7HA85h4ej9uv0AptcwpK"))
            
           
-                
+            # total=total['total']   
             return JsonResponse({
                     'total_amount' : total ,'username' :user_id.username,'email' : user_id.email,'phone':user_id.ph_no,
                     })

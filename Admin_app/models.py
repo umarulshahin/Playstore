@@ -106,6 +106,8 @@ class Order(models.Model):
     status_date = models.DateTimeField(default=timezone.now,null=False)
     order_id = models.CharField(max_length=100,null=False,unique=True)
     created_date =models.DateTimeField(default=timezone.now,null=False)
+    coupon_valid_amount = models.IntegerField(null=True)
+    coupon_discount= models.IntegerField(null=True)
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -140,9 +142,8 @@ class Coupon(models.Model):
     created_date = models.DateField(default=timezone.now,null=False)
     is_delete = models.BooleanField(default=False)
     
- 
-    
-    
+    def __int__(self):
+        return self.id 
     
     
     

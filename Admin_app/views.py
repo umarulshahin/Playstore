@@ -1370,7 +1370,7 @@ def Update_Coupon(request):
         valid_amount = int(request.POST.get("valid_off"))
         dis =int(request.POST.get("discount"))
         
-        print(id,name,valid_amount,dis,"............234")
+      
  
         pattern = r'^[a-zA-Z0-9].*'
         

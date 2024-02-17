@@ -18,4 +18,11 @@ class Wishlist(models.Model):
     customuser=models.ForeignKey(CustomUser,on_delete=models.CASCADE)
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
     
+
+class User_Coupon(models.Model):
+    
+    customuser=models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    coupon=models.ForeignKey(Coupon,on_delete=models.CASCADE)
+    
+    
     

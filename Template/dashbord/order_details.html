@@ -168,22 +168,9 @@
                           
        
 
-                                  <!-- <div>
-                                    
-                                    <% if (order[0].status !== 'Cancelled' && order[0].status !== 'delivered') { %>
-                                        <a href="/cancelorder/<%= order[0]._id %>"> Cancel</a>
-                                    <% } %>
-                                
-                                    <% if (order[0].status == 'delivered' && new Date(order[0].updated.getTime() + 5 * 24 * 60 * 60 * 1000) >= new Date()) { %>
-                                        <a href="/returnorder/<%= order[0]._id %>"> Return</a>
-                                    <% } %>
-                                </div> -->
                                 <a href="{% url 'orders_bill' order.id %}" class="btn btn-success mb-3">Download</a>
                                 <h5>Order ID: {{ order.order_id }}</h5>
-                                <!-- <p>Delivery Address: <%= order[0].address[0].save_as %>,
-                                    <%= order[0].address[0].houseName %>,
-                                    <%= order[0].address[0].city %>,
-                                    <%= order[0].address[0].pincode %> -->
+                                
                                 </p>
                                 
                                 
@@ -225,6 +212,16 @@
                                             {% endfor %}
                                 
                                             <!-- Additional rows -->
+                                            {% if order.coupon_discount %}
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td class="align-middle">Coupon</td>
+                                                <td class="align-middle">{{order.coupon_discount}}</td>
+                                            </tr>
+                                            {% endif %}
                                             <tr>
                                                 <td></td>
                                                 <td></td>

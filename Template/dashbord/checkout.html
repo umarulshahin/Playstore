@@ -37,6 +37,8 @@
 	
 
 </head>
+
+
     <!-- Start Header Area -->
         <!-- End Header Area -->
         <!-- Start Banner Section -->
@@ -59,28 +61,41 @@
                 <div class="row">
                     <div class="col-md-6">
 
-                       <form id="orderForm" method="post" action="{% url 'user_order' %}">   
-                        {% csrf_token %}  
+                        <form id="couponForm" action="{% url 'checkout' %}" method="post">
+                            {% csrf_token %}
+  
                         <div class="input-group mb-3">
-                                <!-- Add a dropdown list for coupons -->
-                                <select class="form-control" id="couponSelect" onchange="applyCoupon(event)">
+                           
+                                <select class="form-control" id="couponSelect" name="coupon_id">
                                     <option value="" disabled selected>Select Coupon</option>
-                                   
-                                        <option value="<%= couponItem.coupancode %>">
-                                            </option>
-                                    
+                                    {% for coupon in coupon %}
+                                    <option  value="{{ coupon.id }}">{{ coupon.name }}</option>
+                                    {% endfor %}
                                 </select>
                                 <div class="input-group-append">
-                                    <a href="{% url 'checkout' %}" class="btn btn-danger ml-1">Clear</a>
-                                </div>
-                            </div>
-                        <!-- </form> -->
+                                    <button type="submit" class="btn btn-primary">Apply</button>
+                                    <a href="" class="btn btn-danger ml-1">Clear</a>
+                                </div> 
+                         </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            
-            
+           
+    
+                      <form id="orderForm" method="post" action="{% url 'user_order' %}">   
+                            {% csrf_token %}  
+                        
+                    
+                    
+                            <!-- </form> -->
+                        
+                        </div>          
+                    </div>
+                </div>
+
+
+    
+           
             <div class="container-fuid mx-5">
                 <div class="row">
                     <div class="col-lg-8">
@@ -178,19 +193,26 @@
                                 <li><a href="#">Subtotal <span><h6>₹ {{ sub_total }}</h6> <div id="subtotal" style="display: inline;"></div></span></a></li>
                                 
                                 {% endif %}
+                                {% if discount %}
                                 <li><a href="#">Discount <span style="color: green;">₹ {{discount}} <div id="discount" style="display: inline;"></div></span></a></li>
+                                {% endif  %}
+                                {% if coupon_amount %}
+                                <li><a href="#">Coupon <span style="color: green;">₹ {{coupon_amount.discount}} <div id="discount" style="display: inline;"></div></span></a></li>
+                                {% endif  %}
+
                                 <li><a href="#">Total <span>₹ {{ total }}<div id="total" style="display: inline;"></div></span></a></li>
                             </ul>
                             <h4 class="mt-3">Choose Payment Method</h4>
                             <div class="payment_item">
                              
+                             
                                 <div class="radion_btn">
                                     <input type="radio" id="f-option6" name="paymentMethod" value="cashOnDelivery" onclick="handlePaymentMethodSelection()" required>
                                     <label for="f-option6">Cash on Delivery</label>
                                     <div class="check"></div>
+                                    <input type="radio" id="f-option6" name="paymentMethod" value="cashOnDelivery" onclick="handlePaymentMethodSelection()" required>
+
                                 </div>
-                                
-                                
 
                                 <!-- <div class="radion_btn">
                                     <input type="radio" id="f-option7" name="paymentMethod" value="wallet" onclick="handlePaymentMethodSelection()" required>
@@ -207,14 +229,17 @@
                             </div>
                                 
                                 <button type="submit" onclick="proceedToOrder()" class="primary-btn" id="proceed">Proceed to Order</button>  
-                            </form>  
+                             
+                             
+                            </form> 
+                            
+                             
                             <div class="radion_btn">
                                 <input type="radio" id="f-option5" name="paymentMethod" value="upi" onclick="handlePaymentMethodSelection()" required>
                                 <label for="f-option5">UPI PAYMENT</label>
                                 <div class="check"></div>
-                            </div>    
+                            </div> 
                             
-                          
     
                     </div>
                     </div>
@@ -222,7 +247,7 @@
             </div>
          
         </section>
-
+    
        
 
 
@@ -434,6 +459,16 @@
 
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
        
+
+        <script>
+            function toggleRadioButton(radioButton) {
+                if (radioButton.checked) {
+                    radioButton.checked = false;
+                } else {
+                    radioButton.checked = true;
+                }
+            }
+            </script>
         <script>
             // Function to automatically select the last address if none is selected
             function autoSelectLastAddress() {
@@ -554,6 +589,8 @@
                                             "address_id" :address_id, // Make sure responseb is accessible here
                                             "csrfmiddlewaretoken": token,
                                         };
+
+                                       
                             
                                         $.ajax({
                                             method: "POST",
@@ -585,11 +622,6 @@
 
                     }
                 });
-
-
-                
-
-
 
                 
             }
@@ -672,7 +704,7 @@ document.getElementById('orderForm').submit();
 }
 
     </script>
-    <script>
+    <!-- <script>
         function applyCoupon(event){
 
             event.preventDefault()
@@ -719,8 +751,7 @@ document.getElementById('orderForm').submit();
       alert('An error occurred while applying the coupon. Please try again.');
     });
         }
-ds
-    </script>
+    </script> -->
 
 
 
