@@ -101,6 +101,16 @@ urlpatterns = [
     
     path('offer_remove/<int:id>',views.Offer_Remove,name="offer_remove"),
     
+    path('coupon_view/',views.Coupon_View,name="coupon_view"),
+     
+    path('add_coupon/',views.Add_Coupon,name="add_coupon"),
+    
+    path('coupon_status/<int:id>',views.Coupon_Status,name="coupon_status"),
+    
+    path('delete_coupon/<int:id>',views.Delete_Coupon,name="delete_coupon"),
+    
+    path('update_coupon/',views.Update_Coupon,name="update_coupon"),
+    
 
     
 

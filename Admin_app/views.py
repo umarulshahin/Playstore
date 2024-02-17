@@ -1243,7 +1243,10 @@ def Update_Offer(request):
  # ................UPDATE OFFERS.........................
  
  # ................ ADD OFFERS IN SUB CATEGORY.........................
- 
+
+@admin_required
+@login_required(login_url="/Admin_app/")
+@never_cache 
 def Add_Offer(request):
     
     if request.method == "POST":
@@ -1260,6 +1263,11 @@ def Add_Offer(request):
  
  # ................ END ADD OFFERS IN SUB CATEGORY.........................
  
+ # ................ REMOVE SUB CATEGORY OFFER.........................
+ 
+@admin_required
+@login_required(login_url="/Admin_app/")
+@never_cache
 def Offer_Remove(request,id):
     
     sub=Sub_Category.objects.get(id=id)
@@ -1268,3 +1276,129 @@ def Offer_Remove(request,id):
         sub.save()
     
     return redirect("sub_category")
+
+# ................ END REMOVE  SUB CATEGORY  OFFERS.........................
+
+# ................ COUP0N VIEW.........................
+
+def Coupon_View(request):
+    
+    coupon=Coupon.objects.all()
+    context={
+        'coupon' : coupon
+    }
+    return render(request,'Admin/coupon.html',context)
+
+# ................ END COUPON.........................
+
+
+# ................ADD COUPON.........................
+
+def Add_Coupon(request):
+    
+    if request.method == "POST":
+        
+        name = request.POST.get("name")
+        valid_amount = int(request.POST.get("valid_amount"))
+        dis =int(request.POST.get("discount"))
+        
+        pattern = r'^[a-zA-Z0-9].*'
+        
+        if not re.match(pattern,name or valid_amount or dis):
+            
+            messages.error(request,"Please Enter Valid inputs")
+            return redirect('coupon_view')
+          
+        elif valid_amount < 100 :
+        
+            messages.error(request,"Invalid offer valid amount . Valid Offer Amount  Should Be 100 or more Than 100")
+            return redirect('coupon_view')
+        
+        elif dis < 0 or (valid_amount/2) < dis:
+            
+            messages.error(request,"Invalid Discound . Discound Should Be Zero or  less than Offer Valid Amount 50%")
+            return redirect('coupon_view')
+        
+        else:
+            
+            Coupon.objects.create(name=name,
+                                  offer_valid_amount=valid_amount,
+                                  discount=dis)
+        
+    return redirect("coupon_view")
+        
+
+# ................END ADD COUPON.........................
+
+# ................  COUPON STATUS.........................
+
+
+def Coupon_Status(request,id):
+    
+    coupon=Coupon.objects.get(id=id)
+    
+    if coupon.is_delete:
+        
+        coupon.is_delete=False
+        coupon.save()
+    else:
+         coupon.is_delete=True
+         coupon.save()
+
+    return redirect("coupon_view")
+    
+# ................END COUPON STATUS.........................
+
+# ............... DELETE COUPON .........................
+
+def Delete_Coupon(request,id):
+    
+    Coupon.objects.get(id=id).delete()
+    return redirect("coupon_view")
+
+# ................END  DELETE COUPON.........................
+
+# ................UPDATE COUPON.........................
+
+def Update_Coupon(request):
+ 
+ 
+    if request.method == "POST":
+        
+        id=request.POST.get("id")
+        name =request.POST.get("name")
+        valid_amount = int(request.POST.get("valid_off"))
+        dis =int(request.POST.get("discount"))
+        
+        print(id,name,valid_amount,dis,"............234")
+ 
+        pattern = r'^[a-zA-Z0-9].*'
+        
+        if not re.match(pattern,name or valid_amount or dis):
+            
+            messages.error(request,"Please Enter Valid inputs")
+            return redirect('coupon_view')
+          
+        elif valid_amount < 100 :
+        
+            messages.error(request,"Invalid offer valid amount . Valid Offer Amount  Should Be 100 or more Than 100")
+            return redirect('coupon_view')
+        
+        elif dis < 0 or (valid_amount/2) < dis:
+            
+            messages.error(request,"Invalid Discound . Discound Should Be Zero or  less than Offer Valid Amount 50%")
+            return redirect('coupon_view')
+        else:
+            
+            Coupon.objects.filter(id=id).update( name=name,
+                                               offer_valid_amount=valid_amount,
+                                               discount=dis
+                                                 )
+  
+    return redirect("coupon_view")
+    
+ # ................END  UPDATE COUPON.........................
+
+
+
+

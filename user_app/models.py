@@ -48,7 +48,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     
     def __int__(self):
         return self.id 
-    
+
     class Meta:
         ordering = ['-id']
     

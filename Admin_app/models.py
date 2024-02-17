@@ -77,7 +77,6 @@ class Product_image(models.Model):
             img.thumbnail(output_size)
             img.save(self.image_url.path)
     
-
 class Product_size(models.Model):
     size=models.CharField(max_length=50,null=False)
     stock=models.IntegerField(null=False)
@@ -119,20 +118,27 @@ class Order(models.Model):
 
 class Order_Items(models.Model):
     
-    order=models.ForeignKey(Order,on_delete=models.CASCADE)
-    product=models.ForeignKey(Product,on_delete=models.SET_NULL, null=True)
-    Sub_Category=models.ForeignKey(Sub_Category,on_delete=models.SET_NULL, null=True)
-    qty=models.IntegerField(null=False,blank=False)
-    size=models.IntegerField(null=False,blank=False)
-    price=models.IntegerField(null=False,blank=False)
-    offer_price=models.IntegerField(null=True,blank=True,default=0)
-    total_price=models.IntegerField(null=False,blank=False)
+    order = models.ForeignKey(Order,on_delete=models.CASCADE)
+    product = models.ForeignKey(Product,on_delete=models.SET_NULL, null=True)
+    Sub_Category = models.ForeignKey(Sub_Category,on_delete=models.SET_NULL, null=True)
+    qty = models.IntegerField(null=False,blank=False)
+    size = models.IntegerField(null=False,blank=False)
+    price = models.IntegerField(null=False,blank=False)
+    offer_price = models.IntegerField(null=True,blank=True,default=0)
+    total_price = models.IntegerField(null=False,blank=False)
     
     
     class Meta:
         ordering = ['-id']
         
 
+class Coupon(models.Model):
+    
+    name = models.CharField(max_length=50,null=False,blank=False)
+    offer_valid_amount = models.IntegerField(null=False,blank=False)
+    discount = models.IntegerField(null=False,blank=False)
+    created_date = models.DateField(default=timezone.now,null=False)
+    is_delete = models.BooleanField(default=False)
     
  
     

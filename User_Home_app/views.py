@@ -34,12 +34,14 @@ def Dashbord(request):
     try:
     
         pro=Product.objects.all()
-        sub = Sub_Category.objects.filter(name__icontains="adidas").prefetch_related("product_set")
     
+        sub = Sub_Category.objects.filter(name__icontains="adidas").prefetch_related("product_set")
+        out_of_stock =True
         context={
                 'pro' : pro,
-                'sub' : sub
-            }
+                'sub' : sub,
+                'out_of_stock':out_of_stock
+        }
         
         return render(request,'dashbord/dashbord.html',context)   
     
@@ -130,13 +132,19 @@ def View_Product(request,id):
     try:
         
         pro=get_object_or_404(Product,id=id)
+        out_of_stock=Product_size.objects.filter(stock__gte=1,product=id)
         
+        if not out_of_stock:
+            stock=False
+        else:
+            stock=True
         relate=Product.objects.exclude(id=id)[:4]
-        
+
         context={
             
             'pro' : pro,
             'relate' : relate,
+            'stock' : stock,
         
         }
         
@@ -417,14 +425,17 @@ def Edit_Address(request):
          
          # .................ADD TO CART......................
 
-@login_required(login_url='/user_app/Login/')
+# @login_required(login_url='/user_app/Login/')
 @never_cache   
 def Add_to_Cart(request):
     
     try:
         
-        if request.method == "POST":
-            if request.user.is_authenticated:
+        if request.user.is_authenticated:
+        
+            if request.method == "POST":
+            
+            
                 pro_id=request.POST.get('product_id')
                 pro_size=request.POST.get('product_size')
                 product = Product.objects.get(id=pro_id)
@@ -445,9 +456,7 @@ def Add_to_Cart(request):
                                 s_dis=0
                                 if not product_check.offer_price or product_check.offer_price<=0:
                                     
-                                   
-                                    print(type(product_check.price))
-                                    print(type(pro_qty))
+                               
                                     total= int(product_check.price) * int(pro_qty)
                                     offer_price=int(product_check.offer_price)
                                     
@@ -500,10 +509,10 @@ def Add_to_Cart(request):
                     return JsonResponse({'status' :"Please select Your Size"})
                     
                             
-            else:
-                        
-                messages.error(request,"Login to Continue")
-                return redirect("login")
+        else:
+                    
+            return JsonResponse({'status' :"Login to Continue"})
+           
                 
             
         
@@ -1492,7 +1501,7 @@ def Add_Wishlist(request):
 def User_Wishlist(request):
     
     wish=Wishlist.objects.filter(customuser=request.user)
-    
+
     context={
         
         'wish': wish
