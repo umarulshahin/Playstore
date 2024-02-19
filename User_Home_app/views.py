@@ -1043,7 +1043,7 @@ def User_Order(request):
                                                size=i.size,
                                                price=i.price,
                                                offer_price=i.offer_price,
-                                              total_price=i.total_price)
+                                               total_price=i.total_price)
                     for i in value:
                                                             
                         for j in pro:
@@ -1059,14 +1059,14 @@ def User_Order(request):
             
                     return redirect('confirmation')
                                 
-             
+                
                 if request.method == "POST":    
-                     
+                        
                         payment_method=request.POST.get("payment_mode")
                         address_id=request.POST.get("address_id")
                        
                         if payment_method == "paid by Razorpay":
-                           
+                    
                             address=User_Address.objects.filter(id=address_id)
                             for j in address:
                                 user_add={'name' :j.name , 'email' : j.email, 'phone' : j.phone, 
@@ -1075,6 +1075,7 @@ def User_Order(request):
                                         'location': j.location} 
                                 
                                 # .................stock checking ............
+                  
                             value=Cart.objects.filter(customuser=request.user)
                             for i in value:
                                     
@@ -1086,7 +1087,7 @@ def User_Order(request):
                                             
                                             messages.error(request,f"{i.product.name} out stock please choose any another product")
                                             return redirect("user_cart")
-                                        
+                        
                                         # .................stock Updatin ............
                                         
                             # value=Cart.objects.filter(customuser=request.user)
@@ -1100,7 +1101,9 @@ def User_Order(request):
                                                                     
                             #                 new_stock=j.stock-i.qty
                             #                 Product_size.objects.filter(product=i.product,size=i.size).update(stock=new_stock)
-                                                                    
+                   
+                            valid_amount=0
+                            discount=0                                       
                             if coupon_id:
                                       
                                 coupon=Coupon.objects.filter(id=coupon_id)
@@ -1110,19 +1113,18 @@ def User_Order(request):
                                                         
                                     valid_amount=coupon.offer_valid_amount
                                     discount=coupon.discount
-                                    print("..........425")
-                                    print(user_id,coupon.id,".........srsrser")
+                            
                                     
                                     User_Coupon.objects.create(customuser=user_id,
                                                 coupon=coupon)
+                             
                                                 
                              #    ...............order_id genarating.............
                                                 
                                                 
                             unique_id = uuid.uuid4()
                             order_id = str(unique_id)[:8]
-                                        
-                                                
+                                   
                             # ..................order creating.................
                                                 
                                                 
@@ -1135,15 +1137,14 @@ def User_Order(request):
                                                 coupon_discount=discount
                                                                 
                                                                     )
-                                            
+                                     
                             id=Order.objects.get(order_id=order_id)
                             value=Cart.objects.filter(customuser=user_id)
                                             
                             request.session['order_id']=id.id
                                             
                                            
-                                                
-                                                
+                       
                             for i in value:
                                                 
                                 Order_Items.objects.create(order=id,
@@ -1156,7 +1157,7 @@ def User_Order(request):
                                                         total_price=i.total_price)
                                                 
                                     # .................stock Updatin ............
-                                        
+                                
                             value=Cart.objects.filter(customuser=request.user)
                             for i in value:
                                 
@@ -1171,14 +1172,47 @@ def User_Order(request):
                                                 
                                             
                                             Cart.objects.filter(customuser=user_id).delete()
-                                            del request.session['coupon_id']
-                    
+                                            request.session['coupon_id']=None
+                                    
                                             return redirect('confirmation')
+                                            
                                     else:
                                         
                                         messages.error(request,f"{i.product.name} out stock please choose any another product")
                                         return redirect("user_cart")
+                                    
+                if request.method == "POST":    
+                    
+                    address=request.POST.get('address')
+                    payment_method=request.POST.get('paymentMethod')
+                    print(payment_method)
+                    print(address)
+                    if payment_method == "wallet":
+                        
+        
+                                
+                                id=int(CustomUser.objects.get(email=request.user))
+                                user=CustomUser.objects.get(id=id)
+                                total=Cart.objects.filter(customuser=user).aggregate(total=Sum('total_price'))
+                                coupon_id=request.session.get("coupon_id")
+                                # coupon=Coupon.objects.get(id=coupon_id)
+                                total=int(total['total'])
+                                # if coupon_id:
+                                    
+                                #     coupon=Coupon.objects.get(id=coupon_id)
+                                #     total -= int(coupon.discount)
+                                    
+                                
+                                if int(user.wallet_bal) < total:
+                                    
+                                        return JsonResponse({'error': f'Not enough Wallet Amount.'}, status=400)
+                                
                             
+                                return JsonResponse({'success' : f'Order successful'})
+                    else:
+                            
+                            return redirect("checkout")
+                            return redirect("pay_with_wallet")
     # except TypeError:
     #     return render(request,'dashbord/user_404.html')                       
         
@@ -1308,10 +1342,23 @@ def Cancellation(request,id):
                         
                         stock.stock += i.qty
                         stock.save()
-            
+                    
+                    if order.status == "delivered":
+                        
+                        user=CustomUser.objects.get(id=order.user)
+                        user.wallet_bal = int(user.wallet_bal) + int(order.total_amount)
+                        user.save()
+                        Wallet_Transactions.objects.create(customuser = user,
+                                                        amount= order.total_amount,
+                                                        resons= 'order Cancellation',
+                                                        add_or_pay = 'add',               
+                                                        )
+                        
                     order.status= 'cancelled'
                     order.status_date=date
                     order.save()
+                    
+                    
                     
                 elif order.payment_type == 'paid by Razorpay' :
                     user_order=Order_Items.objects.filter(order_id=id)
@@ -1322,11 +1369,22 @@ def Cancellation(request,id):
                         
                         stock.stock += i.qty
                         stock.save()
-            
+                
                     order.status= 'cancelled'
                     order.status_date=date
                     order.save()
-            
+                    
+                 #  .......................... Order Amount Add To Wallet....................
+                 
+                    user=CustomUser.objects.get(id=order.user)
+                    user.wallet_bal = int(user.wallet_bal) + int(order.total_amount)
+                    user.save()
+                    Wallet_Transactions.objects.create(customuser = user,
+                                                       amount= order.total_amount,
+                                                       resons= 'order Cancellation',
+                                                       add_or_pay = 'add',               
+                                                       )
+                    
             return redirect('my_order')
         
     except TypeError:
@@ -1377,7 +1435,7 @@ def Pay_With_Upi(request):
                             return redirect("user_cart")
             
             client = razorpay.Client(auth=("Rrzp_test_NqH0AQ919F3Q3B", "90Ku7HA85h4ej9uv0AptcwpK"))
-           
+            print("coming call")
           
             # total=total['total']   
             return JsonResponse({
@@ -1590,6 +1648,88 @@ def Remove_Wishlist(request,id):
     return redirect("user_wishlist")
             
             # .................END REMOVE WISHLIST......................
+            
+             # ................. WALLET......................
+@never_cache 
+def My_Wallet(request):
+    
+    wallet=CustomUser.objects.get(email=request.user)
+    transaction=Wallet_Transactions.objects.filter(customuser=wallet.id)
+  
+    context={
+        'wallet' : wallet,
+        'transaction' : transaction,
+    }
+    
+    return render(request,'dashbord/wallet.html',context)
+
+
+            # .................END WALLET......................
+            
+            # ................. WALLET UPI......................
+
+@never_cache   
+def Wallet_upi(request):
+    
+    user_id=int(CustomUser.objects.get(email=request.user))
+    user=CustomUser.objects.get(id=user_id)
+    client = razorpay.Client(auth=("Rrzp_test_NqH0AQ919F3Q3B", "90Ku7HA85h4ej9uv0AptcwpK"))
+    print("coming call")
+          
+    return JsonResponse({
+                     'username' :user.username,'email' : user.email,'phone':user.ph_no,
+                    })
+       
+       # .................END WALLET UPI......................
+       
+       # .................WALLET RECHARGE......................
+@never_cache      
+def wallet_Recharge(request):
+    
    
+    if request.method == "POST":
+
+        amount=request.POST.get("amount")
+        payment_type=request.POST.get("payment_mode")
+        
+        user=CustomUser.objects.get(email=request.user)
+        new_balance = int(user.wallet_bal) + int(amount)
+        user.wallet_bal=new_balance
+        user.save()
+        
+        Wallet_Transactions.objects.create(customuser=request.user,
+                                           amount=amount,
+                                           resons=payment_type,
+                                           add_or_pay = 'add'
+                                           )
+    return redirect("my_wallet")
        
        
+       # .................END WALLET RECHARGE......................
+
+def Pay_With_Wallet(request):
+    
+    if request.method == "GET":
+        
+        
+        id=int(CustomUser.objects.get(email=request.user))
+        user=CustomUser.objects.get(id=id)
+        total=Cart.objects.filter(customuser=user).aggregate(total=Sum('total_price'))
+        coupon_id=request.session.get("coupon_id")
+        coupon=Coupon.objects.get(id=coupon_id)
+        total=int(total['total'])
+        if coupon_id:
+            
+            coupon=Coupon.objects.get(id=coupon_id)
+            total -= int(coupon.discount)
+            
+        
+        if int(user.wallet_bal) < total:
+            
+                return JsonResponse({'error': f'Not enough Wallet Amount.'}, status=400)
+        
+    
+        return JsonResponse({'success' : f'Order successful'})
+    else:
+      
+      return redirect("checkout")

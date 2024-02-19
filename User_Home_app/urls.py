@@ -57,6 +57,14 @@ urlpatterns = [
     path('user_wishlist/',views.User_Wishlist,name="user_wishlist"),
     
     path('remove_wishlist/<int:id>',views.Remove_Wishlist,name="remove_wishlist"),
+    
+    path('my_wallet/',views.My_Wallet,name="my_wallet"),
+    
+    path("wallet_upi/",views.Wallet_upi,name="wallet_upi"),
+    
+    path("wallet_recharge/",views.wallet_Recharge,name="wallet_recharge"),
+    
+    path("pay_with_wallet",views.Pay_With_Wallet,name="pay_with_wallet")
       
 
     

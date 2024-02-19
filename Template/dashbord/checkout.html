@@ -210,15 +210,14 @@
                                     <input type="radio" id="f-option6" name="paymentMethod" value="cashOnDelivery" onclick="handlePaymentMethodSelection()" required>
                                     <label for="f-option6">Cash on Delivery</label>
                                     <div class="check"></div>
-                                    <input type="radio" id="f-option6" name="paymentMethod" value="cashOnDelivery" onclick="handlePaymentMethodSelection()" required>
 
                                 </div>
 
-                                <!-- <div class="radion_btn">
+                                <div class="radion_btn">
                                     <input type="radio" id="f-option7" name="paymentMethod" value="wallet" onclick="handlePaymentMethodSelection()" required>
                                     <label for="f-option7">Wallet</label>
                                     <div class="check"></div>
-                                </div> -->
+                                </div>
                             </div>
                             <input type="checkbox" id="f-option7" name="selector">
                             <label for="f-option4">Use Wallet </label>
@@ -458,7 +457,7 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>  
 
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-       
+        
 
         <script>
             function toggleRadioButton(radioButton) {
@@ -496,7 +495,7 @@
     hiddenInput.value = selectedPaymentMethod.value;
   } 
 }
-          
+          console.log(selectedPaymentMethod,"..........34")
          async function proceedToOrder() {
            
             console.log("wjeabfqdckuawjsdvcb");
@@ -632,11 +631,45 @@
                 document.getElementById('orderForm')
 
 
-document.getElementById('orderForm').submit();
+                document.getElementById('orderForm').submit();
               
             }
+            else if(selectedpayment.value=="wallet"){
+
+                console.log(selectedpayment.value,"............25")
+
+                console.log(selectedpayment.value,"000000");
+                document.getElementById('orderForm')
+                document.getElementById('orderForm')
+            
+
+                document.getElementById('orderForm').submit();
+            }
+            $.ajax({
+                method: "GET", // Assuming you're making a GET request
+                url: "/user_order", // URL of the Django view function
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.success,
+                        icon: 'success',
+                        timer: 3000 
+                    }).then(() => {
+                        // Optional: Redirect or perform additional actions after the Swal alert is closed
+                        // window.location.href = '/redirect-url';
+                    });
+                    // Handle the successful response, e.g., update DOM elements
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error); // Handle errors gracefully
+                }
+            });
+            
+
+            }
            
-        }
+        
+      
 
         var checkbox=document.getElementById('f-option7');
 
@@ -702,6 +735,7 @@ document.getElementById('orderForm').submit();
     console.log("chaaaa");
      document.getElementById('orderForm').submit();
 }
+
 
     </script>
     <!-- <script>
