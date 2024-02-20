@@ -42,12 +42,12 @@ def Login(request):
         except Exception as e:
             
             messages.error(request, "Email or Passwors mismatch")
-            return render(request,'user_auth/Login.html')
+            return render(request,'User_auth/Login.html')
         
         if not status.is_active:
             
             messages.error(request, "Your account is Blocked")
-            return render(request,'user_auth/Login.html')
+            return render(request,'User_auth/Login.html')
         
         if user is not None  and not user.is_staff and user.is_active:
             
@@ -58,10 +58,10 @@ def Login(request):
             
         else: 
             messages.error(request, "Email or Passwors mismatch")
-            return render(request,'user_auth/Login.html')
+            return render(request,'User_auth/Login.html')
             
 
-    return render(request,'user_auth/Login.html')
+    return render(request,'User_auth/Login.html')
     
                # ................. End Login ................
     
@@ -100,35 +100,35 @@ def Signup(request):
         
         if not (username and L_name and email and phone and password and con_Password):
             messages.error(request, "please Fill Required Field")
-            return render(request,'user_auth/Signup.html')
+            return render(request,'User_auth/Signup.html')
         
         if not re.match(pattern,username and L_name):
             messages.error(request,"Please Enter Valid User Name")
-            return render(request,'user_auth/Signup.html')
+            return render(request,'User_auth/Signup.html')
         
         elif not re.match(pattern_email,email):
             messages.error(request,"Please enter valid email address")
-            return render(request,'user_auth/Signup.html')
+            return render(request,'User_auth/Signup.html')
         
         elif CustomUser.objects.filter(email=email).exists():
             messages.error(request,"Email already exists")
-            return render(request,'user_auth/Signup.html')
+            return render(request,'User_auth/Signup.html')
         
         elif not re.match(pattern_Phone,phone):
             messages.error(request,"Please enter valid Phone number")
-            return render(request,'user_auth/Signup.html')
+            return render(request,'User_auth/Signup.html')
         
         elif CustomUser.objects.filter(ph_no=phone).exists():
             messages.error(request,"Phone number already exists")
-            return render(request,'user_auth/Signup.html')
+            return render(request,'User_auth/Signup.html')
         
         elif not re.match(pattern_pass,password):
             messages.error(request,"The password is too weak")
-            return render(request,'user_auth/Signup.html')
+            return render(request,'User_auth/Signup.html')
         
         elif password != con_Password:
             messages.error(request,"Password mismath")
-            return render(request,'user_auth/Signup.html')
+            return render(request,'User_auth/Signup.html')
         
 
         
@@ -159,7 +159,7 @@ def Signup(request):
         
         return redirect("signup_otp")
     
-    return render(request,'user_auth/Signup.html')
+    return render(request,'User_auth/Signup.html')
 
 
 
@@ -198,14 +198,14 @@ def Signup_Otp(request):
             
             else: 
                 messages.error(request,"Otp mismatch")
-                return render(request,'user_auth/Signup_otp.html')   
+                return render(request,'User_auth/Signup_otp.html')   
                 
             
         elif action == 'cancel':
             user.delete()
             return redirect('signup')
            
-    return render(request,'user_auth/Signup_otp.html')
+    return render(request,'User_auth/Signup_otp.html')
 
 
        # ........End  Signup OTP Varification .......
@@ -269,14 +269,14 @@ def Forgot_pass(request):
             
             request.session['otp']=f_otp
             request.session['email'] =email_f.email
-            return render(request,'user_auth/Forget_otp.html')
+            return render(request,'User_auth/Forget_otp.html')
         
         else:
             
-            return render (request,'user_auth/Login.html') 
+            return render (request,'User_auth/Login.html') 
       
         
-    return render(request,'user_auth/Forget_pass.html')
+    return render(request,'User_auth/Forget_pass.html')
 
         # ........End Forget Password .......
         
@@ -310,9 +310,9 @@ def Forget_OTP_check(request):
             
         else:
     
-            return render (request,'user_auth/Login.html')
+            return render (request,'User_auth/Login.html')
         
-    return render (request,'user_auth/Forget_otp.html')
+    return render (request,'User_auth/Forget_otp.html')
 
                 
                 
@@ -335,7 +335,7 @@ def New_pass(request):
             if  not re.match(pattern_pass,password):
                 
                 messages.error(request,"The password is too weak")
-                return render(request,'user_auth/New_pass.html') 
+                return render(request,'User_auth/New_pass.html') 
                 
             if password != con_pass:
                 messages.error(request,"Password  mismatch")
@@ -349,8 +349,8 @@ def New_pass(request):
                 return redirect("login")
 
         else:
-            return render (request,'user_auth/Login.html')
-    return render(request,'user_auth/New_pass.html')
+            return render (request,'User_auth/Login.html')
+    return render(request,'User_auth/New_pass.html')
              
              
               # ........End New Password .............
@@ -424,7 +424,7 @@ def Signup_Resend_Otp(request):
     except Exception as e:
            
         messages.error(request,"OTP genaration failed")
-        return render(request,'user_auth/Signup_otp.html') 
+        return render(request,'User_auth/Signup_otp.html') 
     
     request.session["re_otp"]=re_otp
     return redirect('signup_otp') 
@@ -445,7 +445,7 @@ def Forgot_Resend_Otp(request):
     except Exception as e:
            
         messages.error(request,"OTP genaration failed")
-        return render(request,'user_auth/Signup_otp.html') 
+        return render(request,'User_auth/Signup_otp.html') 
     print(re_otp,"................426")
     request.session["F_re_otp"]=re_otp
     return redirect('forget_OTP_check') 
@@ -492,7 +492,7 @@ def Referral(request):
             else:
                 
                 messages.error(request,"Referal Code Mismatch ")
-                return render(request,'user_auth/referral.html')
+                return render(request,'User_auth/referral.html')
             
         else:
             
@@ -501,7 +501,7 @@ def Referral(request):
         
     else:
         
-        return render(request,'user_auth/referral.html')
+        return render(request,'User_auth/referral.html')
         
         
              # .............END FORGOT Resend OTP ..........
