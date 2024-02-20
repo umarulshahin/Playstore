@@ -292,7 +292,7 @@ def Category_list(request):
             'cate' : cate
         }
         
-        return render(request,'admin/Category.html',context)
+        return render(request,'Admin/Category.html',context)
     
     except TypeError:
         return render(request,'Admin/admin_404.html')
@@ -420,7 +420,7 @@ def Sub_category(request):
             
         }
 
-        return render(request,"admin/sub_category.html",context)
+        return render(request,"Admin/sub_category.html",context)
     except TypeError:
         return render(request,'Admin/admin_404.html')
                  
@@ -544,7 +544,7 @@ def Product_list(request):
             'img': img
         }
         
-        return render(request,"admin/Product.html",context)
+        return render(request,"Admin/Product.html",context)
     
     except TypeError:
         return render(request,'Admin/admin_404.html')
