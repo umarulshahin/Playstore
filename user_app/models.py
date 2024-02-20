@@ -35,6 +35,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(default=timezone.now)
     ph_no=models.CharField(max_length=15,blank=False)
     wallet_bal = models.DecimalField(max_digits=10, decimal_places=2,default=0.00)
+    rafferal_code = models.CharField(max_length=100,null=False)
     
     
     objects = CustomUserManager()

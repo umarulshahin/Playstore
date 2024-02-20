@@ -64,7 +64,6 @@ urlpatterns = [
     
     path("wallet_recharge/",views.wallet_Recharge,name="wallet_recharge"),
     
-    path("pay_with_wallet",views.Pay_With_Wallet,name="pay_with_wallet")
       
 
     

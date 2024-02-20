@@ -104,16 +104,7 @@
                             <input type="hidden" id="wallet" name="wallet" value="0">
                             <input type="hidden" id="amount" name="amount" value="<%= data.total %>">
 
-                            <div class="container">
-
-                                {% for error in messages %}
-            
-                                <p class="text-center" style="color:red">{{error}}</p>
-            
-                                {%endfor%}
-            
-                            
-                            </div>
+                           
 
                         <div class="container">
                         <h3 class="mt-3">Choose Address:</h3>
@@ -173,10 +164,21 @@
                 
                     <!-- </form> -->
                     </div>
-        
+                   
                     
                     <div class="col-lg-4">
+                        <div class="container">
+
+                            {% for error in messages %}
+        
+                            <p class="text-center" style="color:red">{{error}}</p>
+        
+                            {%endfor%}
+        
+                        
+                        </div>
                         <div class="order_box">
+
                             <h2>Your Order</h2>
                             
                             <ul class="list">
@@ -645,25 +647,7 @@
 
                 document.getElementById('orderForm').submit();
             }
-            $.ajax({
-                method: "GET", // Assuming you're making a GET request
-                url: "/user_order", // URL of the Django view function
-                success: function(response) {
-                    Swal.fire({
-                        title: 'Success',
-                        text: response.success,
-                        icon: 'success',
-                        timer: 3000 
-                    }).then(() => {
-                        // Optional: Redirect or perform additional actions after the Swal alert is closed
-                        // window.location.href = '/redirect-url';
-                    });
-                    // Handle the successful response, e.g., update DOM elements
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error:", error); // Handle errors gracefully
-                }
-            });
+            
             
 
             }

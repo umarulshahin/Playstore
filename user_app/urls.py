@@ -35,5 +35,7 @@ urlpatterns = [
     
     path('forgot_resend_otp/',views.Forgot_Resend_Otp,name="forgot_resent_otp"),
     
+    path('referral/',views.Referral,name="referral"),
+    
 
  ]

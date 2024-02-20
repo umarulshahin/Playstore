@@ -9,8 +9,10 @@ from dotenv import load_dotenv
 from django.contrib.auth import authenticate,login,logout
 from django.views.decorators.cache import  never_cache,cache_control
 from django.contrib.auth.decorators import login_required 
-from .models import *
+from User_Home_app.models import *
+from Admin_app.models import *
 from django.contrib.auth.hashers import make_password, check_password
+import string
 
 
 
@@ -182,7 +184,18 @@ def Signup_Otp(request):
             
             if str(otp) == s_otp or str(re_otp) == s_otp:  
                 
-                return redirect("login")
+                #............ Referral Code Genarating...........
+                
+                length = 8
+                characters = string.ascii_uppercase + string.digits
+                code=''.join(random.choice(characters) for _ in range(length))
+                
+                user.rafferal_code = code
+                user.save()
+                
+                messages.success(request,"Otp Verified..!")
+                return render(request,"User_auth/referral.html")
+            
             else: 
                 messages.error(request,"Otp mismatch")
                 return render(request,'user_auth/Signup_otp.html')   
@@ -307,6 +320,7 @@ def Forget_OTP_check(request):
         # ........End Forget OTP Check .......
         
          # ........New Password .............
+         
 @never_cache       
 def New_pass(request):
     
@@ -349,7 +363,7 @@ def New_pass(request):
    
        # ........ Block Check............
        
-
+@never_cache
 def Block_Check(request, id):
     
     try:
@@ -399,7 +413,7 @@ def otp():
     
     # .............Signup Resend OTP ..........
     
-
+@never_cache
 def Signup_Resend_Otp(request):
     
     try: 
@@ -418,7 +432,9 @@ def Signup_Resend_Otp(request):
 
      # .............End Signup Resend OTP ..........
      
+     # .............FORGOT Resend OTP ..........
      
+@never_cache     
 def Forgot_Resend_Otp(request):
     
     try: 
@@ -433,4 +449,66 @@ def Forgot_Resend_Otp(request):
     print(re_otp,"................426")
     request.session["F_re_otp"]=re_otp
     return redirect('forget_OTP_check') 
+
+     # .............END FORGOT Resend OTP ..........
+
+     # .............REFFERAL CODE CHEKING ..........
+
+
+@never_cache   
+def Referral(request):
     
+    if request.method == "POST":
+        
+        action = request.POST.get("action")
+        code = request.POST.get("code")
+        
+        print(action)
+        print(code)
+        
+        if action == "verify":
+            
+            user = CustomUser.objects.get(rafferal_code = code)
+            if user:
+                new_user = CustomUser.objects.get(ph_no = request.session.get('phone'))   
+                user.wallet_bal += 50
+                user.save()
+                Wallet_Transactions.objects.create( customuser =user,
+                                                   amount = 50,
+                                                   resons = "Referral Bonus",
+                                                   add_or_pay = "add" 
+                                                   )
+                print(new_user)
+                            
+                new_user.wallet_bal += 100
+                new_user.save()
+                Wallet_Transactions.objects.create( customuser =new_user,
+                                                   amount = 100,
+                                                   resons = "Referral Offer",
+                                                   add_or_pay = "add")
+                
+                messages.success(request,"Successfully signup ")
+                return redirect("login")
+            else:
+                
+                messages.error(request,"Referal Code Mismatch ")
+                return render(request,'user_auth/referral.html')
+            
+        else:
+            
+            messages.success(request,"Successfully signup ")
+            return redirect("login")
+        
+    else:
+        
+        return render(request,'user_auth/referral.html')
+        
+        
+             # .............END FORGOT Resend OTP ..........
+
+    
+        
+        
+                
+        
+        
