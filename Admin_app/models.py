@@ -60,9 +60,9 @@ class Product(models.Model):
             output_size = (500, 700)
             img.thumbnail(output_size)
             img.save(self.image.path)
+ 
     class Meta:
-        ordering = ['-id']
-
+        ordering = ['id']
     
 class Product_image(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE)

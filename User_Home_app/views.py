@@ -45,8 +45,16 @@ def Dashbord(request):
         
         return render(request,'dashbord/dashbord.html',context)   
     
-    except TypeError:
-        return render(request,'dashbord/user_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
               
 
                # .................End Dashbord......................
@@ -102,31 +110,53 @@ def All_Product(request):
             
         return render(request,'dashbord/all_product.html',context)
             
-        
-    except TypeError:
-        return render(request,'dashbord/user_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
 
 
         # ................. End All Product......................
                
-         # .................SEARCH......................
+         # .................SEARCH SUGGESTIONS......................
          
 @require_GET   
+@never_cache
 def Suggestions(request):
-    prefix = request.GET.get('prefix', '')
-    suggestions = []
-    # Filter products based on name containing the prefix
-    products = Product.objects.filter(name__icontains=prefix)
-    # Get the names of filtered products
-    for product in products:
-        suggestions.append(product.name)
-    return JsonResponse({'suggestions': suggestions})
+    
+    try:
+        prefix = request.GET.get('prefix', '')
+        suggestions = []
+        # Filter products based on name containing the prefix
+        products = Product.objects.filter(name__icontains=prefix)
+        # Get the names of filtered products
+        for product in products:
+            suggestions.append(product.name)
+        return JsonResponse({'suggestions': suggestions})
+    
+    except Exception as e: 
 
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
 
                
-               # ................. View Product......................
+               # ................. END SEARCH SUGGESTIONS......................
                
+               #.................. VIEW PRODUCT..........................
                
+@never_cache           
 def View_Product(request,id):
     
     try:
@@ -149,8 +179,17 @@ def View_Product(request,id):
         }
         
         return render(request,'dashbord/view_product.html',context)
-    except TypeError:
-        return render(request,'dashbord/user_404.html')
+    
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
                
                # ................. End View Product......................
                
@@ -171,13 +210,24 @@ def User_Profile(request,id):
             return render(request,'dashbord/profile.html',context)
         
         return redirect("login")
-    except TypeError:
-        return render(request,'dashbord/user_404.html') 
+    
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
                   
                      # .................END USER PROFILE......................
                      
                      # .................EDIT PROFILE......................
-                     
+ 
+@login_required(login_url='/user_app/Login/')
+@never_cache                    
 def Edit_Profile(request,id):
     
     try:
@@ -224,8 +274,16 @@ def Edit_Profile(request,id):
             
             return render(request,'dashbord/profile.html')
         
-    except TypeError:
-        return render(request,'dashbord/user_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
     
                      # .................END EDIT PROFILE......................
                      
@@ -251,14 +309,23 @@ def Addresses(request):
         
             return render(request,'dashbord/address.html',context)
         return redirect('user_profile')
-    except TypeError:
-        return render(request,'dashbord/user_404.html')
+    except Exception as e: 
 
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
 
          # .................END ADDRESS AND ADD ADDRESS......................
          
           # ................. ADD ADDRESS......................
-          
+ 
+@login_required(login_url='/user_app/Login/')
+@never_cache          
 def Add_Address(request):
     
     try:
@@ -331,12 +398,23 @@ def Add_Address(request):
                 return redirect("addresses")
             return redirect('login')
         
-    except TypeError:
-        return render(request,'dashbord/user_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
            # .................END ADD ADDRESS......................
          
          # .................DELETE ADDRESS......................
          
+         
+@login_required(login_url='/user_app/Login/')
+@never_cache
 def Delete_Address(request,id):
     
     try:
@@ -352,13 +430,23 @@ def Delete_Address(request,id):
         
         
     
-    except TypeError:
-        return render(request,'dashbord/user_404.html')    
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)  
     
          # .................END DELETE ADDRESS......................
          
          # .................EDIT ADDRESS......................
          
+@login_required(login_url='/user_app/Login/')
+@never_cache
 def Edit_Address(request):
     
     try:
@@ -418,8 +506,16 @@ def Edit_Address(request):
 
         return redirect("addresses")
     
-    except TypeError:
-        return render(request,'dashbord/user_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
          
          # .................END EDIT ADDRESS......................
          
@@ -518,8 +614,16 @@ def Add_to_Cart(request):
         
         return redirect("view_product") 
     
-    except TypeError:
-        return render(request,'dashbord/user_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
 
          # .................END ADD TO CART......................
          
@@ -566,9 +670,16 @@ def User_Cart(request):
                 return render(request,'dashbord/cart.html',context)
         return redirect('login')
     
-    except TypeError:
-        return render(request,'dashbord/user_404.html')
-                
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
            # .................END USER CART......................
            
            
@@ -576,6 +687,8 @@ def User_Cart(request):
            
 @never_cache
 @require_POST
+@login_required(login_url='/user_app/Login/')
+@never_cache
 def update_quantity_view(request):
     
     try:
@@ -663,14 +776,23 @@ def update_quantity_view(request):
                 cart_subtotal=request.session["sub_total"]=sub_total
                 return JsonResponse({'error': f'Not enough stock available. Current stock: {stock.stock}'}, status=400)
             
-    except TypeError:
-            return render(request,'dashbord/user_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
         
          # ................. END UPDATE AND STOCK MANAGE, TOTAL PRICE, SUB_TOTAL  CART......................
          
           # .................DELETE PRODUCT FROM CART......................
         
-        
+    
+@login_required(login_url='/user_app/Login/')
 @never_cache
 def Delete_Cart(request,product_id):
     
@@ -693,8 +815,16 @@ def Delete_Cart(request,product_id):
         
         return redirect('user_cart')
     
-    except TypeError:
-        return render(request,'dashbord/user_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
     
        # .................END DELETE PRODUCT FROM CART......................
        
@@ -779,13 +909,22 @@ def Checkout(request):
                 return render(request,'dashbord/checkout.html',context)
         return redirect('login')
     
-    except TypeError:
-        return render(request,'dashbord/user_404.html')   
-    
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
         # .................END CHECKOUT......................
         
         
         # ................. EDIT CHECKOUT ADDRESS......................
+        
+@login_required(login_url='/user_app/Login/')
 @never_cache
 def Checkout_Edit_Address(request):
     
@@ -848,14 +987,24 @@ def Checkout_Edit_Address(request):
 
             return redirect("checkout")
         
-    except TypeError:
-        return render(request,'dashbord/user_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
     
         # .................END EDIT CHECKOUT ADDRESS......................
         
         
         # .................ADD CHECKOUT ADDRESS......................
-@never_cache       
+        
+@login_required(login_url='/user_app/Login/')
+@never_cache   
 def Checkout_Add_Address(request):
     
     try:
@@ -930,19 +1079,26 @@ def Checkout_Add_Address(request):
                 return redirect("checkout")
             return redirect("login")
         
-    except TypeError:
-        return render(request,'dashbord/user_404.html')
-        
-        
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
         # .................END ADD CHECKOUT ADDRESS......................
         
         
         # .................USER ORDER......................
         
-@never_cache        
+@login_required(login_url='/user_app/Login/')
+@never_cache     
 def User_Order(request):
     
-    # try:
+    try:
 
         
         if  request.user.is_authenticated:
@@ -1034,15 +1190,19 @@ def User_Order(request):
                     value=Cart.objects.filter(customuser=user_id)
                     request.session['order_id']=id.id
                                         
-                                                                                
-                    Order_Items.objects.create(order=id,
-                                               product=i.product,
-                                               Sub_Category=i.product.sub_category,
-                                               qty=i.qty,
-                                               size=i.size,
-                                               price=i.price,
-                                               offer_price=i.offer_price,
-                                               total_price=i.total_price)
+                    for i in value:                
+                                                                    
+                        Order_Items.objects.create(order=id,
+                                                product=i.product,
+                                                Sub_Category=i.product.sub_category,
+                                                qty=i.qty,
+                                                size=i.size,
+                                                price=i.price,
+                                                offer_price=i.offer_price,
+                                                total_price=i.total_price)
+                        
+                        #.............. stock updating...............
+                        
                     for i in value:
                                                             
                         for j in pro:
@@ -1054,7 +1214,7 @@ def User_Order(request):
                                             
                                         
                     Cart.objects.filter(customuser=user_id).delete()
-                    del request.session['coupon_id']
+                    request.session['coupon_id']=None
             
                     return redirect('confirmation')
                 
@@ -1063,7 +1223,6 @@ def User_Order(request):
                                 
                 elif  payment_method == "wallet":
                         
-                            print("....234234")
                                 
                             id=int(CustomUser.objects.get(email=request.user))
                             user=CustomUser.objects.get(id=id)
@@ -1108,16 +1267,17 @@ def User_Order(request):
                                 id=Order.objects.get(order_id=order_id)
                                 value=Cart.objects.filter(customuser=user_id)
                                 request.session['order_id']=id.id
-                                                    
-                                                                                            
-                                Order_Items.objects.create(order=id,
-                                                        product=i.product,
-                                                        Sub_Category=i.product.sub_category,
-                                                        qty=i.qty,
-                                                        size=i.size,
-                                                        price=i.price,
-                                                        offer_price=i.offer_price,
-                                                        total_price=i.total_price)
+                                
+                                for i in value:               
+                                        
+                                    Order_Items.objects.create(order=id,
+                                                            product=i.product,
+                                                            Sub_Category=i.product.sub_category,
+                                                            qty=i.qty,
+                                                            size=i.size,
+                                                            price=i.price,
+                                                            offer_price=i.offer_price,
+                                                            total_price=i.total_price)
                                 
                                 #................... wallet amount reduct.................
                                 
@@ -1286,13 +1446,22 @@ def User_Order(request):
                             
                             return redirect("checkout")
                         
-    # except TypeError:
-    #     return render(request,'dashbord/user_404.html')                       
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)                       
         
         # ................. END USER ORDER ......................
         
         
         # ................. ORDER CONFIRMATION ..................
+        
 @never_cache       
 def Confirmation(request):
     
@@ -1323,15 +1492,23 @@ def Confirmation(request):
             
             return render(request,'dashbord/confirmation.html',context)
         
-    except TypeError:
-        return render(request,'dashbord/user_404.html')
+    except Exception as e: 
 
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
 
        # .................END ORDER CONFIRMATION ......................
        
        
        # .................MY ORDER ......................
-@never_cache      
+@login_required(login_url='/user_app/Login/')
+@never_cache    
 def My_Order(request):
     
     try:
@@ -1371,14 +1548,23 @@ def My_Order(request):
             
             return render(request,'dashbord/my_order.html')
         
-    except TypeError:
-        return render(request,'dashbord/user_404.html')
+    except Exception as e: 
 
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
        
        # .................END MY ORDER ......................
        
        # ................. ORDER DETAILS......................
-@never_cache      
+       
+@login_required(login_url='/user_app/Login/')
+@never_cache   
 def Order_Details(request,id):
     
     try:
@@ -1397,7 +1583,8 @@ def Order_Details(request,id):
        # .................END ORDER DETAILS......................
        
        # .................ORDER CANCELLATION......................
-@never_cache  
+@login_required(login_url='/user_app/Login/')
+@never_cache
 def Cancellation(request,id):
     
     try:
@@ -1492,11 +1679,16 @@ def Cancellation(request,id):
                     
             return redirect('my_order')
         
-    except TypeError:
-        
-            return render(request,'dashbord/user_404.html')
-         
-       
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
        # .................END ORDER CANCELLATION......................
        
        
@@ -1517,13 +1709,11 @@ def Pay_With_Upi(request):
             
             coupon_id=request.session.get("coupon_id")
             total=total['total']   
-            print(coupon_id,".......3412")
             if coupon_id:
                 
                 coupon=Coupon.objects.get(id=coupon_id)
                 total-=coupon.discount
                 
-                print(total,".......234")
                 
             # .........stock cheking ...........
             
@@ -1542,13 +1732,19 @@ def Pay_With_Upi(request):
             client = razorpay.Client(auth=("Rrzp_test_NqH0AQ919F3Q3B", "90Ku7HA85h4ej9uv0AptcwpK"))
             print("coming call")
           
-            # total=total['total']   
             return JsonResponse({
                     'total_amount' : total ,'username' :user_id.username,'email' : user_id.email,'phone':user_id.ph_no,
                     })
-        except TypeError:
-             return render(request,'dashbord/user_404.html')
+        except Exception as e: 
 
+            error=type(e).__name__
+            typee,code=status_codee(error)
+                
+            context={
+                'type' :typee,
+                'code' : code
+            }
+            return render(request, 'dashbord/user_404.html',context)
        # .................END RAZORPAY......................
        
        # .................NEW PASSWORD......................
@@ -1612,9 +1808,16 @@ def New_Password(request):
             
             return render(request,"dashbord/new_password.html")
         
-     except TypeError:
-        return render(request,'dashbord/user_404.html')
+     except Exception as e: 
 
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
        # .................END NEW PASSWORD......................
        
        # .................USER ORDERS BILL DOWNLOADING......................
@@ -1703,9 +1906,16 @@ def Orders_Bill(request,id):
             buffer.close()
             response.write(pdf)
             return response
-    except TypeError:
-        return render(request,'dashbord/user_404.html') 
-        
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
        
        # .................END USER ORDERS BILL DOWNLOADING......................
  
@@ -1715,63 +1925,115 @@ def Orders_Bill(request,id):
 @never_cache 
 def Add_Wishlist(request):
     
-    if request.method== 'POST':
-        pro_id =int(request.POST.get('product_id'))
-        pro=Product.objects.get(id=pro_id)
-        user = get_object_or_404(CustomUser, email=request.user)   
+    try:
+        if request.method== 'POST':
+            pro_id =int(request.POST.get('product_id'))
+            pro=Product.objects.get(id=pro_id)
+            user = get_object_or_404(CustomUser, email=request.user)   
+            
+            if Wishlist.objects.filter(customuser=user,product=pro).exists():
+            
+                return JsonResponse({'success': 'already'})
+            
+            if Cart.objects.filter(customuser=user,product=pro).exists():
+                    return JsonResponse({'success': 'cart already'})
+            Wishlist.objects.create(customuser=user,product=pro) 
         
-        if Wishlist.objects.filter(customuser=user,product=pro).exists():
         
-            return JsonResponse({'success': 'already'})
-        
-        if Cart.objects.filter(customuser=user,product=pro).exists():
-                return JsonResponse({'success': 'cart already'})
-        Wishlist.objects.create(customuser=user,product=pro) 
-      
-     
-        return JsonResponse({'success': "added"})
-    else:
-        return JsonResponse({'success': False})
+            return JsonResponse({'success': "added"})
+        else:
+            return JsonResponse({'success': False})
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
     
     # .................END WISHLIST......................
     
         # .................END WISHLIST......................
-        
+
+@login_required(login_url='/user_app/Login/')
+@never_cache
 def User_Wishlist(request):
     
-    wish=Wishlist.objects.filter(customuser=request.user)
+    try:
+        wish=Wishlist.objects.filter(customuser=request.user)
 
-    context={
+        context={
+            
+            'wish': wish
+        }
         
-        'wish': wish
-    }
-    
-    return render(request,'dashbord/wishlist.html',context)       
+        return render(request,'dashbord/wishlist.html',context)      
+     
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
  
             # .................END WISHLIST......................
             
             # .................REMOVE WISHLIST......................
-            
+        
+@login_required(login_url='/user_app/Login/')
+@never_cache    
 def Remove_Wishlist(request,id):
+    try:
+        Wishlist.objects.get(id=id).delete()
+        return redirect("user_wishlist")
     
-    Wishlist.objects.get(id=id).delete()
-    return redirect("user_wishlist")
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
             
             # .................END REMOVE WISHLIST......................
             
              # ................. WALLET......................
-@never_cache 
+             
+@login_required(login_url='/user_app/Login/')
+@never_cache
 def My_Wallet(request):
     
-    wallet=CustomUser.objects.get(email=request.user)
-    transaction=Wallet_Transactions.objects.filter(customuser=wallet.id)
-  
-    context={
-        'wallet' : wallet,
-        'transaction' : transaction,
-    }
+    try:
+        wallet=CustomUser.objects.get(email=request.user)
+        transaction=Wallet_Transactions.objects.filter(customuser=wallet.id)
     
-    return render(request,'dashbord/wallet.html',context)
+        context={
+            'wallet' : wallet,
+            'transaction' : transaction,
+        }
+        
+        return render(request,'dashbord/wallet.html',context)
+    
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
 
 
             # .................END WALLET......................
@@ -1781,39 +2043,89 @@ def My_Wallet(request):
 @never_cache   
 def Wallet_upi(request):
     
-    user_id=int(CustomUser.objects.get(email=request.user))
-    user=CustomUser.objects.get(id=user_id)
-    client = razorpay.Client(auth=("Rrzp_test_NqH0AQ919F3Q3B", "90Ku7HA85h4ej9uv0AptcwpK"))
-    print("coming call")
-          
-    return JsonResponse({
-                     'username' :user.username,'email' : user.email,'phone':user.ph_no,
-                    })
+    try:
+    
+        user_id=int(CustomUser.objects.get(email=request.user))
+        user=CustomUser.objects.get(id=user_id)
+        client = razorpay.Client(auth=("Rrzp_test_NqH0AQ919F3Q3B", "90Ku7HA85h4ej9uv0AptcwpK"))
+        print("coming call")
+            
+        return JsonResponse({
+                        'username' :user.username,'email' : user.email,'phone':user.ph_no,
+                        })
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
        
        # .................END WALLET UPI......................
        
        # .................WALLET RECHARGE......................
-@never_cache      
+       
+@login_required(login_url='/user_app/Login/')
+@never_cache
 def wallet_Recharge(request):
     
-   
-    if request.method == "POST":
+    try:
+        if request.method == "POST":
 
-        amount=request.POST.get("amount")
-        payment_type=request.POST.get("payment_mode")
-        
-        user=CustomUser.objects.get(email=request.user)
-        new_balance = int(user.wallet_bal) + int(amount)
-        user.wallet_bal=new_balance
-        user.save()
-        
-        Wallet_Transactions.objects.create(customuser=request.user,
-                                           amount=amount,
-                                           resons=payment_type,
-                                           add_or_pay = 'add'
-                                           )
-    return redirect("my_wallet")
+            amount=request.POST.get("amount")
+            payment_type=request.POST.get("payment_mode")
+            
+            user=CustomUser.objects.get(email=request.user)
+            new_balance = int(user.wallet_bal) + int(amount)
+            user.wallet_bal=new_balance
+            user.save()
+            
+            Wallet_Transactions.objects.create(customuser=request.user,
+                                            amount=amount,
+                                            resons=payment_type,
+                                            add_or_pay = 'add'
+                                            )
+        return redirect("my_wallet")
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
        
        
        # .................END WALLET RECHARGE......................
+       
+#.......................... STATUS CODE CHEKING.................
+
+never_cache
+def status_codee(error):
+    
+
+    
+    if error == 'ValidationError':
+        type='Page not Found'
+        code=404
+        return type,code
+    
+    elif error == 'TypeError':
+        
+        type='Bad Request'
+        code=400
+        return type,code
+    
+    else:
+        
+        type='Page not Found'
+        code=404
+        return type,code
+
+ #..........................END STATUS CODE CHEKING.................
 

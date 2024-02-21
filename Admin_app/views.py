@@ -69,8 +69,16 @@ def Admin(request):
             
         return render(request,"Admin/admin_login.html")
     
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
     
               # ........... End Admin Authentication................
               
@@ -103,8 +111,7 @@ def Admin_dashbord(request):
                 upi_total=Order.objects.filter(payment_type="paid by Razorpay",created_date__range=(start_date, end_date),status__in=['pending','processing','shipped','delivered']).aggregate(total=Sum('total_amount'))
                 wallet_total=Order.objects.filter(payment_type="wallet",created_date__range=(start_date, end_date),status__in=['pending','processing','shipped','delivered']).aggregate(total=Sum('total_amount'))
                 wallet=Order.objects.filter(payment_type="wallet")
-                print(wallet)
-                print(wallet_total)
+               
                 pending=Order.objects.filter(status='pending',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
                 processing=Order.objects.filter(status='processing',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
                 shipped=Order.objects.filter(status='shipped',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
@@ -156,8 +163,7 @@ def Admin_dashbord(request):
                 upi_total=Order.objects.filter(payment_type="paid by Razorpay").aggregate(total=Sum('total_amount'))
                 wallet_total=Order.objects.filter(payment_type="wallet",).aggregate(total=Sum('total_amount'))
                 wallet=Order.objects.filter(payment_type="wallet")
-                print(wallet)
-                print(wallet_total)
+                
                 
                 pending=Order.objects.filter(status='pending').aggregate(total=Count("status"))
                 processing=Order.objects.filter(status='processing').aggregate(total=Count("status"))
@@ -194,8 +200,16 @@ def Admin_dashbord(request):
                 
                 return render(request,"Admin/admin_dashbord.html",context)
             
-    except TypeError:
-         return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
 
                # ............ End Admin Dashbord ....................
                
@@ -213,8 +227,16 @@ def Admin_logout(request):
             logout(request)
             
             return redirect("admin_login")
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
 
                 # ............End Admin Logout  ....................
                 
@@ -236,8 +258,16 @@ def User_list(request):
         }
         
         return render(request,"Admin/user_list.html",context)
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
 
                 # ..............End User List ..........................
                 
@@ -255,13 +285,22 @@ def User_block(request,id):
         user.save()
         return redirect("block_check",id=id)
     
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
 
 
                   # ................End User Block .........................
                   
                   # ................User UnBlock .........................
+                  
 @admin_required
 @login_required(login_url="/Admin_app/")
 @never_cache                 
@@ -271,8 +310,16 @@ def User_unblock(request,id):
         user.is_active=True
         user.save()
         return redirect("user_list")
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
 
                 # ................End User UnBlock ......................... 
                 
@@ -294,8 +341,16 @@ def Category_list(request):
         
         return render(request,'Admin/Category.html',context)
     
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
                 
                 # ................End Product Category......................... 
                 
@@ -320,8 +375,16 @@ def Change_Status(request,id):
 
         return redirect('category_list')
     
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
     
                 
                 # ................End Change Status.........................
@@ -339,8 +402,16 @@ def Delete_category(request,id):
         
         return redirect("category_list")
     
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
     
     
                 # ................End Delete Change Category...............
@@ -365,8 +436,16 @@ def Update_category(request,id):
         
         return redirect("category_list")
     
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
     
                 
                 # ................End  Update Category.................
@@ -393,8 +472,16 @@ def Add_category(request):
             
             return redirect("category_list")
         
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
     
                 # ................End  Add Category.........................
                 
@@ -416,13 +503,21 @@ def Sub_category(request):
         context={
             'sub':sub,
             'main':main,
-             'off' : off,
+            'off' : off,
             
         }
 
         return render(request,"Admin/sub_category.html",context)
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
                  
                   # ................End sub Category.........................
                   
@@ -446,8 +541,16 @@ def Status_Change(request,id):
             status.save()
             
         return redirect("sub_category") 
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
     
     
                   # ................Sub Category Status Change.........................
@@ -473,8 +576,16 @@ def Update_Sub_Category(request,id):
             Sub_Category.objects.filter(id=id).update(name=name)
             
             return redirect("sub_category") 
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
     
                    
                     # ................End Update Sub Category .........................
@@ -491,8 +602,16 @@ def Delete_Sub_Category(request,id):
         sub.delete()
         
         return redirect("sub_category")
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
     
     
                     
@@ -520,8 +639,16 @@ def Add_Sub_Category(request):
         Sub_Category.objects.create(name=sub,category=id)
         
         return redirect("sub_category") 
-    except TypeError:
-        return render(request,'Admin/admin_404.html')                        
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)                        
         
                     
                     # ................End Add Sub Category .........................
@@ -534,7 +661,7 @@ def Add_Sub_Category(request):
 def Product_list(request):
     try:
         pro=Product.objects.all()
-        sub=Sub_Category.objects.all()
+        sub=Sub_Category.objects.filter(is_deleted=True)
         img=Product_image.objects.all().prefetch_related("product_set")
         
         
@@ -546,8 +673,16 @@ def Product_list(request):
         
         return render(request,"Admin/Product.html",context)
     
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
                     
                     
                     # ................End Product .........................
@@ -580,8 +715,17 @@ def Product_Status(request,id):
         else:
             messages.error(request, "Please add any size")
             return redirect("product_list")
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+        
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
                     
                     # ................End Product Status.........................
                     
@@ -651,8 +795,16 @@ def Add_Product(request):
                 
             return redirect("product_list") 
         
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
                     
                     # ................End Add Product .........................
                     
@@ -670,8 +822,16 @@ def Delete_Product(request,id):
         
         return redirect("product_list")
                     
-    except TypeError:
-        return render(request,'Admin/admin_404.html')                
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)                
                     # ................End Delete Product .........................
                     
                     # ................Update Product .........................
@@ -757,8 +917,16 @@ def Update_Product(request,id):
                 
             
         return redirect("product_list") 
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
                     
                     # ................End Update Product .........................
                     
@@ -795,8 +963,16 @@ def Add_Size(request,id):
                         Product_size.objects.create(size=size,stock=stock,product=value)
             
         return redirect("product_list")
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
 
                     # ................END ADD SIZE .........................
                     
@@ -828,8 +1004,16 @@ def Edit_Size(request,id):
 
             
         return redirect("product_list")
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
                     
                     # ................END EDIT SIZE .........................
                     
@@ -872,8 +1056,16 @@ def User_Orders(request):
         }
         
         return render(request,'Admin/user_orders.html',context)
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
                     
                     # ................END USER ORDERS  .........................
                     
@@ -894,8 +1086,16 @@ def Order_List(request,id):
         
         
         return render(request,'Admin/order_list.html',context)
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
                     
                     # ................END USER ORDER LIST .........................
                     
@@ -922,93 +1122,126 @@ def Order_Status(request,id):
             
         
         return redirect('user_orders')
-    except TypeError:
-        return render(request,'Admin/admin_404.html')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
                     
                     # ................END ORDER STATUS .........................
                     
                     # ................SALES REPORTS .........................
-                    
                     
 @never_cache                   
 def Sales_Report(request):
     
     try: 
         
-            if request.method == "POST":
-                
-                start_date = request.POST.get("startDate")
-                end_date = request.POST.get("endDate")
-                response = HttpResponse(content_type='application/pdf')
-                response['Content-Disposition'] = 'attachment; filename="sales_Reports.pdf"'
-                buffer = BytesIO()
-                p = canvas.Canvas(buffer, pagesize=letter)
+        if request.method == "POST":
+            
+            start_date = request.POST.get("startDate")
+            end_date = request.POST.get("endDate")
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="sales_Reports.pdf"'
+            buffer = BytesIO()
+            p = canvas.Canvas(buffer, pagesize=letter)
 
-                # Sales Report Heading
-                p.setFont("Helvetica-Bold", 16)
-                p.drawString(220, 750, "Sales Report")
+            # Sales Report Heading
+            p.setFont("Helvetica-Bold", 16)
+            p.drawString(220, 750, "Sales Report")
 
-                # Start and End Date
-                p.setFont("Helvetica", 12)
-                p.drawString(50, 720, f"Sale Started: {start_date}")
-                p.drawString(50, 700, f"Sale Ended: {end_date}")
+            # Start and End Date
+            p.setFont("Helvetica", 12)
+            p.drawString(50, 720, f"Sale Started: {start_date}")
+            p.drawString(50, 700, f"Sale Ended: {end_date}")
 
-                # Transactions Heading
-                p.drawString(220, 670, "Transactions")
+            # Transactions Heading
+            p.setFont("Helvetica-Bold", 16)
+            p.drawString(220, 670, "Transactions")
 
-                # Transaction Table
-                total_sale = Order.objects.filter(status__in=['pending','processing','shipped','delivered'], created_date__range=(start_date, end_date)).aggregate(total=Sum('total_amount'))
-                all_amount = Order.objects.filter(created_date__range=(start_date, end_date)).aggregate(total=Sum("total_amount"))
-                cod_total = Order.objects.filter(payment_type="cashOnDelivery", created_date__range=(start_date, end_date), status__in=['pending','processing','shipped','delivered']).aggregate(total=Sum('total_amount'))
-                upi_total = Order.objects.filter(payment_type="paid by Razorpay", created_date__range=(start_date, end_date), status__in=['pending','processing','shipped','delivered']).aggregate(total=Sum('total_amount'))
-                wallet_total = Order.objects.filter(payment_type="wallet", created_date__range=(start_date, end_date), status__in=['pending','processing','shipped','delivered']).aggregate(total=Sum('total_amount'))
+            # Transactions Table
+            total_sale = Order.objects.filter(status__in=['pending', 'processing', 'shipped', 'delivered'], created_date__range=(start_date, end_date)).aggregate(total=Sum('total_amount'))
+            all_amount = Order.objects.filter(created_date__range=(start_date, end_date)).aggregate(total=Sum("total_amount"))
+            cod_total = Order.objects.filter(payment_type="cashOnDelivery", created_date__range=(start_date, end_date), status__in=['pending', 'processing', 'shipped', 'delivered']).aggregate(total=Sum('total_amount'))
+            upi_total = Order.objects.filter(payment_type="paid by Razorpay", created_date__range=(start_date, end_date), status__in=['pending', 'processing', 'shipped', 'delivered']).aggregate(total=Sum('total_amount'))
+            wallet_total = Order.objects.filter(payment_type="wallet", created_date__range=(start_date, end_date), status__in=['pending', 'processing', 'shipped', 'delivered']).aggregate(total=Sum('total_amount'))
 
-                data_transactions = [['Cash on Delivery', 'Online payment','Wallet','Total Revenue','Total Sale']]
-                data_transactions.append([cod_total['total'], upi_total['total'], wallet_total['total'], total_sale['total'], all_amount['total']])
-                table_transactions = Table(data_transactions, colWidths=[100, 80, 80, 80, 80])
+            data_transactions = [['Cash on Delivery', 'Online payment', 'Wallet', 'Total Revenue', 'Total Sale']]
+            data_transactions.append([cod_total['total'], upi_total['total'], wallet_total['total'], total_sale['total'], all_amount['total']])
+            table_transactions = Table(data_transactions, colWidths=[100, 80, 80, 80, 80])
 
-                # Product Summary Heading
-                p.drawString(220, 520, "Product Summary")
+            # Set style for the transactions table
+            style = TableStyle([
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ])
+            table_transactions.setStyle(style)
 
-                # Product Summary Table
-                data_product_summary = [['Product', 'Quantity', 'Price', 'Total Amount']]
-                products = Product.objects.all()
-                for product in products:
-                    product_summary = Order_Items.objects.filter(order__created_date__range=(start_date, end_date), product=product.id).aggregate(total=Sum('qty'), total_price=Sum('total_price'))
-                    data_product_summary.append([product.name, product_summary['total'], product.price, product_summary['total_price']])
-                table_product_summary = Table(data_product_summary, colWidths=[80, 80, 80, 100])
+            # Draw the transactions table on the PDF
+            table_transactions.wrapOn(p, 0, 0)
+            table_transactions.drawOn(p, 50, 600)
 
-                # Set style for both tables
-                style = TableStyle([
-                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
-                    ('BACKGROUND', (0, 1), (-1, -1), colors.white),
-                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
-                ])
-                table_transactions.setStyle(style)
-                table_product_summary.setStyle(style)
+            # Product Summary Heading
+            p.setFont("Helvetica-Bold", 16)
+            p.drawString(220, 520, "Product Summary")
+            
+            
+            # Product Summary Table
+            data_product_summary = [['Product', 'Quantity', 'Price', 'Total Amount']]
+            products = Product.objects.all()
+            for product in products:
+                product_summary = Order_Items.objects.filter(order__created_date__range=(start_date, end_date), product=product.id).aggregate(total=Sum('qty'), total_price=Sum('total_price'))
+                data_product_summary.append([product.name, product_summary['total'], product.price, product_summary['total_price']])
+            table_product_summary = Table(data_product_summary, colWidths=[80, 80, 80, 100])
 
-                # Draw tables on the PDF
-                table_transactions.wrapOn(p, 0, 0)
-                table_transactions.drawOn(p, 50, 600)
-                table_product_summary.wrapOn(p, 0, 0)
-                table_product_summary.drawOn(p, 50, 300)
+            # Set style for the product summary table
+            table_product_summary.setStyle(style)
 
-                p.showPage()
-                p.save()
+            # Draw the product summary table on the PDF
+            table_product_summary.wrapOn(p, 0, 0)
 
-                # Get the value of the BytesIO buffer and write it to the response
-                pdf = buffer.getvalue()
-                buffer.close()
-                response.write(pdf)
-                return response
+            # Define the starting Y coordinate for drawing the table
+            start_y_coordinate = 500
 
+            # Calculate the height of the table
+            table_height = table_product_summary._height
+
+            # Calculate the ending Y coordinate for drawing the table
+            end_y_coordinate = start_y_coordinate - table_height
+
+            # Draw the table at the calculated Y coordinate
+            table_product_summary.drawOn(p, 50, end_y_coordinate)
+
+            p.showPage()
+            p.save()
+
+            # Get the value of the BytesIO buffer and write it to the response
+            pdf = buffer.getvalue()
+            buffer.close()
+            response.write(pdf)
+            return response
         
-            return redirect('admin_dashbord')
-    except:
-        return render(request,'Admin/admin_404.html')
+        return redirect('admin_dashbord')
+    
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
                     
                     # ................END SALES REPORTS.........................
                     
@@ -1019,13 +1252,23 @@ def Sales_Report(request):
 @never_cache                      
 def Offers(request):
     
-    
-    off=Offer.objects.all()
-    context={
-        'offer' : off
-    }
-    
-    return render(request,'Admin/offers.html',context)
+    try:
+        off=Offer.objects.all()
+        context={
+            'offer' : off
+        }
+        
+        return render(request,'Admin/offers.html',context)
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
 
                      
                       # ................END OFFERS PAGE.........................
@@ -1036,7 +1279,8 @@ def Offers(request):
 @login_required(login_url="/Admin_app/")
 @never_cache                      
 def Creat_Offer(request):
-    
+    try:
+        
         if request.method == 'POST':
             name=request.POST.get("category_name")
             disc=request.POST.get("discount")
@@ -1085,6 +1329,17 @@ def Creat_Offer(request):
                 
         return redirect('offers')
     
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
+    
     # ................ END CREATE OFFERS PAGE.........................
     
     
@@ -1094,33 +1349,57 @@ def Creat_Offer(request):
 @login_required(login_url="/Admin_app/")
 @never_cache 
 def Delete_Offer(request,id):
+    try:
     
-    Offer.objects.get(id=id).delete()
-    return redirect('offers')
+        Offer.objects.get(id=id).delete()
+        return redirect('offers')
     
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
+        
  # ................END DELETE OFFERS .........................
  
  
- # ................OFFERS STATUS CHANGING   .........................
+ # ................OFFERS STATUS CHANGING .........................
  
 @admin_required
 @login_required(login_url="/Admin_app/")
 @never_cache 
 def Offer_Status(request,id):
     
-    off=Offer.objects.get(id=id)
-    
-    if off.is_delete:
+    try:
+            
+        off=Offer.objects.get(id=id)
         
-        off.is_delete=False
-        off.save()
+        if off.is_delete:
+            
+            off.is_delete=False
+            off.save()
+            
+        else:
+            
+            off.is_delete=True
+            off.save()
         
-    else:
-        
-        off.is_delete=True
-        off.save()
-    
-    return redirect('offers')
+        return redirect('offers')
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
 
  # ................END OFFERS STATUS CHANGING.........................
  
@@ -1132,57 +1411,70 @@ def Offer_Status(request,id):
 @never_cache 
 def Update_Offer(request):
     
-    if request.method == "POST":
-            
-            id=request.POST.get("id")
-            name=request.POST.get("name")
-            off=request.POST.get("off")
-            s_date=request.POST.get("s_date")
-            e_date=request.POST.get("e_date")
+    try:
         
+        if request.method == "POST":
+                
+                id=request.POST.get("id")
+                name=request.POST.get("name")
+                off=request.POST.get("off")
+                s_date=request.POST.get("s_date")
+                e_date=request.POST.get("e_date")
+            
+            
+                pattern = r'^[a-zA-Z0-9].*'
+                
+                s_date=datetime.strptime(s_date, '%Y-%m-%d').date()
+                e_date=datetime.strptime(e_date, '%Y-%m-%d').date()
+                today = datetime.today().date()
+                
+                if not re.match(pattern,name or off ):
+                
+                    messages.error(request,"Please Enter Valid inputs")
+                    return redirect('offers')
+                
+                elif int(off) < 0 or int(off) > 80:
+                    
+                    messages.error(request,"Invalid Discound . Discound Should Be Zero and Less Than 80%")
+                    return redirect('offers')
+                
+                elif s_date < today or e_date < today:
+                    
+                    messages.error(request," Invalid Date. Date Should Be Today or  Above Today")
+                    return redirect('offers')
+                
+                elif s_date > e_date:
+                    
+                    messages.error(request," Invalid Date. End Date Should Be Start Date or  Above Start Date")
+                    return redirect('offers')
+                
+                value=Offer.objects.exclude(id=id)
+                if value.filter(name=name):
+                    
+                    messages.error(request," Invalid Offer. Offer Name already added")
+                    return redirect('offers')
+                
+                elif Offer.objects.get(id=id) :
+                    
+                    Offer.objects.filter(id=id).update(name=name,
+                                                    discount=off,
+                                                    start_date=s_date,
+                                                    end_date=e_date)
+                    
+                    return redirect('offers')
         
-            pattern = r'^[a-zA-Z0-9].*'
+        return redirect('offers')
+    
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
             
-            s_date=datetime.strptime(s_date, '%Y-%m-%d').date()
-            e_date=datetime.strptime(e_date, '%Y-%m-%d').date()
-            today = datetime.today().date()
-            
-            if not re.match(pattern,name or off ):
-            
-                messages.error(request,"Please Enter Valid inputs")
-                return redirect('offers')
-            
-            elif int(off) < 0 or int(off) > 80:
-                
-                messages.error(request,"Invalid Discound . Discound Should Be Zero and Less Than 80%")
-                return redirect('offers')
-            
-            elif s_date < today or e_date < today:
-                
-                messages.error(request," Invalid Date. Date Should Be Today or  Above Today")
-                return redirect('offers')
-            
-            elif s_date > e_date:
-                
-                messages.error(request," Invalid Date. End Date Should Be Start Date or  Above Start Date")
-                return redirect('offers')
-            
-            value=Offer.objects.exclude(id=id)
-            if value.filter(name=name):
-                
-                messages.error(request," Invalid Offer. Offer Name already added")
-                return redirect('offers')
-            
-            elif Offer.objects.get(id=id) :
-                 
-                Offer.objects.filter(id=id).update(name=name,
-                                                discount=off,
-                                                start_date=s_date,
-                                                end_date=e_date)
-                
-                return redirect('offers')
-       
-    return redirect('offers')
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
  
  # ................UPDATE OFFERS.........................
  
@@ -1193,17 +1485,30 @@ def Update_Offer(request):
 @never_cache 
 def Add_Offer(request):
     
-    if request.method == "POST":
+    try:
+    
+        if request.method == "POST":
+            
+            id=request.POST.get("id")
+            offer=request.POST.get("offer_id")
         
-        id=request.POST.get("id")
-        offer=request.POST.get("offer_id")
-      
-        if offer and offer != '0':
+            if offer and offer != '0':
+                
+                Sub_Category.objects.filter(id=id).update(offer=offer)
+                
+        
+        return redirect("sub_category") 
+    
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
             
-            Sub_Category.objects.filter(id=id).update(offer=offer)
-            
-       
-    return redirect("sub_category") 
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
  
  # ................ END ADD OFFERS IN SUB CATEGORY.........................
  
@@ -1214,135 +1519,246 @@ def Add_Offer(request):
 @never_cache
 def Offer_Remove(request,id):
     
-    sub=Sub_Category.objects.get(id=id)
-    if sub.offer:
-        sub.offer=None
-        sub.save()
+    try:
     
-    return redirect("sub_category")
+        sub=Sub_Category.objects.get(id=id)
+        if sub.offer:
+            sub.offer=None
+            sub.save()
+        
+        return redirect("sub_category")
+    
+    except Exception as e: 
 
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
 # ................ END REMOVE  SUB CATEGORY  OFFERS.........................
 
 # ................ COUP0N VIEW.........................
 
+@admin_required
+@login_required(login_url="/Admin_app/")
+@never_cache 
 def Coupon_View(request):
     
-    coupon=Coupon.objects.all()
-    context={
-        'coupon' : coupon
-    }
-    return render(request,'Admin/coupon.html',context)
+    try:
+    
+        coupon=Coupon.objects.all()
+        context={
+            'coupon' : coupon
+        }
+        return render(request,'Admin/coupon.html',context)
+    
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
 
 # ................ END COUPON.........................
 
 
 # ................ADD COUPON.........................
 
+@admin_required
+@login_required(login_url="/Admin_app/")
+@never_cache 
 def Add_Coupon(request):
     
-    if request.method == "POST":
-        
-        name = request.POST.get("name")
-        valid_amount = int(request.POST.get("valid_amount"))
-        dis =int(request.POST.get("discount"))
-        
-        pattern = r'^[a-zA-Z0-9].*'
-        
-        if not re.match(pattern,name or valid_amount or dis):
+    try:
+        if request.method == "POST":
             
-            messages.error(request,"Please Enter Valid inputs")
-            return redirect('coupon_view')
-          
-        elif valid_amount < 100 :
-        
-            messages.error(request,"Invalid offer valid amount . Valid Offer Amount  Should Be 100 or more Than 100")
-            return redirect('coupon_view')
-        
-        elif dis < 0 or (valid_amount/2) < dis:
+            name = request.POST.get("name")
+            valid_amount = int(request.POST.get("valid_amount"))
+            dis =int(request.POST.get("discount"))
             
-            messages.error(request,"Invalid Discound . Discound Should Be Zero or  less than Offer Valid Amount 50%")
-            return redirect('coupon_view')
-        
-        else:
+            pattern = r'^[a-zA-Z0-9].*'
             
-            Coupon.objects.create(name=name,
-                                  offer_valid_amount=valid_amount,
-                                  discount=dis)
-        
-    return redirect("coupon_view")
+            if not re.match(pattern,name or valid_amount or dis):
+                
+                messages.error(request,"Please Enter Valid inputs")
+                return redirect('coupon_view')
+            
+            elif valid_amount < 100 :
+            
+                messages.error(request,"Invalid offer valid amount . Valid Offer Amount  Should Be 100 or more Than 100")
+                return redirect('coupon_view')
+            
+            elif dis < 0 or (valid_amount/2) < dis:
+                
+                messages.error(request,"Invalid Discound . Discound Should Be Zero or  less than Offer Valid Amount 50%")
+                return redirect('coupon_view')
+            
+            else:
+                
+                Coupon.objects.create(name=name,
+                                    offer_valid_amount=valid_amount,
+                                    discount=dis)
+            
+        return redirect("coupon_view")
+    
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
         
 
 # ................END ADD COUPON.........................
 
 # ................  COUPON STATUS.........................
 
-
+@admin_required
+@login_required(login_url="/Admin_app/")
+@never_cache 
 def Coupon_Status(request,id):
     
-    coupon=Coupon.objects.get(id=id)
-    
-    if coupon.is_delete:
+    try:
+        coupon=Coupon.objects.get(id=id)
         
-        coupon.is_delete=False
-        coupon.save()
-    else:
-         coupon.is_delete=True
-         coupon.save()
+        if coupon.is_delete:
+            
+            coupon.is_delete=False
+            coupon.save()
+        else:
+            coupon.is_delete=True
+            coupon.save()
 
-    return redirect("coupon_view")
+        return redirect("coupon_view")
+    
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
     
 # ................END COUPON STATUS.........................
 
 # ............... DELETE COUPON .........................
 
+@admin_required
+@login_required(login_url="/Admin_app/")
+@never_cache 
 def Delete_Coupon(request,id):
     
-    Coupon.objects.get(id=id).delete()
-    return redirect("coupon_view")
+    try:
+        
+        Coupon.objects.get(id=id).delete()
+        return redirect("coupon_view")
+    
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
 
 # ................END  DELETE COUPON.........................
 
 # ................UPDATE COUPON.........................
 
+@admin_required
+@login_required(login_url="/Admin_app/")
+@never_cache 
 def Update_Coupon(request):
  
- 
-    if request.method == "POST":
-        
-        id=request.POST.get("id")
-        name =request.POST.get("name")
-        valid_amount = int(request.POST.get("valid_off"))
-        dis =int(request.POST.get("discount"))
-        
-      
- 
-        pattern = r'^[a-zA-Z0-9].*'
-        
-        if not re.match(pattern,name or valid_amount or dis):
+    try:
+        if request.method == "POST":
             
-            messages.error(request,"Please Enter Valid inputs")
-            return redirect('coupon_view')
-          
-        elif valid_amount < 100 :
-        
-            messages.error(request,"Invalid offer valid amount . Valid Offer Amount  Should Be 100 or more Than 100")
-            return redirect('coupon_view')
-        
-        elif dis < 0 or (valid_amount/2) < dis:
+            id=request.POST.get("id")
+            name =request.POST.get("name")
+            valid_amount = int(request.POST.get("valid_off"))
+            dis =int(request.POST.get("discount"))
             
-            messages.error(request,"Invalid Discound . Discound Should Be Zero or  less than Offer Valid Amount 50%")
-            return redirect('coupon_view')
-        else:
+        
+    
+            pattern = r'^[a-zA-Z0-9].*'
             
-            Coupon.objects.filter(id=id).update( name=name,
-                                               offer_valid_amount=valid_amount,
-                                               discount=dis
-                                                 )
-  
-    return redirect("coupon_view")
+            if not re.match(pattern,name or valid_amount or dis):
+                
+                messages.error(request,"Please Enter Valid inputs")
+                return redirect('coupon_view')
+            
+            elif valid_amount < 100 :
+            
+                messages.error(request,"Invalid offer valid amount . Valid Offer Amount  Should Be 100 or more Than 100")
+                return redirect('coupon_view')
+            
+            elif dis < 0 or (valid_amount/2) < dis:
+                
+                messages.error(request,"Invalid Discound . Discound Should Be Zero or  less than Offer Valid Amount 50%")
+                return redirect('coupon_view')
+            else:
+                
+                Coupon.objects.filter(id=id).update( name=name,
+                                                offer_valid_amount=valid_amount,
+                                                discount=dis
+                                                    )
+    
+        return redirect("coupon_view")
+    
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_code(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
     
  # ................END  UPDATE COUPON.........................
+ 
+ 
+ #.......................... STATUS CODE CHEKING.................
 
+never_cache
+def status_code(error):
+    
+    
+    
+    if error == 'ValidationError':
+        type='Page not Found'
+        code=404
+        return type,code
+    
+    elif error == 'TypeError':
+        
+        type='Bad Request'
+        code=400
+        return type,code
+    
+    else:
+        
+        type='Page not Found'
+        code=404
+        return type,code
 
-
+ #..........................END STATUS CODE CHEKING.................
 
