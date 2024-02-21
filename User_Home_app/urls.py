@@ -64,6 +64,8 @@ urlpatterns = [
     
     path("wallet_recharge/",views.wallet_Recharge,name="wallet_recharge"),
     
+    path("return/<int:id>",views.Return,name="return"),
+    
       
 
     

@@ -93,36 +93,28 @@ def Admin(request):
 def Admin_dashbord(request):
     
     try:
-    
         if request.method =="POST":
             
             start_date=request.POST.get("startDate")
             end_date=request.POST.get("endDate")
             
             if start_date and end_date:
-            
                 total_sale=Order.objects.filter(status__in=['pending','processing','shipped','delivered'], created_date__range=(start_date, end_date)).aggregate(total=Coalesce(Sum('total_amount'), Value(0)))
                 all_amount=Order.objects.filter(created_date__range=(start_date, end_date)).aggregate(total=Coalesce(Sum('total_amount'), Value(0)))
-                
                 total_sale=total_sale['total']//1000
                 all_amount=all_amount['total']//1000
-                
-                cod_total=Order.objects.filter(payment_type="cashOnDelivery", created_date__range=(start_date, end_date),status__in=['pending','processing','shipped','delivered']).aggregate(total=Sum('total_amount'))
-                upi_total=Order.objects.filter(payment_type="paid by Razorpay",created_date__range=(start_date, end_date),status__in=['pending','processing','shipped','delivered']).aggregate(total=Sum('total_amount'))
-                wallet_total=Order.objects.filter(payment_type="wallet",created_date__range=(start_date, end_date),status__in=['pending','processing','shipped','delivered']).aggregate(total=Sum('total_amount'))
-                wallet=Order.objects.filter(payment_type="wallet")
-               
+                cod_total=Order.objects.filter(payment_type="cashOnDelivery", created_date__range=(start_date, end_date),status__in=['pending','processing','shipped','delivered']).aggregate(total=Coalesce(Sum('total_amount'), Value(0)))
+                upi_total=Order.objects.filter(payment_type="paid by Razorpay",created_date__range=(start_date, end_date),status__in=['pending','processing','shipped','delivered']).aggregate(total=Coalesce(Sum('total_amount'), Value(0)))
+                wallet_total=Order.objects.filter(payment_type="wallet",created_date__range=(start_date, end_date),status__in=['pending','processing','shipped','delivered']).aggregate(total=Coalesce(Sum('total_amount'), Value(0)))
                 pending=Order.objects.filter(status='pending',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
                 processing=Order.objects.filter(status='processing',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
                 shipped=Order.objects.filter(status='shipped',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
                 delivered=Order.objects.filter(status='delivered',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
                 cancelled=Order.objects.filter(status='cancelled',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
                 refund=Order.objects.filter(status='refunded',created_date__range=(start_date, end_date)).aggregate(total=Count("status"))
-                    
                 adidas = Order_Items.objects.filter(order__created_date__range=(start_date,end_date),Sub_Category="2").aggregate(total=Sum('qty'))              
                 puma= Order_Items.objects.filter(order__created_date__range=(start_date,end_date),Sub_Category="1").aggregate(total=Sum('qty'))
                 nike= Order_Items.objects.filter(order__created_date__range=(start_date,end_date),Sub_Category="3").aggregate(total=Sum('qty'))
-                
                 all=Order.objects.filter(created_date__range=(start_date, end_date)).aggregate(total=Count('id'))
                 
                 context={
@@ -1165,11 +1157,11 @@ def Sales_Report(request):
             p.drawString(220, 670, "Transactions")
 
             # Transactions Table
-            total_sale = Order.objects.filter(status__in=['pending', 'processing', 'shipped', 'delivered'], created_date__range=(start_date, end_date)).aggregate(total=Sum('total_amount'))
+            total_sale = Order.objects.filter(status__in=['pending', 'processing', 'shipped', 'delivered'], created_date__range=(start_date, end_date)).aggregate(total=Coalesce(Sum('total_amount'), Value(0)))
             all_amount = Order.objects.filter(created_date__range=(start_date, end_date)).aggregate(total=Sum("total_amount"))
-            cod_total = Order.objects.filter(payment_type="cashOnDelivery", created_date__range=(start_date, end_date), status__in=['pending', 'processing', 'shipped', 'delivered']).aggregate(total=Sum('total_amount'))
-            upi_total = Order.objects.filter(payment_type="paid by Razorpay", created_date__range=(start_date, end_date), status__in=['pending', 'processing', 'shipped', 'delivered']).aggregate(total=Sum('total_amount'))
-            wallet_total = Order.objects.filter(payment_type="wallet", created_date__range=(start_date, end_date), status__in=['pending', 'processing', 'shipped', 'delivered']).aggregate(total=Sum('total_amount'))
+            cod_total = Order.objects.filter(payment_type="cashOnDelivery", created_date__range=(start_date, end_date), status__in=['pending', 'processing', 'shipped', 'delivered']).aggregate(total=Coalesce(Sum('total_amount'), Value(0)))
+            upi_total = Order.objects.filter(payment_type="paid by Razorpay", created_date__range=(start_date, end_date), status__in=['pending', 'processing', 'shipped', 'delivered']).aggregate(total=Coalesce(Sum('total_amount'), Value(0)))
+            wallet_total = Order.objects.filter(payment_type="wallet", created_date__range=(start_date, end_date), status__in=['pending', 'processing', 'shipped', 'delivered']).aggregate(total=Coalesce(Sum('total_amount'), Value(0)))
 
             data_transactions = [['Cash on Delivery', 'Online payment', 'Wallet', 'Total Revenue', 'Total Sale']]
             data_transactions.append([cod_total['total'], upi_total['total'], wallet_total['total'], total_sale['total'], all_amount['total']])
@@ -1679,62 +1671,6 @@ def Delete_Coupon(request,id):
         return render(request, 'Admin/admin_404.html',context)
 
 # ................END  DELETE COUPON.........................
-
-# ................UPDATE COUPON.........................
-
-@admin_required
-@login_required(login_url="/Admin_app/")
-@never_cache 
-def Update_Coupon(request):
- 
-    try:
-        if request.method == "POST":
-            
-            id=request.POST.get("id")
-            name =request.POST.get("name")
-            valid_amount = int(request.POST.get("valid_off"))
-            dis =int(request.POST.get("discount"))
-            
-        
-    
-            pattern = r'^[a-zA-Z0-9].*'
-            
-            if not re.match(pattern,name or valid_amount or dis):
-                
-                messages.error(request,"Please Enter Valid inputs")
-                return redirect('coupon_view')
-            
-            elif valid_amount < 100 :
-            
-                messages.error(request,"Invalid offer valid amount . Valid Offer Amount  Should Be 100 or more Than 100")
-                return redirect('coupon_view')
-            
-            elif dis < 0 or (valid_amount/2) < dis:
-                
-                messages.error(request,"Invalid Discound . Discound Should Be Zero or  less than Offer Valid Amount 50%")
-                return redirect('coupon_view')
-            else:
-                
-                Coupon.objects.filter(id=id).update( name=name,
-                                                offer_valid_amount=valid_amount,
-                                                discount=dis
-                                                    )
-    
-        return redirect("coupon_view")
-    
-    except Exception as e: 
-
-        error=type(e).__name__
-        typee,code=status_code(error)
-            
-        context={
-            'type' :typee,
-            'code' : code
-        }
-        return render(request, 'Admin/admin_404.html',context)
-    
- # ................END  UPDATE COUPON.........................
- 
  
  #.......................... STATUS CODE CHEKING.................
 

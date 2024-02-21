@@ -72,7 +72,7 @@ def Login(request):
             'type' :typee,
             'code' : code
         }
-        return render(request, 'dashbord/user_404.html',context)
+        return render(request, 'User_auth/auth_error.html',context)
     
                # ................. End Login ................
     
@@ -168,10 +168,10 @@ def Signup(request):
             request.session['phone'] = phone
             
             
-            
             return redirect("signup_otp")
         
         return render(request,'User_auth/Signup.html')
+    
     except Exception as e: 
 
         error=type(e).__name__
@@ -181,7 +181,7 @@ def Signup(request):
             'type' :typee,
             'code' : code
         }
-        return render(request, 'dashbord/user_404.html',context)
+        return render(request, 'User_auth/auth_error.html',context)
 
 
 
@@ -193,22 +193,19 @@ def Signup(request):
 @never_cache 
 def Signup_Otp(request):
     try:
-    
+            
             otp=request.session.get("otp")
             re_otp=request.session.get("re_otp")
-        
             user = CustomUser.objects.get(ph_no = request.session.get('phone'))
-            
             if request.method =="POST":
-                action = request.POST.get('action')
                 
+                action = request.POST.get('action')
                 if action == 'verify':
                     s_otp=request.POST.get("otp")
                     
                     if str(otp) == s_otp or str(re_otp) == s_otp:  
                         
                         #............ Referral Code Genarating...........
-                        
                         length = 8
                         characters = string.ascii_uppercase + string.digits
                         code=''.join(random.choice(characters) for _ in range(length))
@@ -227,11 +224,10 @@ def Signup_Otp(request):
                 elif action == 'cancel':
                     user.delete()
                     return redirect('signup')
-                
+            print("in")
             return render(request,'User_auth/Signup_otp.html')
         
     except Exception as e: 
-
         error=type(e).__name__
         typee,code=statuss_code(error)
             
@@ -239,7 +235,7 @@ def Signup_Otp(request):
             'type' :typee,
             'code' : code
         }
-        return render(request, 'dashbord/user_404.html',context)
+        return render(request, 'User_auth/auth_error.html',context)
 
 
        # ........End  Signup OTP Varification .......
@@ -268,7 +264,7 @@ def Logout(request):
             'type' :typee,
             'code' : code
         }
-        return render(request, 'dashbord/user_404.html',context)
+        return render(request, 'User_auth/auth_error.html',context)
        # ..................End Logout ................
        
        
@@ -332,7 +328,7 @@ def Forgot_pass(request):
             'type' :typee,
             'code' : code
         }
-        return render(request, 'dashbord/user_404.html',context)
+        return render(request, 'User_auth/auth_error.html',context)
 
         # ........End Forget Password .......
         
@@ -378,7 +374,7 @@ def Forget_OTP_check(request):
             'type' :typee,
             'code' : code
         }
-        return render(request, 'dashbord/user_404.html',context)
+        return render(request, 'User_auth/auth_error.html',context)
 
                 
                 
@@ -427,7 +423,7 @@ def New_pass(request):
             'type' :typee,
             'code' : code
         }
-        return render(request, 'dashbord/user_404.html',context)
+        return render(request, 'User_auth/auth_error.html',context)
              
               # ........End New Password .............
 
@@ -468,7 +464,7 @@ def Block_Check(request, id):
             'type' :typee,
             'code' : code
         }
-        return render(request, 'dashbord/user_404.html',context)
+        return render(request, 'User_auth/auth_error.html',context)
 
 
        
@@ -528,7 +524,7 @@ def Signup_Resend_Otp(request):
             'type' :typee,
             'code' : code
         }
-        return render(request, 'dashbord/user_404.html',context)
+        return render(request, 'User_auth/auth_error.html',context)
 
 
      # .............End Signup Resend OTP ..........
@@ -561,7 +557,7 @@ def Forgot_Resend_Otp(request):
             'type' :typee,
             'code' : code
         }
-        return render(request, 'dashbord/user_404.html',context)
+        return render(request, 'User_auth/auth_error.html',context)
 
      # .............END FORGOT Resend OTP ..........
 
@@ -577,13 +573,20 @@ def Referral(request):
             action = request.POST.get("action")
             code = request.POST.get("code")
             
-            print(action)
-            print(code)
+          
             
             if action == "verify":
+                try:
+                    
+                 user = CustomUser.objects.get(rafferal_code = code)
+                 
+                except Exception as e:
+                    
+                    messages.error(request,"Referal Code Mismatch ")
+                    return render(request,'User_auth/referral.html')
                 
-                user = CustomUser.objects.get(rafferal_code = code)
-                if user:
+                if user :
+                    
                     new_user = CustomUser.objects.get(ph_no = request.session.get('phone'))   
                     user.wallet_bal += 50
                     user.save()
@@ -592,7 +595,6 @@ def Referral(request):
                                                     resons = "Referral Bonus",
                                                     add_or_pay = "add" 
                                                     )
-                    print(new_user)
                                 
                     new_user.wallet_bal += 100
                     new_user.save()
@@ -616,6 +618,7 @@ def Referral(request):
         else:
             
             return render(request,'User_auth/referral.html')
+        
     except Exception as e: 
 
         error=type(e).__name__
@@ -625,7 +628,7 @@ def Referral(request):
             'type' :typee,
             'code' : code
         }
-        return render(request, 'dashbord/user_404.html',context)
+        return render(request, 'User_auth/auth_error.html',context)
         
         
              # .............END FORGOT Resend OTP ..........

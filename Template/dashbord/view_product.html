@@ -344,20 +344,28 @@
                           "csrfmiddlewaretoken": token,
                       };
                       $.ajax({
-                          type: 'POST',
-                          url: '{% url "add_wishlist" %}', // URL to your Django view
-                          data: data,
-                          success: function(response) {
+                        type: 'POST',
+                        url: '{% url "add_wishlist" %}', // URL to your Django view
+                        data: data,
+                        success: function(response) {
                             if (response.success === 'added') {
-                                alert('Product added to wishlist successfully');
+                                toastr.success('Product added to wishlist successfully');
+                                setTimeout(function() {
+                                }, 2000);
                             } else if (response.success === 'already') {
-                                alert('Product already in Wishlist');
-                            }else if (response.success === 'cart already') {
-
-                                alert('Product already in Cart');
-                                
-                             } else {
-                                alert('Failed to add product to wishlist');
+                                toastr.warning('Product already in Wishlist');
+                                setTimeout(function() {
+                                }, 2000);
+                            } else if (response.success === 'cart already') {
+        
+                                toastr.warning('Product already in Cart');
+                                setTimeout(function() {
+                                }, 2000);
+                            }else {
+        
+                                toastr.warning('Failed to add product to wishlist');
+                                setTimeout(function() {
+                                }, 2000);
                             }
                         },
                         error: function() {

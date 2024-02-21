@@ -189,19 +189,28 @@
           };
         
           $.ajax({
-              type: 'POST',
-              url: '{% url "add_wishlist" %}', // URL to your Django view
-              data: data,
-              success: function(response) {
+            type: 'POST',
+            url: '{% url "add_wishlist" %}', // URL to your Django view
+            data: data,
+            success: function(response) {
                 if (response.success === 'added') {
-                    alert('Product added to wishlist successfully');
+                    toastr.success('Product added to wishlist successfully');
+                    setTimeout(function() {
+                    }, 2000);
                 } else if (response.success === 'already') {
-                    alert('Product already in Wishlist');
+                    toastr.warning('Product already in Wishlist');
+                    setTimeout(function() {
+                    }, 2000);
                 } else if (response.success === 'cart already') {
 
-                    alert('Product already in Cart');
+                    toastr.warning('Product already in Cart');
+                    setTimeout(function() {
+                    }, 2000);
                 }else {
-                    alert('Failed to add product to wishlist');
+
+                    toastr.warning('Failed to add product to wishlist');
+                    setTimeout(function() {
+                    }, 2000);
                 }
             },
             error: function() {

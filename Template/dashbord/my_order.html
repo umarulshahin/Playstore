@@ -65,6 +65,8 @@
             {% if item.status == 'pending' or item.status == 'processing' %}
             <a class="btn btn-orange" style="color: white;" onclick="confirm('{% url 'cancellation' item.id %}')">Cancel</a>
 
+            {% elif item.status == 'delivered' %}
+            <a class="btn btn-orange" style="color: white;" onclick="confirm('{% url 'return' item.id %}')">Return</a>
 
             {% endif %}
             </div>

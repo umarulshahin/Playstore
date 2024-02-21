@@ -109,7 +109,7 @@ urlpatterns = [
     
     path('delete_coupon/<int:id>',views.Delete_Coupon,name="delete_coupon"),
     
-    path('update_coupon/',views.Update_Coupon,name="update_coupon"),
+    # path('update_coupon/',views.Update_Coupon,name="update_coupon"),
     
 
     

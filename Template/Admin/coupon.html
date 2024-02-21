@@ -61,8 +61,7 @@
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#changeStatusModal{{ off.id }}">
                                     <i class="bx bx-edit-alt me-1"></i> Change status</a>
-                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#updateCategoryModal{{ off.id }}">
-                                    <i class="bx bx-edit-alt me-1"></i> Update coupon</a>
+                              
                                 <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal{{ off.id }}">
                                     <i class="bx bx-trash me-1"></i> Delete</a>
                             </div>
@@ -91,39 +90,7 @@
                     </div>
                 </div>
 
-                <!-- Update category modal -->
-                <div class="modal fade" id="updateCategoryModal{{ off.id }}" tabindex="-1" role="dialog" aria-labelledby="updateCategoryModalLabel{{ off.id }}" aria-hidden="true">
-
-                    <!-- Modal content goes here -->
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="updateCategoryModalLabel{{ off.id }}">Update Coupon</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form method="post" action="{% url 'update_coupon' %}" id="updateoffersForm{{off.id}}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="id" value="{{off.id}}">
-                                    <label for="category_name">Offer Name:</label>
-                                    <input type="text" name="name" class="form-control" value="{{off.name}}" required>
-                                    <label for="discount">Offer valid Amount:</label>
-                                    <input type="text" name="valid_off" class="form-control" value="{{off.offer_valid_amount}}" required>
-                                    <label for="discount">Discount:</label>
-                                    <input type="text" name="discount" class="form-control" value="{{off.discount}}" required>
-                                   
-                                 
-                                    <!-- Add other fields as needed -->
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary" form="updateoffersForm{{off.id}}">Save changes</button>
-                            </div>
-                        </div>
-                   
-                    </div>
-                </div>
+               
                 
 
 

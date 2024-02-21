@@ -883,7 +883,7 @@ def Checkout(request):
                     else:
                         request.session["coupon_id"]=None
                         
-                coupon=Coupon.objects.all()
+                coupon=Coupon.objects.filter(is_delete=True)
                 valid=[]
                 for i in coupon:
                     
@@ -1141,7 +1141,7 @@ def User_Order(request):
                 coupon_id=request.session.get("coupon_id")
                 
               
-                if  payment_method == 'cashOnDelivery':    
+                if  payment_method == 'cashOnDelivery' and address:    
                     
                     valid_amount=0
                     discount=0
@@ -1221,7 +1221,7 @@ def User_Order(request):
                 # ..................... Wallet Payment .........................
                 
                                 
-                elif  payment_method == "wallet":
+                elif  payment_method == "wallet" and address:
                         
                                 
                             id=int(CustomUser.objects.get(email=request.user))
@@ -1230,24 +1230,26 @@ def User_Order(request):
                             
                             total=int(total['total'])
                             
-                            #........................ coupon cheking...........
                             
-                            valid_amount=0
-                            discount=0
-                            if coupon_id:
-                                
-                                coupon=Coupon.objects.filter(id=coupon_id)
-                                for coupon in coupon:
-                            
-                                    total-=coupon.discount      
-                                    valid_amount=coupon.offer_valid_amount
-                                    discount=coupon.discount
-                                    
-                                    User_Coupon.objects.create(customuser=user,
-                                                                coupon=coupon)
-                                                
+                                     # ...................Wallet Balance cheking....................
                             if int(user.wallet_bal) > total:
                                     
+                                    
+                                    #........................ coupon cheking...........
+                            
+                                valid_amount=0
+                                discount=0
+                                if coupon_id:
+                                    
+                                    coupon=Coupon.objects.filter(id=coupon_id)
+                                    for coupon in coupon:
+                                
+                                        total-=coupon.discount      
+                                        valid_amount=coupon.offer_valid_amount
+                                        discount=coupon.discount
+                                        
+                                        User_Coupon.objects.create(customuser=user,
+                                                                    coupon=coupon)
                     #    ...............order_id genarating.............                
                                             
                                 unique_id = uuid.uuid4()
@@ -1439,7 +1441,10 @@ def User_Order(request):
                                         
                                         messages.error(request,f"{i.product.name} out stock please choose any another product")
                                         return redirect("user_cart")
-                                    
+                        else:
+                            
+                            messages.error(request,f"Select any Address ")
+                            return redirect("checkout")      
                     
                 
                 else:
@@ -2128,4 +2133,60 @@ def status_codee(error):
         return type,code
 
  #..........................END STATUS CODE CHEKING.................
+ 
+  #..........................ORDER RETURN.................
+
+ 
+@login_required(login_url='/user_app/Login/')
+@never_cache
+def Return(request,id):
+        
+    try:
+                
+            order=Order.objects.get(id=id)
+            date=timezone.now()
+            if order:
+                                
+                    user_order=Order_Items.objects.filter(order_id=id)
+                    for i in user_order:
+                        
+                        
+                        stock=Product_size.objects.get(product=i.product,size=i.size)
+                        
+                        stock.stock += i.qty
+                        stock.save()
+                
+                   
+                    
+                 #  .......................... Order Amount Add To Wallet....................
+                 
+                    user=CustomUser.objects.get(id=order.user)
+                    user.wallet_bal = int(user.wallet_bal) + int(order.total_amount)
+                    user.save()
+                    Wallet_Transactions.objects.create(customuser = user,
+                                                       amount= order.total_amount,
+                                                       resons= 'order Return',
+                                                       add_or_pay = 'add',               
+                                                       )
+                    order.status= 'refunded'
+                    order.status_date=date
+                    order.save()
+                    
+                    
+               
+        
+    except Exception as e: 
+
+        error=type(e).__name__
+        typee,code=status_codee(error)
+            
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'dashbord/user_404.html',context)
+    return redirect("my_order")
+    
+      #..........................END ORDER RETURN.................
+
 
