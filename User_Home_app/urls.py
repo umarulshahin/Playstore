@@ -8,7 +8,7 @@ urlpatterns = [
     
     path('view_product/<int:id>',views.View_Product,name="view_product"),
     
-    path('user_profile/<int:id>',views.User_Profile,name="user_profile"),
+    path('user_profile/',views.User_Profile,name="user_profile"),
     
     path('edit_profile/<int:id>',views.Edit_Profile,name="edit_profile"),
     

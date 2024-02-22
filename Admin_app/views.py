@@ -723,7 +723,6 @@ def Product_Status(request,id):
                     
                     # ................Add Product .........................
                     
-# from django.core.files.base import ContentFile 
 
 @admin_required
 @login_required(login_url="/Admin_app/")

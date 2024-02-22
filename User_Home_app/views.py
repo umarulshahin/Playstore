@@ -200,16 +200,19 @@ def View_Product(request,id):
 
 @login_required(login_url='/user_app/Login/')
 @never_cache
-def User_Profile(request,id):
+def User_Profile(request):
     
     try:
+        
         if request.user.is_authenticated:
             
-            user_details = CustomUser.objects.get(id=id)
+            user=CustomUser.objects.get(email=request.user)
+            user_details = CustomUser.objects.get(id=user)
             
             context = {
                 'user' : user_details,
             }
+            
             return render(request,'dashbord/profile.html',context)
         
         return redirect("login")
@@ -237,45 +240,32 @@ def Edit_Profile(request,id):
         if request.method == "POST":
             
             username=request.POST.get("editFirstName")
-            email=request.POST.get("editEmail")
             phone=request.POST.get("editphone")
             
             pattern = r'^[a-zA-Z0-9].*'
             pattern_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
             pattern_Phone= r'^(?!0{10}$)\d{10}$'
             
-            if not (username or email or phone ):
+            if not (username  or phone ):
                 messages.error(request, "please Fill Required Field")
-                return render(request,'dashbord/profile.html')
+                return redirect("user_profile")
             
             if not re.match(pattern,username):
                 messages.error(request,"Please Enter Valid User Name")
-                return render(request,'dashbord/profile.html')
+                return redirect("user_profile")
             
-            elif not re.match(pattern_email,email):
-                messages.error(request,"Please enter valid email address")
-                return render(request,'dashbord/profile.html')
-            
-            # elif CustomUser.objects.filter(email=email).exists():
-            #     messages.error(request,"Email already exists")
-            #     return render(request,'dashbord/profile.html')
             
             elif not re.match(pattern_Phone,phone):
                 messages.error(request,"Please enter valid Phone number")
-                return render(request,'dashbord/profile.html')
+                return redirect("user_profile")
+                    
             
-            # elif CustomUser.objects.filter(ph_no=phone).exists():
-            #     messages.error(request,"Phone number already exists")
-            #     return render(request,'dashbord/profile.html')
+            CustomUser.objects.filter(id=id).update(username=username,ph_no=phone)
             
+            return redirect("user_profile")
             
+        return redirect('user_profile')   
             
-            CustomUser.objects.filter(id=id).update(username=username,email=email,ph_no=phone)
-            
-            
-            
-            
-            return render(request,'dashbord/profile.html')
         
     except Exception as e: 
 
@@ -301,16 +291,23 @@ def Addresses(request):
         
         if request.user.is_authenticated:
             
-            user=CustomUser.objects.get(email=request.user)
-            value=User_Address.objects.filter(customuser=user.id)
-            
-            context={
+            try:
+                user=CustomUser.objects.get(email=request.user)
                 
-                'value' : value
-            }
-        
-        
-            return render(request,'dashbord/address.html',context)
+                value=User_Address.objects.filter(customuser=user.id)
+                
+                context={
+                    
+                    'value' : value
+                }
+            
+            
+                return render(request,'dashbord/address.html',context)
+            
+            except Exception as e:
+                
+                return render(request,'dashbord/address.html')
+                
         return redirect('user_profile')
     except Exception as e: 
 
@@ -367,9 +364,6 @@ def Add_Address(request):
                                 messages.error(request,"Please enter valid email address")
                                 return redirect("addresses")
                             
-                            # elif CustomUser.objects.filter(email=email).exists():
-                            #     messages.error(request,"Email already exists")
-                            #     return render(request,'dashbord/profile.html')
                             
                         elif not re.match(pattern_Phone,phone):
                                 messages.error(request,"Please enter valid Phone number")
@@ -524,7 +518,6 @@ def Edit_Address(request):
          
          # .................ADD TO CART......................
 
-# @login_required(login_url='/user_app/Login/')
 @never_cache   
 def Add_to_Cart(request):
     
@@ -1773,8 +1766,13 @@ def New_Password(request):
                         pattern = r'^[a-zA-Z0-9].*'
                         pattern_pass = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$'
                         
-                        if not (old_pass and new_pass and con_pass ):
+                        if not (old_pass or new_pass or con_pass ):
                             messages.error(request, "please Fill Required Field")
+                            return render(request,"dashbord/new_password.html")
+                        
+                        elif not re.match(pattern,new_pass or con_pass or old_pass ):
+                            
+                            messages.error(request,"Please enter valid input")
                             return render(request,"dashbord/new_password.html")
                         
                         elif not re.match(pattern_pass,new_pass):
@@ -2175,7 +2173,7 @@ def Return(request,id):
                     order.status_date=date
                     order.save()
                     
-                    
+            return redirect("my_order")    
                
         
     except Exception as e: 
@@ -2188,7 +2186,7 @@ def Return(request,id):
             'code' : code
         }
         return render(request, 'dashbord/user_404.html',context)
-    return redirect("my_order")
+    
     
       #..........................END ORDER RETURN.................
 
