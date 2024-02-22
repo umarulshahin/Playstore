@@ -30,6 +30,10 @@ def Login(request):
         if  'email_user' in request.session :
             return redirect("Dashbord")
         
+        elif 'phone' in request.session:
+            
+            return redirect("signup_otp")
+        
         
         if request.method == 'POST':
             email=request.POST.get("email")
@@ -87,6 +91,10 @@ def Signup(request):
     try:
         if  'user_email' in request.session :
             return redirect("Dashbord")
+        
+        elif 'phone' in request.session:
+            
+            return redirect("signup_otp")    
         
         if request.method =="POST":
             
@@ -212,6 +220,7 @@ def Signup_Otp(request):
                         
                         user.rafferal_code = code
                         user.save()
+                        request.session.flush()
                         
                         messages.success(request,"Otp Verified..!")
                         return render(request,"User_auth/referral.html")
@@ -222,9 +231,10 @@ def Signup_Otp(request):
                         
                     
                 elif action == 'cancel':
+                    
+                    request.session.flush()
                     user.delete()
                     return redirect('signup')
-            print("in")
             return render(request,'User_auth/Signup_otp.html')
         
     except Exception as e: 

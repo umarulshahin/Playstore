@@ -16,6 +16,8 @@
 	<!-- meta character set -->
 	<meta charset="UTF-8">
 	<!-- Site Title -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
 	<title>PlayStore</title>
 	<!--
 		CSS
@@ -189,6 +191,7 @@ font-family: 'Russo One', sans-serif;
 									<ul class="dropdown-menu">
 										<li class="nav-item"><a class="nav-link" href="{% url 'user_profile' user.id %}">My Account</a></li>
 										<li class="nav-item"><a class="nav-link" href="{% url 'user_wishlist' %}">My Wishlist</a></li>
+										<li class="nav-item"><a class="nav-link" href="{% url 'user_cart' %}">My Cart</a></li>
 										<li class="nav-item"><a class="nav-link" href="{% url 'my_order' %}">My Order</a></li>
 										<li class="nav-item"><a class="nav-link" href="{% url 'my_wallet' %}">My Wallet</a></li>
 										<li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>

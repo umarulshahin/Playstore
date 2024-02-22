@@ -32,6 +32,9 @@ from datetime import datetime
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def Dashbord(request):
     try:
+        if 'phone' in request.session:
+            print("in.....123")
+            return redirect("signup_otp")  
     
         pro=Product.objects.all()
     
