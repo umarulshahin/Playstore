@@ -1017,14 +1017,15 @@ def Edit_Size(request,id):
 @never_cache                     
 def User_Orders(request):
     
-    # try:
+    try:
     
         order=Order.objects.all()
         
         addresses=[]
         for i in order:
             
-            pairs = i.user_address.strip('{}').split(',')        
+            pairs = i.user_address.strip('{}').split(',')    
+            print(pairs)    
             my_dict = {}
             for pair in pairs:
                 key, value = pair.split(':')
@@ -1049,16 +1050,16 @@ def User_Orders(request):
         
         return render(request,'Admin/user_orders.html',context)
     
-    # except Exception as e: 
+    except Exception as e: 
 
-    #     error=type(e).__name__
-    #     typee,code=status_code(error)
+        error=type(e).__name__
+        typee,code=status_code(error)
             
-    #     context={
-    #         'type' :typee,
-    #         'code' : code
-    #     }
-    #     return render(request, 'Admin/admin_404.html',context)
+        context={
+            'type' :typee,
+            'code' : code
+        }
+        return render(request, 'Admin/admin_404.html',context)
                     
                     # ................END USER ORDERS  .........................
                     
